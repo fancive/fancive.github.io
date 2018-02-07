@@ -1,7 +1,7 @@
 ---
 title: cache使用
 date: 2018-01-28 19:13:37
-tags: tech
+tags: 技术经验
 ---
 
 # cache使用
