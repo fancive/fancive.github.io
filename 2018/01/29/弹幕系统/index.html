@@ -103,18 +103,18 @@
   <meta name="keywords" content="技术经验," />
 
 
-<meta name="description" content="弹幕系统部署comet 属于接入层，非常容易扩展，直接开启多个comet节点，修改配置文件中的base节点下的server.id修改成不同值（注意一定要保证不同的comet进程值唯一），前端接入可以使用LVS 或者 DNS来转发。logiclogic 属于无状态的逻辑层，提供推送消息等外部接口，可以随意增加节点，使用nginx upstream来扩展http接口，内部rpc部分，可以使用LVS四层">
+<meta name="description" content="弹幕系统部署comet属于接入层，非常容易扩展，直接开启多个comet节点，修改配置文件中的base节点下的server.id修改成不同值（注意一定要保证不同的comet进程值唯一），前端接入可以使用LVS 或者 DNS来转发。 logiclogic 属于无状态的逻辑层，提供推送消息等外部接口，可以随意增加节点，使用nginx upstream来扩展http接口，内部rpc部分，可以使用LVS四层">
 <meta name="keywords" content="技术经验">
 <meta property="og:type" content="article">
 <meta property="og:title" content="弹幕系统">
 <meta property="og:url" content="http://fancive.github.io/2018/01/29/弹幕系统/index.html">
 <meta property="og:site_name" content="划水日常">
-<meta property="og:description" content="弹幕系统部署comet 属于接入层，非常容易扩展，直接开启多个comet节点，修改配置文件中的base节点下的server.id修改成不同值（注意一定要保证不同的comet进程值唯一），前端接入可以使用LVS 或者 DNS来转发。logiclogic 属于无状态的逻辑层，提供推送消息等外部接口，可以随意增加节点，使用nginx upstream来扩展http接口，内部rpc部分，可以使用LVS四层">
+<meta property="og:description" content="弹幕系统部署comet属于接入层，非常容易扩展，直接开启多个comet节点，修改配置文件中的base节点下的server.id修改成不同值（注意一定要保证不同的comet进程值唯一），前端接入可以使用LVS 或者 DNS来转发。 logiclogic 属于无状态的逻辑层，提供推送消息等外部接口，可以随意增加节点，使用nginx upstream来扩展http接口，内部rpc部分，可以使用LVS四层">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-01-30T16:03:13.682Z">
+<meta property="og:updated_time" content="2018-06-22T14:23:50.510Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="弹幕系统">
-<meta name="twitter:description" content="弹幕系统部署comet 属于接入层，非常容易扩展，直接开启多个comet节点，修改配置文件中的base节点下的server.id修改成不同值（注意一定要保证不同的comet进程值唯一），前端接入可以使用LVS 或者 DNS来转发。logiclogic 属于无状态的逻辑层，提供推送消息等外部接口，可以随意增加节点，使用nginx upstream来扩展http接口，内部rpc部分，可以使用LVS四层">
+<meta name="twitter:description" content="弹幕系统部署comet属于接入层，非常容易扩展，直接开启多个comet节点，修改配置文件中的base节点下的server.id修改成不同值（注意一定要保证不同的comet进程值唯一），前端接入可以使用LVS 或者 DNS来转发。 logiclogic 属于无状态的逻辑层，提供推送消息等外部接口，可以随意增加节点，使用nginx upstream来扩展http接口，内部rpc部分，可以使用LVS四层">
 
 
 
@@ -325,9 +325,11 @@
       
 
       
-        <h1 id="弹幕系统"><a href="#弹幕系统" class="headerlink" title="弹幕系统"></a>弹幕系统</h1><h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><h3 id="comet-属于接入层，非常容易扩展，直接开启多个comet节点，修改配置文件中的base节点下的server-id修改成不同值（注意一定要保证不同的comet进程值唯一），前端接入可以使用LVS-或者-DNS来转发。"><a href="#comet-属于接入层，非常容易扩展，直接开启多个comet节点，修改配置文件中的base节点下的server-id修改成不同值（注意一定要保证不同的comet进程值唯一），前端接入可以使用LVS-或者-DNS来转发。" class="headerlink" title="comet 属于接入层，非常容易扩展，直接开启多个comet节点，修改配置文件中的base节点下的server.id修改成不同值（注意一定要保证不同的comet进程值唯一），前端接入可以使用LVS 或者 DNS来转发。"></a>comet 属于接入层，非常容易扩展，直接开启多个comet节点，修改配置文件中的base节点下的server.id修改成不同值（注意一定要保证不同的comet进程值唯一），前端接入可以使用LVS 或者 DNS来转发。</h3><h3 id="logic"><a href="#logic" class="headerlink" title="logic"></a>logic</h3><p>logic 属于无状态的逻辑层，提供推送消息等外部接口，可以随意增加节点，使用nginx upstream来扩展http接口，内部rpc部分，可以使用LVS四层转发。</p>
+        <h1 id="弹幕系统"><a href="#弹幕系统" class="headerlink" title="弹幕系统"></a>弹幕系统</h1><h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><h3 id="comet"><a href="#comet" class="headerlink" title="comet"></a>comet</h3><p>属于接入层，非常容易扩展，直接开启多个comet节点，修改配置文件中的base节点下的server.id修改成不同值（注意一定要保证不同的comet进程值唯一），前端接入可以使用LVS 或者 DNS来转发。</p>
+<h3 id="logic"><a href="#logic" class="headerlink" title="logic"></a>logic</h3><p>logic 属于无状态的逻辑层，提供推送消息等外部接口，可以随意增加节点，使用nginx upstream来扩展http接口，内部rpc部分，可以使用LVS四层转发。</p>
 <h3 id="kafka"><a href="#kafka" class="headerlink" title="kafka"></a>kafka</h3><p>kafka 可以使用多broker，或者多partition来扩展队列。</p>
-<h3 id="srouter-属于有状态节点，主要用于收集用户上下线消息，进行数据统计。logic可以使用一致性hash配置节点，增加多个router节点（目前还不支持动态扩容），提前预估好在线和压力情况。"><a href="#srouter-属于有状态节点，主要用于收集用户上下线消息，进行数据统计。logic可以使用一致性hash配置节点，增加多个router节点（目前还不支持动态扩容），提前预估好在线和压力情况。" class="headerlink" title="srouter 属于有状态节点，主要用于收集用户上下线消息，进行数据统计。logic可以使用一致性hash配置节点，增加多个router节点（目前还不支持动态扩容），提前预估好在线和压力情况。"></a>srouter 属于有状态节点，主要用于收集用户上下线消息，进行数据统计。logic可以使用一致性hash配置节点，增加多个router节点（目前还不支持动态扩容），提前预估好在线和压力情况。</h3><h3 id="job"><a href="#job" class="headerlink" title="job"></a>job</h3><p>job 根据kafka的partition来扩展多job工作方式，具体可以参考下kafka的partition负载，主要用于将消息推送到对应的comet。</p>
+<h3 id="router"><a href="#router" class="headerlink" title="router"></a>router</h3><p>属于有状态节点，主要用于收集用户上下线消息，进行数据统计。logic可以使用一致性hash配置节点，增加多个router节点（目前还不支持动态扩容），提前预估好在线和压力情况。</p>
+<h3 id="job"><a href="#job" class="headerlink" title="job"></a>job</h3><p>job 根据kafka的partition来扩展多job工作方式，具体可以参考下kafka的partition负载，主要用于将消息推送到对应的comet。</p>
 
       
     </div>
@@ -444,7 +446,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-count">13</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -465,7 +467,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">3</span>
+                      
+                    
+                    <span class="site-state-item-count">4</span>
                     <span class="site-state-item-name">标签</span>
                   
                 </div>
@@ -501,7 +505,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#弹幕系统"><span class="nav-number">1.</span> <span class="nav-text">弹幕系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#部署"><span class="nav-number">1.1.</span> <span class="nav-text">部署</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#comet-属于接入层，非常容易扩展，直接开启多个comet节点，修改配置文件中的base节点下的server-id修改成不同值（注意一定要保证不同的comet进程值唯一），前端接入可以使用LVS-或者-DNS来转发。"><span class="nav-number">1.1.1.</span> <span class="nav-text">comet 属于接入层，非常容易扩展，直接开启多个comet节点，修改配置文件中的base节点下的server.id修改成不同值（注意一定要保证不同的comet进程值唯一），前端接入可以使用LVS 或者 DNS来转发。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#logic"><span class="nav-number">1.1.2.</span> <span class="nav-text">logic</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kafka"><span class="nav-number">1.1.3.</span> <span class="nav-text">kafka</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#srouter-属于有状态节点，主要用于收集用户上下线消息，进行数据统计。logic可以使用一致性hash配置节点，增加多个router节点（目前还不支持动态扩容），提前预估好在线和压力情况。"><span class="nav-number">1.1.4.</span> <span class="nav-text">srouter 属于有状态节点，主要用于收集用户上下线消息，进行数据统计。logic可以使用一致性hash配置节点，增加多个router节点（目前还不支持动态扩容），提前预估好在线和压力情况。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#job"><span class="nav-number">1.1.5.</span> <span class="nav-text">job</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#弹幕系统"><span class="nav-number">1.</span> <span class="nav-text">弹幕系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#部署"><span class="nav-number">1.1.</span> <span class="nav-text">部署</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#comet"><span class="nav-number">1.1.1.</span> <span class="nav-text">comet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#logic"><span class="nav-number">1.1.2.</span> <span class="nav-text">logic</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kafka"><span class="nav-number">1.1.3.</span> <span class="nav-text">kafka</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#router"><span class="nav-number">1.1.4.</span> <span class="nav-text">router</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#job"><span class="nav-number">1.1.5.</span> <span class="nav-text">job</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
