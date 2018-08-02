@@ -3,7 +3,7 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: 划水日常
+title: 不眠之夜
 subtitle:
 description: 
 author: fancivez
@@ -80,3 +80,10 @@ deploy:
   repo: git@github.com:fancive/fancive.github.io.git
   type: git
   branch: master
+
+menu:
+  home: /      //主页
+  categories: /categories //分类
+  archives: /archives   //归档
+  tags: /tags   //标签
+  about: /about   //关于
