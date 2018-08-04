@@ -103,18 +103,18 @@
   <meta name="keywords" content="tech,redis," />
 
 
-<meta name="description" content="redis_string(sds)结构声明 12345struct sdshdr &amp;#123;    long len;    long free;    char buf[];&amp;#125;; struct sdshdr是redis的字符串容器，比较与常规字符串，有几个特点  支持O(1) 时间内获取字符串长度 sdslen 不会因为长度溢出导致缓冲区溢出(buffer overflow)  st">
+<meta name="description" content="redis 版本: v1.3.12  redis_string(sds)结构声明 12345struct sdshdr &amp;#123;    long len;    long free;    char buf[];&amp;#125;; struct sdshdr是redis的字符串容器，比较与常规字符串，有几个特点  支持O(1) 时间内获取字符串长度 sdslen 不会因为长度溢出导致缓冲区溢出(">
 <meta name="keywords" content="tech,redis">
 <meta property="og:type" content="article">
 <meta property="og:title" content="redis_string">
 <meta property="og:url" content="http://fancive.github.io/2018/08/04/redis-string/index.html">
 <meta property="og:site_name" content="不眠之夜">
-<meta property="og:description" content="redis_string(sds)结构声明 12345struct sdshdr &amp;#123;    long len;    long free;    char buf[];&amp;#125;; struct sdshdr是redis的字符串容器，比较与常规字符串，有几个特点  支持O(1) 时间内获取字符串长度 sdslen 不会因为长度溢出导致缓冲区溢出(buffer overflow)  st">
+<meta property="og:description" content="redis 版本: v1.3.12  redis_string(sds)结构声明 12345struct sdshdr &amp;#123;    long len;    long free;    char buf[];&amp;#125;; struct sdshdr是redis的字符串容器，比较与常规字符串，有几个特点  支持O(1) 时间内获取字符串长度 sdslen 不会因为长度溢出导致缓冲区溢出(">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-08-04T06:50:13.383Z">
+<meta property="og:updated_time" content="2018-08-04T07:12:58.359Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="redis_string">
-<meta name="twitter:description" content="redis_string(sds)结构声明 12345struct sdshdr &amp;#123;    long len;    long free;    char buf[];&amp;#125;; struct sdshdr是redis的字符串容器，比较与常规字符串，有几个特点  支持O(1) 时间内获取字符串长度 sdslen 不会因为长度溢出导致缓冲区溢出(buffer overflow)  st">
+<meta name="twitter:description" content="redis 版本: v1.3.12  redis_string(sds)结构声明 12345struct sdshdr &amp;#123;    long len;    long free;    char buf[];&amp;#125;; struct sdshdr是redis的字符串容器，比较与常规字符串，有几个特点  支持O(1) 时间内获取字符串长度 sdslen 不会因为长度溢出导致缓冲区溢出(">
 
 
 
@@ -325,7 +325,10 @@
       
 
       
-        <h1 id="redis-string-sds"><a href="#redis-string-sds" class="headerlink" title="redis_string(sds)"></a>redis_string(sds)</h1><p>结构声明</p>
+        <blockquote>
+<p>redis 版本: v1.3.12</p>
+</blockquote>
+<h1 id="redis-string-sds"><a href="#redis-string-sds" class="headerlink" title="redis_string(sds)"></a>redis_string(sds)</h1><p>结构声明</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sdshdr</span> &#123;</span></span><br><span class="line">    <span class="keyword">long</span> len;</span><br><span class="line">    <span class="keyword">long</span> <span class="built_in">free</span>;</span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>struct sdshdr是redis的字符串容器，比较与常规字符串，有几个特点</p>
 <ul>
@@ -341,7 +344,7 @@
 <li>惰性释放</li>
 </ul>
 <p>用户不会只在 redis中存储字符串，可能有其他数据类型，因此可能会有 EOF,  所以存储类型必须是二进制安全的，否则造成截断。</p>
-<h2 id="横线比较"><a href="#横线比较" class="headerlink" title="横线比较"></a>横线比较</h2><p>nginx中的字符串容器设计</p>
+<h2 id="横向比较"><a href="#横向比较" class="headerlink" title="横向比较"></a>横向比较</h2><p>nginx中的字符串容器设计</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="keyword">size_t</span>      len;</span><br><span class="line">    u_char     *data;</span><br><span class="line">&#125; <span class="keyword">ngx_str_t</span>;</span><br></pre></td></tr></table></figure>
 <p>比较与reids, nginx 中的字符串容器没有free 属性，因此获取字符串长度时间复杂度也为O(1),  但是获取字符串容器总长度的事件复杂度为 O(n)</p>
 <h2 id="ref"><a href="#ref" class="headerlink" title="ref"></a>ref</h2><p><a href="http://redisbook.com/index.html" target="_blank" rel="noopener">redisbook</a></p>
@@ -386,6 +389,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/04/redis-list/" rel="prev" title="redis_list">
+                redis_list <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -459,7 +466,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-count">20</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -539,7 +546,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#redis-string-sds"><span class="nav-number">1.</span> <span class="nav-text">redis_string(sds)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么这么设计"><span class="nav-number">1.1.</span> <span class="nav-text">为什么这么设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#横线比较"><span class="nav-number">1.2.</span> <span class="nav-text">横线比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ref"><span class="nav-number">1.3.</span> <span class="nav-text">ref</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#redis-string-sds"><span class="nav-number">1.</span> <span class="nav-text">redis_string(sds)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么这么设计"><span class="nav-number">1.1.</span> <span class="nav-text">为什么这么设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#横向比较"><span class="nav-number">1.2.</span> <span class="nav-text">横向比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ref"><span class="nav-number">1.3.</span> <span class="nav-text">ref</span></a></li></ol></li></ol></div>
             
 
           </div>
