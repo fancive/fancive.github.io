@@ -72,7 +72,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: next
+theme: startbootstrap-clean-blog
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
@@ -86,4 +86,4 @@ menu:
   categories: /categories //分类
   archives: /archives   //归档
   tags: /tags   //标签
-  about: /about   //关于
+  about: /about   //关于                  （添加此行即可）

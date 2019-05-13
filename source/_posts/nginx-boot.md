@@ -1,7 +1,10 @@
 ---
 title: nginx_boot
 date: 2018-06-13 15:49:56
+categories:
+- 中间件
 tags:
+- nginx
 ---
 
 # main

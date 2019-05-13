@@ -1,7 +1,12 @@
 ---
 title: nginx_connection
 date: 2018-06-14 18:25:49
+categories:
+- 中间件
 tags:
+- nginx
+- tech
+
 ---
 
 # connection

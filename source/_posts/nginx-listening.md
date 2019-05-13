@@ -2,6 +2,9 @@
 title: nginx_listening
 date: 2018-06-13 13:42:24
 tags:
+- nginx
+- tech
+
 ---
 
 # ngx_listening_t

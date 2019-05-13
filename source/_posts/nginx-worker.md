@@ -1,7 +1,11 @@
 ---
 title: nginx_worker
 date: 2018-06-14 15:41:08
-tags:
+categories: 
+- 中间件
+tags: 
+- nginx
+- tech
 ---
 
 

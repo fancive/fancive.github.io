@@ -1,7 +1,12 @@
 ---
 title: cache使用
 date: 2018-01-28 19:13:37
-tags: 技术经验
+categories:
+- 技术方案
+tags: 
+- memcache
+- redis
+- tech
 ---
 
 # cache使用

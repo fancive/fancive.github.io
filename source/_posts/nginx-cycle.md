@@ -1,7 +1,11 @@
 ---
 title: nginx_cycle
 date: 2018-06-13 14:27:28
+categories:
+- 中间件
 tags:
+- nginx
+- tech
 ---
 
 # ngx_cycle_t
