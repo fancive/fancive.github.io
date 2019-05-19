@@ -100,30 +100,31 @@
 
 
   
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="xv6," />
 
 
-<meta name="description" content="6.828_1讲义Finding and breaking at an address1234nm kernel | grep _start8010a48c D _binary_entryother_start8010a460 D _binary_initcode_start0010000c T _start Run the kernel inside QEMU GDB, setting a br">
+<meta name="description" content="6.828_1讲义Finding and breaking at an address1234nm kernel | grep _start8010a48c D _binary_entryother_start8010a460 D _binary_initcode_start0010000c T _start 使用qemu启动xv6 kernel，并用gdb调试，在_start设置断点 1make">
+<meta name="keywords" content="xv6">
 <meta property="og:type" content="article">
 <meta property="og:title" content="6.828_lab1_1">
-<meta property="og:url" content="http://fancive.github.io/2018/05/09/6-828-lab1-1/index.html">
-<meta property="og:site_name" content="划水日常">
-<meta property="og:description" content="6.828_1讲义Finding and breaking at an address1234nm kernel | grep _start8010a48c D _binary_entryother_start8010a460 D _binary_initcode_start0010000c T _start Run the kernel inside QEMU GDB, setting a br">
+<meta property="og:url" content="http://fancive.github.io/2018/05/09/6.828_lab1_1/index.html">
+<meta property="og:site_name" content="不眠之夜">
+<meta property="og:description" content="6.828_1讲义Finding and breaking at an address1234nm kernel | grep _start8010a48c D _binary_entryother_start8010a460 D _binary_initcode_start0010000c T _start 使用qemu启动xv6 kernel，并用gdb调试，在_start设置断点 1make">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-05-10T00:37:36.467Z">
+<meta property="og:updated_time" content="2019-05-09T14:17:30.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="6.828_lab1_1">
-<meta name="twitter:description" content="6.828_1讲义Finding and breaking at an address1234nm kernel | grep _start8010a48c D _binary_entryother_start8010a460 D _binary_initcode_start0010000c T _start Run the kernel inside QEMU GDB, setting a br">
+<meta name="twitter:description" content="6.828_1讲义Finding and breaking at an address1234nm kernel | grep _start8010a48c D _binary_entryother_start8010a460 D _binary_initcode_start0010000c T _start 使用qemu启动xv6 kernel，并用gdb调试，在_start设置断点 1make">
 
 
 
 
 
 
-  <link rel="canonical" href="http://fancive.github.io/2018/05/09/6-828-lab1-1/"/>
+  <link rel="canonical" href="http://fancive.github.io/2018/05/09/6.828_lab1_1/"/>
 
 
-  <title>6.828_lab1_1 | 划水日常</title>
+  <title>6.828_lab1_1 | 不眠之夜</title>
   
 
 
@@ -181,7 +182,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">划水日常</span>
+        <span class="site-title">不眠之夜</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -258,7 +259,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/05/09/6-828-lab1-1/">
+    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/05/09/6.828_lab1_1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="fancivez">
@@ -267,7 +268,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="划水日常">
+      <meta itemprop="name" content="不眠之夜">
     </span>
 
     
@@ -297,6 +298,24 @@
           </span>
 
           
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/操作系统/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a></span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -325,12 +344,26 @@
 
       
         <h1 id="6-828-1"><a href="#6-828-1" class="headerlink" title="6.828_1"></a>6.828_1</h1><h2 id="讲义"><a href="#讲义" class="headerlink" title="讲义"></a>讲义</h2><h3 id="Finding-and-breaking-at-an-address"><a href="#Finding-and-breaking-at-an-address" class="headerlink" title="Finding and breaking at an address"></a>Finding and breaking at an address</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">nm kernel | grep _start</span><br><span class="line">8010a48c D _binary_entryother_start</span><br><span class="line">8010a460 D _binary_initcode_start</span><br><span class="line">0010000c T _start</span><br></pre></td></tr></table></figure>
-<p>Run the kernel inside QEMU GDB, setting a breakpoint at _start (i.e., the address you just found).<br>使用qemu启动xv6 kernel，并用gdb调试，在_start设置断点</p>
+<p>使用qemu启动xv6 kernel，并用gdb调试，在_start设置断点</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make qemu-gdb</span><br></pre></td></tr></table></figure>
-<p><leave "make="" qemu-gdb"="" running,="" and="" in="" a="" new="" terminal,="" navigate="" to="" the="" same="" directory="" run="" following.="" if="" you="" are="" trying="" this="" by="" logging="" into="" athena.dialup.mit.edu,="" check="" hostname="" make="" sure="" that="" running="" both="" commands="" on="" physical="" machine.=""><br>保持<code>make qemu-gdb</code>运行，开启新的终端tab并进入相同目录</leave></p>
+<p>保持<code>make qemu-gdb</code>运行，开启新的终端tab并进入相同目录</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">gdb</span><br><span class="line">...</span><br><span class="line">(gdb) br * 0x0010000c</span><br><span class="line">Breakpoint 1 at 0x10000c</span><br><span class="line">(gdb) c</span><br><span class="line">Continuing.</span><br><span class="line">The target architecture is assumed to be i386</span><br><span class="line">=&gt; 0x10000c:	mov    %cr4,%eax</span><br></pre></td></tr></table></figure>
-<h3 id="What-is-on-the-stack"><a href="#What-is-on-the-stack" class="headerlink" title="What is on the stack?"></a>What is on the stack?</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">(gdb) info reg</span><br><span class="line">eax            0x0	0</span><br><span class="line">ecx            0x0	0</span><br><span class="line">edx            0x1f0	496</span><br><span class="line">ebx            0x10054	65620</span><br><span class="line">esp            0x7bcc	0x7bcc</span><br><span class="line">ebp            0x7bf8	0x7bf8</span><br><span class="line">esi            0x10054	65620</span><br><span class="line">edi            0x1144a8	1131688</span><br><span class="line">eip            0x10000c	0x10000c</span><br><span class="line">eflags         0x46	[ PF ZF ]</span><br><span class="line">cs             0x8	8</span><br><span class="line">ss             0x10	16</span><br><span class="line">ds             0x10	16</span><br><span class="line">es             0x10	16</span><br><span class="line">fs             0x0	0</span><br><span class="line">gs             0x0	0</span><br></pre></td></tr></table></figure>
+<h2 id="hw0"><a href="#hw0" class="headerlink" title="hw0"></a>hw0</h2><h3 id="What-is-on-the-stack"><a href="#What-is-on-the-stack" class="headerlink" title="What is on the stack?"></a>What is on the stack?</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">(gdb) info reg</span><br><span class="line">eax            0x0	0</span><br><span class="line">ecx            0x0	0</span><br><span class="line">edx            0x1f0	496</span><br><span class="line">ebx            0x10054	65620</span><br><span class="line">esp            0x7bcc	0x7bcc</span><br><span class="line">ebp            0x7bf8	0x7bf8</span><br><span class="line">esi            0x10054	65620</span><br><span class="line">edi            0x1144a8	1131688</span><br><span class="line">eip            0x10000c	0x10000c</span><br><span class="line">eflags         0x46	[ PF ZF ]</span><br><span class="line">cs             0x8	8</span><br><span class="line">ss             0x10	16</span><br><span class="line">ds             0x10	16</span><br><span class="line">es             0x10	16</span><br><span class="line">fs             0x0	0</span><br><span class="line">gs             0x0	0</span><br></pre></td></tr></table></figure>
+<p>清空段寄存器 DS、ES、SS</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># Zero data segment registers DS, ES, and SS.</span><br><span class="line"></span><br><span class="line">xorw    %ax,%ax             # Set %ax to zero</span><br><span class="line">movw    %ax,%ds             # -&gt; Data Segment</span><br><span class="line">movw    %ax,%es             # -&gt; Extra Segment</span><br><span class="line">movw    %ax,%ss             # -&gt; Stack Segment</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>确认 0x64和0x60 输出端口的高位为2，使第21位地址正常工作</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">seta20.1:</span><br><span class="line">  inb     $0x64,%al               # in byte 从端口 0x64 读 1 bype到 %al  0x60端口是数据端口,可以读出键盘数据,0x64是控制端口,用来发出控制信号</span><br><span class="line">  testb   $0x2,%al                # 逻辑与运算结果为零,就把ZF(零标志)置1;</span><br><span class="line">  jnz     seta20.1                   # jump if not zero (结果不为0则设置ZF为1,跳转)</span><br><span class="line"></span><br><span class="line">  movb    $0xd1,%al               # </span><br><span class="line">  outb    %al,$0x64                 # 写1 Byte 到 0x64端口</span><br><span class="line">  </span><br><span class="line">seta20.2:</span><br><span class="line">  inb     $0x64,%al               # Wait for not busy</span><br><span class="line">  testb   $0x2,%al</span><br><span class="line">  jnz     seta20.2</span><br><span class="line"></span><br><span class="line">  movb    $0xdf,%al               # 0xdf -&gt; port 0x60</span><br><span class="line">  outb    %al,$0x60</span><br></pre></td></tr></table></figure>
+<p>引导加载器执行 lgdt指令来把指向 gdt 的指针 gdtdesc加载到全局描述符表（GDT）寄存器中。将 %cr0 中的 CR0_PE 位置为1，从而开启保护模式</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">lgdt    gdtdesc</span><br><span class="line">movl    %cr0, %eax</span><br><span class="line">orl     $CR0_PE, %eax</span><br><span class="line">movl    %eax, %cr0</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">(gdb) x/24x $esp</span><br><span class="line">0x7bcc:	0x00007db3	0x00100000	0x00009516	0x00001000</span><br><span class="line">0x7bdc:	0x00000000	0x00000000	0x00000000	0x00000000</span><br><span class="line">0x7bec:	0x00000000	0x00000000	0x00000000	0x00000000</span><br><span class="line">0x7bfc:	0x00007c4d	0x8ec031fa	0x8ec08ed8	0xa864e4d0</span><br><span class="line">0x7c0c:	0xb0fa7502	0xe464e6d1	0x7502a864	0xe6dfb0fa</span><br><span class="line">0x7c1c:	0x16010f60	0x200f7c78	0xc88366c0	0xc0220f01</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure>
+<h3 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h3><ol>
+<li><a href="https://stackoverflow.com/questions/21078932/why-test-port-0x64-in-a-bootloader-before-switching-into-protected-mode?utm_medium=organic&amp;utm_source=google_rich_qa&amp;utm_campaign=google_rich_qa" target="_blank" rel="noopener">Why test port 0x64 in a bootloader before switching into protected mode?</a></li>
+<li><a href="https://stackoverflow.com/questions/28242830/syntax-of-x86-assembly-code" target="_blank" rel="noopener">Syntax of x86 assembly code</a></li>
+<li><a href="http://gaylord.iteye.com/blog/2248392" target="_blank" rel="noopener">bootasm.s解析</a></li>
+<li><a href="https://blog.theerrorlog.com/the-funny-design-of-a20.html" target="_blank" rel="noopener">PC的“有趣”设计：A20</a></li>
+</ol>
 
       
     </div>
@@ -346,6 +379,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/xv6/" rel="tag"># xv6</a>
+          
+        </div>
+      
 
       
       
@@ -355,8 +394,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/04/21/nginx源码-多进程启动/" rel="next" title="">
-                <i class="fa fa-chevron-left"></i> 
+              <a href="/2018/04/21/nginx-multiprocess/" rel="next" title="nginx源码_多进程启动">
+                <i class="fa fa-chevron-left"></i> nginx源码_多进程启动
               </a>
             
           </div>
@@ -364,6 +403,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/29/swoole_1_server_c/" rel="prev" title="swoole_1_server.c">
+                swoole_1_server.c <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -437,19 +480,40 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-count">23</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
               
 
               
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
 
               
                 
                 
                 <div class="site-state-item site-state-tags">
-                  
+                  <a href="/tags/index.html">
                     
                     
                       
@@ -458,9 +522,19 @@
                     
                       
                     
-                    <span class="site-state-item-count">3</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
                     <span class="site-state-item-name">标签</span>
-                  
+                  </a>
                 </div>
               
             </nav>
@@ -494,7 +568,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#6-828-1"><span class="nav-number">1.</span> <span class="nav-text">6.828_1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#讲义"><span class="nav-number">1.1.</span> <span class="nav-text">讲义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Finding-and-breaking-at-an-address"><span class="nav-number">1.1.1.</span> <span class="nav-text">Finding and breaking at an address</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#What-is-on-the-stack"><span class="nav-number">1.1.2.</span> <span class="nav-text">What is on the stack?</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#6-828-1"><span class="nav-number">1.</span> <span class="nav-text">6.828_1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#讲义"><span class="nav-number">1.1.</span> <span class="nav-text">讲义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Finding-and-breaking-at-an-address"><span class="nav-number">1.1.1.</span> <span class="nav-text">Finding and breaking at an address</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hw0"><span class="nav-number">1.2.</span> <span class="nav-text">hw0</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#What-is-on-the-stack"><span class="nav-number">1.2.1.</span> <span class="nav-text">What is on the stack?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reference"><span class="nav-number">1.2.2.</span> <span class="nav-text">reference</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
@@ -514,7 +588,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

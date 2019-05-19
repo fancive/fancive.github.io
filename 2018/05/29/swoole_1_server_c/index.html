@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.2" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.2" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.2',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="tech,swoole," />
+
+
+<meta name="description" content="swoole-server-1main() swServer_init() 初始化 swServer_create() 根据 factory_mode 创建reactor线程 swServer_add_port() 还没看 swServer_start() 启动Server123456789101112131415161718192021222324252627282930313233343536">
+<meta name="keywords" content="tech,swoole">
+<meta property="og:type" content="article">
+<meta property="og:title" content="swoole_1_server.c">
+<meta property="og:url" content="http://fancive.github.io/2018/05/29/swoole_1_server_c/index.html">
+<meta property="og:site_name" content="不眠之夜">
+<meta property="og:description" content="swoole-server-1main() swServer_init() 初始化 swServer_create() 根据 factory_mode 创建reactor线程 swServer_add_port() 还没看 swServer_start() 启动Server123456789101112131415161718192021222324252627282930313233343536">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-01-05T13:25:02.331Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="swoole_1_server.c">
+<meta name="twitter:description" content="swoole-server-1main() swServer_init() 初始化 swServer_create() 根据 factory_mode 创建reactor线程 swServer_add_port() 还没看 swServer_start() 启动Server123456789101112131415161718192021222324252627282930313233343536">
+
+
+
+
+
+
+  <link rel="canonical" href="http://fancive.github.io/2018/05/29/swoole_1_server_c/"/>
+
+
+  <title>swoole_1_server.c | 不眠之夜</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">不眠之夜</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/05/29/swoole_1_server_c/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fancivez">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="不眠之夜">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">swoole_1_server.c</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-29T20:11:19+08:00">2018-05-29</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="swoole-server-1"><a href="#swoole-server-1" class="headerlink" title="swoole-server-1"></a>swoole-server-1</h1><h2 id="main"><a href="#main" class="headerlink" title="main()"></a>main()</h2><ul>
+<li>swServer_init() 初始化</li>
+<li>swServer_create() 根据 factory_mode 创建reactor线程</li>
+<li>swServer_add_port() 还没看</li>
+<li>swServer_start() 启动Server<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> ret;</span><br><span class="line"></span><br><span class="line">	swServer serv;</span><br><span class="line">	swServer_init(&amp;serv); <span class="comment">//初始化</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//config</span></span><br><span class="line">	serv.reactor_num = <span class="number">2</span>; <span class="comment">//reactor线程数量</span></span><br><span class="line">	serv.worker_num = <span class="number">4</span>;      <span class="comment">//worker进程数量</span></span><br><span class="line"></span><br><span class="line">	serv.factory_mode = SW_MODE_PROCESS; <span class="comment">//SW_MODE_PROCESS SW_MODE_THREAD SW_MODE_BASE</span></span><br><span class="line">	serv.max_connection = <span class="number">100000</span>;</span><br><span class="line">	<span class="comment">//serv.open_cpu_affinity = 1;</span></span><br><span class="line">	<span class="comment">//serv.open_tcp_nodelay = 1;</span></span><br><span class="line">	<span class="comment">//serv.daemonize = 1;</span></span><br><span class="line">	<span class="comment">//serv.open_eof_check = 1;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//create Server</span></span><br><span class="line">	ret = swServer_create(&amp;serv);</span><br><span class="line">	<span class="keyword">if</span> (ret &lt; <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		swTrace(<span class="string">"create server fail[error=%d].\n"</span>, ret);</span><br><span class="line">		<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//swServer_addListen(&amp;serv, SW_SOCK_UDP, "127.0.0.1", 9500);</span></span><br><span class="line">	swListenPort *port = swServer_add_port(&amp;serv, SW_SOCK_TCP, <span class="string">"127.0.0.1"</span>, <span class="number">9501</span>);</span><br><span class="line">	<span class="comment">//swServer_addListen(&amp;serv, SW_SOCK_UDP, "127.0.0.1", 9502);</span></span><br><span class="line">	<span class="comment">//swServer_addListen(&amp;serv, SW_SOCK_UDP, "127.0.0.1", 8888);</span></span><br><span class="line">	port-&gt;backlog = <span class="number">128</span>;</span><br><span class="line"></span><br><span class="line">	serv.onStart = my_onStart;</span><br><span class="line">	serv.onShutdown = my_onShutdown;</span><br><span class="line">	serv.onConnect = my_onConnect;</span><br><span class="line">	serv.onReceive = my_onReceive;</span><br><span class="line">	serv.onClose = my_onClose;</span><br><span class="line">	serv.onWorkerStart = my_onWorkerStart;</span><br><span class="line">	serv.onWorkerStop = my_onWorkerStop;</span><br><span class="line"></span><br><span class="line">	ret = swServer_start(&amp;serv);</span><br><span class="line">	<span class="keyword">if</span> (ret &lt; <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		swTrace(<span class="string">"start server fail[error=%d].\n"</span>, ret);</span><br><span class="line">		<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">swServer_init</span><span class="params">(swServer *serv)</span></span>;</span><br></pre></td></tr></table></figure>
+<h2 id="swServer-init"><a href="#swServer-init" class="headerlink" title="swServer_init()"></a>swServer_init()</h2><p>就是初始化结构体成员, 调用 swoole_init()</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * initializing server config, set default</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">swServer_init</span><span class="params">(swServer *serv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    swoole_init();</span><br><span class="line">    bzero(serv, <span class="keyword">sizeof</span>(swServer));</span><br><span class="line"></span><br><span class="line">    serv-&gt;factory_mode = SW_MODE_BASE;</span><br><span class="line"></span><br><span class="line">    serv-&gt;reactor_num = SW_REACTOR_NUM &gt; SW_REACTOR_MAX_THREAD ? SW_REACTOR_MAX_THREAD : SW_REACTOR_NUM;</span><br><span class="line"></span><br><span class="line">    serv-&gt;dispatch_mode = SW_DISPATCH_FDMOD;</span><br><span class="line"></span><br><span class="line">    serv-&gt;worker_num = SW_CPU_NUM;</span><br><span class="line">    serv-&gt;max_connection = SwooleG.max_sockets &lt; SW_SESSION_LIST_SIZE ? SwooleG.max_sockets : SW_SESSION_LIST_SIZE;</span><br><span class="line"></span><br><span class="line">    serv-&gt;max_request = <span class="number">0</span>;</span><br><span class="line">    serv-&gt;max_wait_time = SW_WORKER_MAX_WAIT_TIME;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//http server</span></span><br><span class="line">    serv-&gt;http_parse_post = <span class="number">1</span>;</span><br><span class="line">    serv-&gt;upload_tmp_dir = sw_strdup(<span class="string">"/tmp"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//heartbeat check</span></span><br><span class="line">    serv-&gt;heartbeat_idle_time = SW_HEARTBEAT_IDLE;</span><br><span class="line">    serv-&gt;heartbeat_check_interval = SW_HEARTBEAT_CHECK;</span><br><span class="line"></span><br><span class="line">    serv-&gt;buffer_input_size = SW_BUFFER_INPUT_SIZE;</span><br><span class="line">    serv-&gt;buffer_output_size = SW_BUFFER_OUTPUT_SIZE;</span><br><span class="line"></span><br><span class="line">    SwooleG.serv = serv;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="swServer-add-port"><a href="#swServer-add-port" class="headerlink" title="swServer_add_port"></a>swServer_add_port</h2><p>这里是socket, bind<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function">swListenPort* <span class="title">swServer_add_port</span><span class="params">(swServer *serv, <span class="keyword">int</span> type, <span class="keyword">char</span> *host, <span class="keyword">int</span> port)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (serv-&gt;listen_port_num &gt;= SW_MAX_LISTEN_PORT)</span><br><span class="line">    &#123;</span><br><span class="line">        swoole_error_log(SW_LOG_ERROR, SW_ERROR_SERVER_TOO_MANY_LISTEN_PORT, <span class="string">"allows up to %d ports to listen"</span>, SW_MAX_LISTEN_PORT);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!(type == SW_SOCK_UNIX_DGRAM || type == SW_SOCK_UNIX_STREAM) &amp;&amp; (port &lt; <span class="number">0</span> || port &gt; <span class="number">65535</span>))</span><br><span class="line">    &#123;</span><br><span class="line">        swoole_error_log(SW_LOG_ERROR, SW_ERROR_SERVER_INVALID_LISTEN_PORT, <span class="string">"invalid port [%d]"</span>, port);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">strlen</span>(host) + <span class="number">1</span>  &gt; SW_HOST_MAXSIZE)</span><br><span class="line">    &#123;</span><br><span class="line">        swoole_error_log(SW_LOG_ERROR, SW_ERROR_NAME_TOO_LONG, <span class="string">"address '%s' exceeds %d characters limit"</span>, host, SW_HOST_MAXSIZE - <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    swListenPort *ls = SwooleG.memory_pool-&gt;alloc(SwooleG.memory_pool, <span class="keyword">sizeof</span>(swListenPort));</span><br><span class="line">    <span class="keyword">if</span> (ls == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        swError(<span class="string">"alloc failed"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    swPort_init(ls);</span><br><span class="line">    ls-&gt;type = type;</span><br><span class="line">    ls-&gt;port = port;</span><br><span class="line">    <span class="built_in">strncpy</span>(ls-&gt;host, host, <span class="built_in">strlen</span>(host) + <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (type &amp; SW_SOCK_SSL)</span><br><span class="line">    &#123;</span><br><span class="line">        type = type &amp; (~SW_SOCK_SSL);</span><br><span class="line">        <span class="keyword">if</span> (swSocket_is_stream(type))</span><br><span class="line">        &#123;</span><br><span class="line">            ls-&gt;type = type;</span><br><span class="line">            ls-&gt;ssl = <span class="number">1</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> SW_USE_OPENSSL</span></span><br><span class="line">            ls-&gt;ssl_config.prefer_server_ciphers = <span class="number">1</span>;</span><br><span class="line">            ls-&gt;ssl_config.session_tickets = <span class="number">0</span>;</span><br><span class="line">            ls-&gt;ssl_config.stapling = <span class="number">1</span>;</span><br><span class="line">            ls-&gt;ssl_config.stapling_verify = <span class="number">1</span>;</span><br><span class="line">            ls-&gt;ssl_config.ciphers = sw_strdup(SW_SSL_CIPHER_LIST);</span><br><span class="line">            ls-&gt;ssl_config.ecdh_curve = sw_strdup(SW_SSL_ECDH_CURVE);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//create server socket</span></span><br><span class="line">    <span class="keyword">int</span> sock = swSocket_create(ls-&gt;type);</span><br><span class="line">    <span class="keyword">if</span> (sock &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        swSysError(<span class="string">"create socket failed."</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//bind address and port</span></span><br><span class="line">    <span class="keyword">if</span> (swSocket_bind(sock, ls-&gt;type, ls-&gt;host, &amp;ls-&gt;port) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        close(sock);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//dgram socket, setting socket buffer size</span></span><br><span class="line">    <span class="keyword">if</span> (swSocket_is_dgram(ls-&gt;type))</span><br><span class="line">    &#123;</span><br><span class="line">        setsockopt(sock, SOL_SOCKET, SO_SNDBUF, &amp;ls-&gt;socket_buffer_size, <span class="keyword">sizeof</span>(<span class="keyword">int</span>));</span><br><span class="line">        setsockopt(sock, SOL_SOCKET, SO_RCVBUF, &amp;ls-&gt;socket_buffer_size, <span class="keyword">sizeof</span>(<span class="keyword">int</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//O_NONBLOCK &amp; O_CLOEXEC</span></span><br><span class="line">    swoole_fcntl_set_option(sock, <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">    ls-&gt;sock = sock;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (swSocket_is_dgram(ls-&gt;type))</span><br><span class="line">    &#123;</span><br><span class="line">        serv-&gt;have_udp_sock = <span class="number">1</span>;</span><br><span class="line">        serv-&gt;dgram_port_num++;</span><br><span class="line">        <span class="keyword">if</span> (ls-&gt;type == SW_SOCK_UDP)</span><br><span class="line">        &#123;</span><br><span class="line">            serv-&gt;udp_socket_ipv4 = sock;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (ls-&gt;type == SW_SOCK_UDP6)</span><br><span class="line">        &#123;</span><br><span class="line">            serv-&gt;udp_socket_ipv6 = sock;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        serv-&gt;have_tcp_sock = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    LL_APPEND(serv-&gt;listen_list, ls);</span><br><span class="line">    serv-&gt;listen_port_num++;</span><br><span class="line">    <span class="keyword">return</span> ls;</span><br><span class="line">&#125;</span><br><span class="line">``` </span><br><span class="line">#<span class="meta"># listen swServer_start_proxy</span></span><br><span class="line"></span><br><span class="line">注册swServer_master_onAccept事件</span><br><span class="line"></span><br><span class="line">```c</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * proxy模式</span></span><br><span class="line"><span class="comment"> * 在单独的n个线程中接受维持TCP连接</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">swServer_start_proxy</span><span class="params">(swServer *serv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret;</span><br><span class="line">    swReactor *main_reactor = SwooleG.memory_pool-&gt;alloc(SwooleG.memory_pool, <span class="keyword">sizeof</span>(swReactor));</span><br><span class="line"></span><br><span class="line">    ret = swReactor_create(main_reactor, SW_REACTOR_MAXEVENTS);</span><br><span class="line">    <span class="keyword">if</span> (ret &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        swWarn(<span class="string">"Reactor create failed"</span>);</span><br><span class="line">        <span class="keyword">return</span> SW_ERR;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    main_reactor-&gt;thread = <span class="number">1</span>;</span><br><span class="line">    main_reactor-&gt;socket_list = serv-&gt;connection_list;</span><br><span class="line">    main_reactor-&gt;disable_accept = <span class="number">0</span>;</span><br><span class="line">    main_reactor-&gt;enable_accept = swServer_enable_accept;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> HAVE_SIGNALFD</span></span><br><span class="line">    <span class="keyword">if</span> (SwooleG.use_signalfd)</span><br><span class="line">    &#123;</span><br><span class="line">        swSignalfd_setup(main_reactor);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//set listen socket options</span></span><br><span class="line">    swListenPort *ls;</span><br><span class="line">    LL_FOREACH(serv-&gt;listen_list, ls)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (swSocket_is_dgram(ls-&gt;type))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (swPort_listen(ls) &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> SW_ERR;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * create reactor thread</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    ret = swReactorThread_start(serv, main_reactor);</span><br><span class="line">    <span class="keyword">if</span> (ret &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        swWarn(<span class="string">"ReactorThread start failed"</span>);</span><br><span class="line">        <span class="keyword">return</span> SW_ERR;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> SW_USE_TIMEWHEEL</span></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * heartbeat thread</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">if</span> (serv-&gt;heartbeat_check_interval &gt;= <span class="number">1</span> &amp;&amp; serv-&gt;heartbeat_check_interval &lt;= serv-&gt;heartbeat_idle_time)</span><br><span class="line">    &#123;</span><br><span class="line">        swTrace(<span class="string">"hb timer start, time: %d live time:%d"</span>, serv-&gt;heartbeat_check_interval, serv-&gt;heartbeat_idle_time);</span><br><span class="line">        swHeartbeatThread_start(serv);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * master thread loop</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    SwooleTG.type = SW_THREAD_MASTER;</span><br><span class="line">    SwooleTG.factory_target_worker = <span class="number">-1</span>;</span><br><span class="line">    SwooleTG.factory_lock_target = <span class="number">0</span>;</span><br><span class="line">    SwooleTG.id = serv-&gt;reactor_num;</span><br><span class="line">    SwooleTG.update_time = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    SwooleG.main_reactor = main_reactor;</span><br><span class="line">    SwooleG.pid = getpid();</span><br><span class="line">    SwooleG.process_type = SW_PROCESS_MASTER;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * set a special id</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    main_reactor-&gt;id = serv-&gt;reactor_num;</span><br><span class="line">    main_reactor-&gt;ptr = serv;</span><br><span class="line">    main_reactor-&gt;setHandle(main_reactor, SW_FD_LISTEN, swServer_master_onAccept);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (serv-&gt;onStart != <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        serv-&gt;onStart(serv);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">tmo</span>;</span></span><br><span class="line">    tmo.tv_sec = <span class="number">1</span>; <span class="comment">//for seconds timer</span></span><br><span class="line">    tmo.tv_usec = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> main_reactor-&gt;wait(main_reactor, &amp;tmo);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/tech/" rel="tag"># tech</a>
+          
+            <a href="/tags/swoole/" rel="tag"># swoole</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/09/6.828_lab1_1/" rel="next" title="6.828_lab1_1">
+                <i class="fa fa-chevron-left"></i> 6.828_lab1_1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/30/swoole-2-memery-fixed-pool/" rel="prev" title="swoole_2_memery_fixed_pool">
+                swoole_2_memery_fixed_pool <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">fancivez</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#swoole-server-1"><span class="nav-number">1.</span> <span class="nav-text">swoole-server-1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#main"><span class="nav-number">1.1.</span> <span class="nav-text">main()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#swServer-init"><span class="nav-number">1.2.</span> <span class="nav-text">swServer_init()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#swServer-add-port"><span class="nav-number">1.3.</span> <span class="nav-text">swServer_add_port</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fancivez</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.0.2</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.2"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

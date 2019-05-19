@@ -103,27 +103,24 @@
   <meta name="keywords" content="Hexo, NexT" />
 
 
-<meta name="description" content="title: nginx源码_多进程启动date: 2018-04-21 10:48:55 tags:nginx源码多进程启动ngx_master_process_cycle1ngx_master_process_cycle(ngx_cycle_t *cycle) 信号初始化 123sigemptyset(&amp;amp;set);sigaddset(&amp;amp;set, SIGCHLD);... 函数">
-<meta property="og:type" content="article">
-<meta property="og:title" content="划水日常">
-<meta property="og:url" content="http://fancive.github.io/2018/04/21/nginx源码-多进程启动/index.html">
-<meta property="og:site_name" content="划水日常">
-<meta property="og:description" content="title: nginx源码_多进程启动date: 2018-04-21 10:48:55 tags:nginx源码多进程启动ngx_master_process_cycle1ngx_master_process_cycle(ngx_cycle_t *cycle) 信号初始化 123sigemptyset(&amp;amp;set);sigaddset(&amp;amp;set, SIGCHLD);... 函数">
+<meta property="og:type" content="website">
+<meta property="og:title" content="标签">
+<meta property="og:url" content="http://fancive.github.io/tags/index.html">
+<meta property="og:site_name" content="不眠之夜">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-05-29T12:12:20.672Z">
+<meta property="og:updated_time" content="2019-04-27T12:52:28.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="划水日常">
-<meta name="twitter:description" content="title: nginx源码_多进程启动date: 2018-04-21 10:48:55 tags:nginx源码多进程启动ngx_master_process_cycle1ngx_master_process_cycle(ngx_cycle_t *cycle) 信号初始化 123sigemptyset(&amp;amp;set);sigaddset(&amp;amp;set, SIGCHLD);... 函数">
+<meta name="twitter:title" content="标签">
 
 
 
 
 
 
-  <link rel="canonical" href="http://fancive.github.io/2018/04/21/nginx源码-多进程启动/"/>
+  <link rel="canonical" href="http://fancive.github.io/tags/"/>
 
 
-  <title> | 划水日常</title>
+  <title>标签 | 不眠之夜</title>
   
 
 
@@ -181,7 +178,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">划水日常</span>
+        <span class="site-title">不眠之夜</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -244,157 +241,79 @@
 
   <div id="posts" class="posts-expand">
     
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/04/21/nginx源码-多进程启动/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="fancivez">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="划水日常">
-    </span>
-
     
+    
+    <div class="post-block page">
       <header class="post-header">
 
-        
-        
-          <h1 class="post-title" itemprop="name headline"></h1>
-        
+	<h1 class="post-title" itemprop="name headline">标签</h1>
 
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-21T10:48:55+08:00">2018-04-21</time>
-            
 
-            
-            
 
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
+</header>
 
       
       
-
       
-        <hr>
-<p>title: nginx源码_多进程启动<br>date: 2018-04-21 10:48:55</p>
-<h2 id="tags-nginx源码"><a href="#tags-nginx源码" class="headerlink" title="tags:nginx源码"></a>tags:nginx源码</h2><h1 id="多进程启动"><a href="#多进程启动" class="headerlink" title="多进程启动"></a>多进程启动</h1><h2 id="ngx-master-process-cycle"><a href="#ngx-master-process-cycle" class="headerlink" title="ngx_master_process_cycle"></a><code>ngx_master_process_cycle</code></h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ngx_master_process_cycle(<span class="keyword">ngx_cycle_t</span> *cycle)</span><br></pre></td></tr></table></figure>
-<p>信号初始化</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sigemptyset(&amp;<span class="built_in">set</span>);</span><br><span class="line">sigaddset(&amp;<span class="built_in">set</span>, SIGCHLD);</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><h3 id="sigaddset"><a href="#sigaddset" class="headerlink" title="sigaddset"></a><code>sigaddset</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sigaddset</span><br></pre></td></tr></table></figure>
-
+      <div class="post-body">
+        
+        
+          <div class="tag-cloud">
+            <div class="tag-cloud-title">
+                
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                  
+                    
+                  
+                
+                目前共计 8 个标签
+            </div>
+            <div class="tag-cloud-tags">
+              <a href="/tags/memcache/" style="font-size: 12px; color: #ccc">memcache</a> <a href="/tags/nginx/" style="font-size: 24px; color: #4f4f4f">nginx</a> <a href="/tags/redis/" style="font-size: 18px; color: #8e8e8e">redis</a> <a href="/tags/swoole/" style="font-size: 18px; color: #8e8e8e">swoole</a> <a href="/tags/tech/" style="font-size: 30px; color: #111">tech</a> <a href="/tags/xv6/" style="font-size: 12px; color: #ccc">xv6</a> <a href="/tags/操作系统/" style="font-size: 12px; color: #ccc">操作系统</a> <a href="/tags/读书/" style="font-size: 12px; color: #ccc">读书</a>
+            </div>
+          </div>
+        
+      </div>
+      
+      
       
     </div>
     
     
     
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2018/03/22/nginx源码-work负载均衡-accept-mutex/" rel="next" title="nginx源码_work负载均衡--accept_mutex">
-                <i class="fa fa-chevron-left"></i> nginx源码_work负载均衡--accept_mutex
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/05/30/swoole-2-memery-fixed-pool/" rel="prev" title="swoole_2_memery_fixed_pool">
-                swoole_2_memery_fixed_pool <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-
-    <div class="post-spread">
-      
-    </div>
   </div>
 
 
           </div>
           
-
-  
-
-
 
         </div>
         
@@ -415,17 +334,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -440,19 +350,40 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-count">23</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
               
 
               
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
 
               
                 
                 
                 <div class="site-state-item site-state-tags">
-                  
+                  <a href="/tags/index.html">
                     
                     
                       
@@ -463,9 +394,17 @@
                     
                       
                     
-                    <span class="site-state-item-count">4</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
                     <span class="site-state-item-name">标签</span>
-                  
+                  </a>
                 </div>
               
             </nav>
@@ -490,22 +429,6 @@
       </section>
 
       
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#tags-nginx源码"><span class="nav-number">1.</span> <span class="nav-text">tags:nginx源码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#多进程启动"><span class="nav-number"></span> <span class="nav-text">多进程启动</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ngx-master-process-cycle"><span class="nav-number">1.</span> <span class="nav-text">ngx_master_process_cycle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数"><span class="nav-number">2.</span> <span class="nav-text">函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sigaddset"><span class="nav-number">2.1.</span> <span class="nav-text">sigaddset</span></a></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
-      
 
       
 
@@ -519,7 +442,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

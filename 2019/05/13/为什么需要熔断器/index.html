@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.2" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.2" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.2',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+<meta name="description" content="背景 我们采用的是同步(callee)阻塞(caller)的多进程模型 受限与db/cache 连接数，因此瓶颈一般在于worker数量，而不是硬件资源 我们服务逻辑上都在同一层(可以互相调用)，因此一个请求到后端各服务有乘数效应(放大) 服务健康失败会把不健康的节点踢除 还有一个外部变量是时任CTO希望收敛技术栈，有了php-&amp;gt;golang的大背景  导致的p0问题 事故报告_2018.0">
+<meta property="og:type" content="article">
+<meta property="og:title" content="为什么需要熔断器">
+<meta property="og:url" content="http://fancive.github.io/2019/05/13/为什么需要熔断器/index.html">
+<meta property="og:site_name" content="不眠之夜">
+<meta property="og:description" content="背景 我们采用的是同步(callee)阻塞(caller)的多进程模型 受限与db/cache 连接数，因此瓶颈一般在于worker数量，而不是硬件资源 我们服务逻辑上都在同一层(可以互相调用)，因此一个请求到后端各服务有乘数效应(放大) 服务健康失败会把不健康的节点踢除 还有一个外部变量是时任CTO希望收敛技术栈，有了php-&amp;gt;golang的大背景  导致的p0问题 事故报告_2018.0">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://fancive.github.io/2019/05/13/为什么需要熔断器/media/circutBreaker.png">
+<meta property="og:updated_time" content="2019-05-13T09:55:02.031Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="为什么需要熔断器">
+<meta name="twitter:description" content="背景 我们采用的是同步(callee)阻塞(caller)的多进程模型 受限与db/cache 连接数，因此瓶颈一般在于worker数量，而不是硬件资源 我们服务逻辑上都在同一层(可以互相调用)，因此一个请求到后端各服务有乘数效应(放大) 服务健康失败会把不健康的节点踢除 还有一个外部变量是时任CTO希望收敛技术栈，有了php-&amp;gt;golang的大背景  导致的p0问题 事故报告_2018.0">
+<meta name="twitter:image" content="http://fancive.github.io/2019/05/13/为什么需要熔断器/media/circutBreaker.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://fancive.github.io/2019/05/13/为什么需要熔断器/"/>
+
+
+  <title>为什么需要熔断器 | 不眠之夜</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">不眠之夜</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2019/05/13/为什么需要熔断器/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fancivez">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="不眠之夜">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">为什么需要熔断器</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-13T12:42:08+08:00">2019-05-13</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术方案/" itemprop="url" rel="index"><span itemprop="name">技术方案</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><ol>
+<li>我们采用的是同步(callee)阻塞(caller)的多进程模型</li>
+<li>受限与db/cache 连接数，因此瓶颈一般在于worker数量，而不是硬件资源</li>
+<li>我们服务逻辑上都在同一层(可以互相调用)，因此一个请求到后端各服务有乘数效应(放大)</li>
+<li>服务健康失败会把不健康的节点踢除</li>
+<li>还有一个外部变量是时任CTO希望收敛技术栈，有了php-&gt;golang的大背景</li>
+</ol>
+<p>导致的p0问题 <a href="">事故报告_2018.07.04</a>（少数服务容量瓶颈拖慢了所有服务、导致雪崩，18年服务端最大的锅之一）</p>
+<h2 id="反思"><a href="#反思" class="headerlink" title="反思"></a>反思</h2><ol>
+<li>提高硬件资源的利用率→改变同步阻塞的通信模型 （通过换golang解决）</li>
+<li>避免请求到后端的乘数效应→ 对服务进程逻辑分层，减少同级服务的互相调用 （通过重新规划服务分层解决）</li>
+<li>解决进程模型带来的连接数的问题→需要连接池(另外一个topic中会讨论) </li>
+<li>如何在现有的通信模型下避免服务雪崩(一个服务性能瓶颈拖慢其他服务，导致雪崩)→熔断</li>
+<li>修改健康检查失败踢节点的逻辑-&gt;只能主动将自己摘除</li>
+</ol>
+<h2 id="方案设计"><a href="#方案设计" class="headerlink" title="方案设计"></a>方案设计</h2><p>最后的实现方案如下，是一个单机系统的熔断器，熔断级别是针对单个service 级别(可以改为一个 service:endpoint  /  service:endpoint:function )</p>
+<p><img src="media/circutBreaker.png" alt="circutBreaker"></p>
+<h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><h4 id="如何保证操作原子性"><a href="#如何保证操作原子性" class="headerlink" title="如何保证操作原子性"></a>如何保证操作原子性</h4><p>php apcu / 底层使用 pthread_mutex_lock (<a href="https://linux.die.net/man/3/pthread_mutex_lock" target="_blank" rel="noopener">https://linux.die.net/man/3/pthread_mutex_lock</a>)</p>
+<p><a href="https://github.com/krakjoe/apcu" target="_blank" rel="noopener">https://github.com/krakjoe/apcu</a></p>
+<p><a href="https://www.php.net/manual/en/book.apcu.php" target="_blank" rel="noopener">https://www.php.net/manual/en/book.apcu.php</a></p>
+<h4 id="有哪些状态"><a href="#有哪些状态" class="headerlink" title="有哪些状态"></a>有哪些状态</h4><h5 id="counter"><a href="#counter" class="headerlink" title="counter"></a>counter</h5><ol>
+<li>服务级别的请求成功计数器  succ_counter</li>
+<li>服务级别的请求失败计数器  fail_counter</li>
+</ol>
+<h5 id="switch"><a href="#switch" class="headerlink" title="switch"></a>switch</h5><ol>
+<li>熔断器是否开启 open_swtich</li>
+</ol>
+<h5 id="timestamp"><a href="#timestamp" class="headerlink" title="timestamp"></a>timestamp</h5><ol>
+<li>熔断器开启的开始时间 open_timestamp</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/09/高效能程序员的修炼-chapter1/" rel="next" title="高效能程序员的修炼_chapter1">
+                <i class="fa fa-chevron-left"></i> 高效能程序员的修炼_chapter1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">fancivez</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#反思"><span class="nav-number">2.</span> <span class="nav-text">反思</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方案设计"><span class="nav-number">3.</span> <span class="nav-text">方案设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#注意点"><span class="nav-number">3.1.</span> <span class="nav-text">注意点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#如何保证操作原子性"><span class="nav-number">3.1.1.</span> <span class="nav-text">如何保证操作原子性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#有哪些状态"><span class="nav-number">3.1.2.</span> <span class="nav-text">有哪些状态</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#counter"><span class="nav-number">3.1.2.1.</span> <span class="nav-text">counter</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#switch"><span class="nav-number">3.1.2.2.</span> <span class="nav-text">switch</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#timestamp"><span class="nav-number">3.1.2.3.</span> <span class="nav-text">timestamp</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fancivez</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.0.2</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.2"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
