@@ -507,7 +507,7 @@
 <li>修改健康检查失败踢节点的逻辑-&gt;只能主动将自己摘除</li>
 </ol>
 <h2 id="方案设计"><a href="#方案设计" class="headerlink" title="方案设计"></a>方案设计</h2><p>最后的实现方案如下，是一个单机系统的熔断器，熔断级别是针对单个service 级别(可以改为一个 service:endpoint  /  service:endpoint:function )</p>
-<p><img src="[http://ww3.sinaimg.cn/large/006tNc79gy1g3f117lprmj312k0iz40a.jpg](http://ww3.sinaimg.cn/large/006tNc79gy1g3f117lprmj312k0iz40a.jpg" alt="test">)</p>
+<p><img src="/Users/fancivez/Library/Mobile Documents/com~apple~CloudDocs/Dev/doc/hexo/source/_posts/assets/006tNc79gy1g3h50mmo90j30wn0g1acc.jpg" alt="breaker"></p>
 <h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><h4 id="如何保证操作原子性"><a href="#如何保证操作原子性" class="headerlink" title="如何保证操作原子性"></a>如何保证操作原子性</h4><p>php apcu / 底层使用 pthread_mutex_lock (<a href="https://linux.die.net/man/3/pthread_mutex_lock" target="_blank" rel="noopener">https://linux.die.net/man/3/pthread_mutex_lock</a>)</p>
 <p><a href="https://github.com/krakjoe/apcu" target="_blank" rel="noopener">https://github.com/krakjoe/apcu</a></p>
 <p><a href="https://www.php.net/manual/en/book.apcu.php" target="_blank" rel="noopener">https://www.php.net/manual/en/book.apcu.php</a></p>
