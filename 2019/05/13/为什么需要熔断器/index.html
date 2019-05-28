@@ -111,7 +111,7 @@
 <meta property="og:description" content="背景 我们采用的是同步(callee)阻塞(caller)的多进程模型 受限与db/cache 连接数，因此瓶颈一般在于worker数量，而不是硬件资源 我们服务逻辑上都在同一层(可以互相调用)，因此一个请求到后端各服务有乘数效应(放大) 服务健康失败会把不健康的节点踢除 还有一个外部变量是时任CTO希望收敛技术栈，有了php-&amp;gt;golang的大背景  导致的p0问题 事故报告_2018.0">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://fancive.github.io/2019/05/13/为什么需要熔断器/[http://ww3.sinaimg.cn/large/006tNc79gy1g3f117lprmj312k0iz40a.jpg](http://ww3.sinaimg.cn/large/006tNc79gy1g3f117lprmj312k0iz40a.jpg">
-<meta property="og:updated_time" content="2019-05-26T13:13:28.034Z">
+<meta property="og:updated_time" content="2019-05-28T08:55:16.345Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="为什么需要熔断器">
 <meta name="twitter:description" content="背景 我们采用的是同步(callee)阻塞(caller)的多进程模型 受限与db/cache 连接数，因此瓶颈一般在于worker数量，而不是硬件资源 我们服务逻辑上都在同一层(可以互相调用)，因此一个请求到后端各服务有乘数效应(放大) 服务健康失败会把不健康的节点踢除 还有一个外部变量是时任CTO希望收敛技术栈，有了php-&amp;gt;golang的大背景  导致的p0问题 事故报告_2018.0">
@@ -360,7 +360,7 @@
 <li>修改健康检查失败踢节点的逻辑-&gt;只能主动将自己摘除</li>
 </ol>
 <h2 id="方案设计"><a href="#方案设计" class="headerlink" title="方案设计"></a>方案设计</h2><p>最后的实现方案如下，是一个单机系统的熔断器，熔断级别是针对单个service 级别(可以改为一个 service:endpoint  /  service:endpoint:function )</p>
-<p><img src="[http://ww3.sinaimg.cn/large/006tNc79gy1g3f117lprmj312k0iz40a.jpg](http://ww3.sinaimg.cn/large/006tNc79gy1g3f117lprmj312k0iz40a.jpg" alt="circutBreaker"></p>
+<p><img src="[http://ww3.sinaimg.cn/large/006tNc79gy1g3f117lprmj312k0iz40a.jpg](http://ww3.sinaimg.cn/large/006tNc79gy1g3f117lprmj312k0iz40a.jpg" alt="test">)</p>
 <h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><h4 id="如何保证操作原子性"><a href="#如何保证操作原子性" class="headerlink" title="如何保证操作原子性"></a>如何保证操作原子性</h4><p>php apcu / 底层使用 pthread_mutex_lock (<a href="https://linux.die.net/man/3/pthread_mutex_lock" target="_blank" rel="noopener">https://linux.die.net/man/3/pthread_mutex_lock</a>)</p>
 <p><a href="https://github.com/krakjoe/apcu" target="_blank" rel="noopener">https://github.com/krakjoe/apcu</a></p>
 <p><a href="https://www.php.net/manual/en/book.apcu.php" target="_blank" rel="noopener">https://www.php.net/manual/en/book.apcu.php</a></p>
