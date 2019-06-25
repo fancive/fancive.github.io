@@ -255,6 +255,163 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/06/22/swoole-boot/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fancivez">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="不眠之夜">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/06/22/swoole-boot/" itemprop="url">swoole_boot</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-22T23:02:24+08:00">2018-06-22</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/中间件/" itemprop="url" rel="index"><span itemprop="name">中间件</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="swoole-启动"><a href="#swoole-启动" class="headerlink" title="swoole 启动"></a>swoole 启动</h1><h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><ul>
+<li>minit</li>
+<li>swoole_server-&gt;start()</li>
+</ul>
+<h2 id="MINIT-amp-amp-RINIT"><a href="#MINIT-amp-amp-RINIT" class="headerlink" title="MINIT &amp;&amp; RINIT"></a>MINIT &amp;&amp; RINIT</h2><p>swoole作为php扩展在minit阶段启动，实现 PHP_MINIT_FUNCTION 宏和 PHP_RINIT_FUNCTION 宏</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/* &#123;&#123;&#123; PHP_MINIT_FUNCTION</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">PHP_MINIT_FUNCTION(swoole)</span><br><span class="line">&#123;</span><br><span class="line">    ZEND_INIT_MODULE_GLOBALS(swoole, php_swoole_init_globals, <span class="literal">NULL</span>);</span><br><span class="line">    REGISTER_INI_ENTRIES();</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// 常量</span></span><br><span class="line">    REGISTER_STRINGL_CONSTANT(<span class="string">"SWOOLE_VERSION"</span>, PHP_SWOOLE_VERSION, <span class="keyword">sizeof</span>(PHP_SWOOLE_VERSION) - <span class="number">1</span>, CONST_CS | CONST_PERSISTENT);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 类, swoole_server_methods数组包含start方法</span></span><br><span class="line">    SWOOLE_INIT_CLASS_ENTRY(swoole_server_ce, <span class="string">"swoole_server"</span>, <span class="string">"Swoole\\Server"</span>, swoole_server_methods);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//类属性</span></span><br><span class="line">    zend_declare_property_null(swoole_server_class_entry_ptr, ZEND_STRL(<span class="string">"onConnect"</span>), ZEND_ACC_PUBLIC TSRMLS_CC);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//swoole init</span></span><br><span class="line">    swoole_init();</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> SUCCESS;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">PHP_RINIT_FUNCTION(swoole)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//running</span></span><br><span class="line">    SwooleG.running = <span class="number">1</span>;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> SUCCESS;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="swoole-server-c"><a href="#swoole-server-c" class="headerlink" title="swoole_server.c"></a>swoole_server.c</h2><p>swoole_server -&gt;start</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">PHP_METHOD(swoole_server, start)</span><br><span class="line">&#123;</span><br><span class="line">    zval *zobject = getThis();</span><br><span class="line">    <span class="keyword">int</span> ret;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (SwooleGS-&gt;start &gt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        swoole_php_fatal_error(E_WARNING, <span class="string">"server is running. unable to execute swoole_server-&gt;start."</span>);</span><br><span class="line">        RETURN_FALSE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    swServer *serv = swoole_get_object(zobject);</span><br><span class="line">    php_swoole_register_callback(serv);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (php_sw_server_callbacks[SW_SERVER_CB_onReceive] == <span class="literal">NULL</span> &amp;&amp; php_sw_server_callbacks[SW_SERVER_CB_onPacket] == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        swoole_php_fatal_error(E_ERROR, <span class="string">"require onReceive/onPacket callback"</span>);</span><br><span class="line">        RETURN_FALSE;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//-------------------------------------------------------------</span></span><br><span class="line">    serv-&gt;onReceive = php_swoole_onReceive;</span><br><span class="line">    serv-&gt;ptr2 = zobject;</span><br><span class="line"></span><br><span class="line">    sw_zval_add_ref(&amp;zobject);</span><br><span class="line">    php_swoole_server_before_start(serv, zobject TSRMLS_CC);</span><br><span class="line"></span><br><span class="line">    ret = swServer_start(serv);</span><br><span class="line">    <span class="keyword">if</span> (ret &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        swoole_php_fatal_error(E_ERROR, <span class="string">"failed to start server. Error: %s"</span>, sw_error);</span><br><span class="line">        RETURN_LONG(ret);</span><br><span class="line">    &#125;</span><br><span class="line">    RETURN_TRUE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="swServer-start"><a href="#swServer-start" class="headerlink" title="swServer_start()"></a>swServer_start()</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">swServer_start</span><span class="params">(swServer *serv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    swFactory *factory = &amp;serv-&gt;factory;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">        </span><br><span class="line">    <span class="comment">//run as daemon</span></span><br><span class="line">    <span class="keyword">if</span> (serv-&gt;daemonize &gt; <span class="number">0</span>)</span><br><span class="line">    &#123;    </span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    serv-&gt;send = swServer_tcp_send;</span><br><span class="line">    serv-&gt;sendwait = swServer_tcp_sendwait;</span><br><span class="line">    serv-&gt;sendfile = swServer_tcp_sendfile;</span><br><span class="line">    serv-&gt;close = swServer_tcp_close;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// worker内存</span></span><br><span class="line">    serv-&gt;workers = SwooleG.memory_pool-&gt;alloc(SwooleG.memory_pool, serv-&gt;worker_num * <span class="keyword">sizeof</span>(swWorker));</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//factory start 下面会讨论</span></span><br><span class="line">    <span class="keyword">if</span> (factory-&gt;start(factory) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> SW_ERR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//signal Init</span></span><br><span class="line">    swServer_signal_init(serv);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (serv-&gt;factory_mode == SW_MODE_SINGLE)</span><br><span class="line">    &#123;</span><br><span class="line">        ret = swReactorProcess_start(serv);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        ret = swServer_start_proxy(serv); <span class="comment">//base &amp;&amp; process</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    ...    </span><br><span class="line">    <span class="keyword">return</span> SW_OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="factory-gt-start"><a href="#factory-gt-start" class="headerlink" title="factory-&gt;start()"></a>factory-&gt;start()</h2><p>swoole_server.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">PHP_METHOD(swoole_server, __construct)</span><br><span class="line">&#123;</span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">long</span> serv_mode = SW_MODE_PROCESS;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    swServer_init(serv);</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __CYGWIN__</span></span><br><span class="line">    serv_mode = SW_MODE_SINGLE;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">elif</span> !defined(SW_USE_THREAD)</span></span><br><span class="line">    <span class="keyword">if</span> (serv_mode == SW_MODE_THREAD || serv_mode == SW_MODE_BASE)</span><br><span class="line">    &#123;</span><br><span class="line">        serv_mode = SW_MODE_SINGLE;</span><br><span class="line">        swoole_php_fatal_error(E_WARNING, <span class="string">"can't use multi-threading in PHP. reset server mode to be SWOOLE_MODE_BASE"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    serv-&gt;factory_mode = serv_mode;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>回到 swoole_server -&gt;start -&gt; php_swoole_server_before_start() -&gt;swServer_create()</p>
+<h2 id="swServer-create"><a href="#swServer-create" class="headerlink" title="swServer_create()"></a>swServer_create()</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">swServer_create</span><span class="params">(swServer *serv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (serv-&gt;factory_mode == SW_MODE_SINGLE)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> swReactorProcess_create(serv);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> swReactorThread_create(serv);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>swReactorProcess_create()-&gt;swFactory_create()-&gt;swFactory_start() 什么都没做</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">swFactory_start</span><span class="params">(swFactory *factory)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    SwooleWG.run_always = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> SW_OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="swReactorThread-create"><a href="#swReactorThread-create" class="headerlink" title="swReactorThread_create()"></a>swReactorThread_create()</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">swReactorThread_create</span><span class="params">(swServer *serv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (serv-&gt;factory_mode == SW_MODE_THREAD)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (serv-&gt;worker_num &lt; <span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            swError(<span class="string">"Fatal Error: serv-&gt;worker_num &lt; 1"</span>);</span><br><span class="line">            <span class="keyword">return</span> SW_ERR;</span><br><span class="line">        &#125;</span><br><span class="line">        ret = swFactoryThread_create(&amp;(serv-&gt;factory), serv-&gt;worker_num);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (serv-&gt;factory_mode == SW_MODE_PROCESS)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (serv-&gt;worker_num &lt; <span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            swError(<span class="string">"Fatal Error: serv-&gt;worker_num &lt; 1"</span>);</span><br><span class="line">            <span class="keyword">return</span> SW_ERR;</span><br><span class="line">        &#125;</span><br><span class="line">        ret = swFactoryProcess_create(&amp;(serv-&gt;factory), serv-&gt;worker_num);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        ret = swFactory_create(&amp;(serv-&gt;factory));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>swFactoryProcess_create()-&gt;swFactoryProcess_create()</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">swFactoryProcess_create</span><span class="params">(swFactory *factory, <span class="keyword">int</span> worker_num)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ...    </span><br><span class="line">    factory-&gt;start = swFactoryProcess_start;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="swFactoryProcess-start"><a href="#swFactoryProcess-start" class="headerlink" title="swFactoryProcess_start()"></a>swFactoryProcess_start()</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">swFactoryProcess_start</span><span class="params">(swFactory *factory)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    swServer *serv = factory-&gt;ptr;</span><br><span class="line">    swWorker *worker;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; serv-&gt;worker_num; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        worker = swServer_get_worker(serv, i);</span><br><span class="line">        <span class="keyword">if</span> (swWorker_create(worker) &lt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> SW_ERR;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    serv-&gt;reactor_pipe_num = serv-&gt;worker_num / serv-&gt;reactor_num;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//必须先启动manager进程组，否则会带线程fork</span></span><br><span class="line">    <span class="keyword">if</span> (swManager_start(factory) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        swWarn(<span class="string">"swFactoryProcess_manager_start failed."</span>);</span><br><span class="line">        <span class="keyword">return</span> SW_ERR;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//主进程需要设置为直写模式</span></span><br><span class="line">    factory-&gt;finish = swFactory_finish;</span><br><span class="line">    <span class="keyword">return</span> SW_OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/06/14/nginx-connection/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1511,151 +1668,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/03/22/nginx-accept-mutex/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="fancivez">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="不眠之夜">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/22/nginx-accept-mutex/" itemprop="url">nginx源码_work负载均衡--accept_mutex</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-22T22:55:04+08:00">2018-03-22</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/中间件/" itemprop="url" rel="index"><span itemprop="name">中间件</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="nginx源码-work负载均衡–accept-mutex"><a href="#nginx源码-work负载均衡–accept-mutex" class="headerlink" title="nginx源码_work负载均衡–accept_mutex"></a>nginx源码_work负载均衡–accept_mutex</h1><blockquote>
-<p>nginx -v 1.9</p>
-</blockquote>
-<h2 id="0x01-引言"><a href="#0x01-引言" class="headerlink" title="0x01 引言"></a>0x01 引言</h2><p>accept_mutex是nginx各worker接收请求的负载均衡策略的实现的核心  </p>
-<h2 id="ngx-accept-disabled"><a href="#ngx-accept-disabled" class="headerlink" title="ngx_accept_disabled"></a>ngx_accept_disabled</h2><p>ngx_accept_disabled = 进程当前连接数/8 - 空闲连接数 ， 可见当前进程的连接数越多，ngx_accept_disabled越大</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ngx_accept_disabled = ngx_cycle-&gt;connection_n / <span class="number">8</span> - ngx_cycle-&gt;free_connection_n;</span><br></pre></td></tr></table></figure>
-<h2 id="负载均衡逻辑"><a href="#负载均衡逻辑" class="headerlink" title="负载均衡逻辑"></a>负载均衡逻辑</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (ngx_use_accept_mutex) &#123;</span><br><span class="line">       <span class="keyword">if</span> (ngx_accept_disabled &gt; <span class="number">0</span>) &#123;</span><br><span class="line">           ngx_accept_disabled--;</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">           <span class="keyword">if</span> (ngx_trylock_accept_mutex(cycle) == NGX_ERROR) &#123;</span><br><span class="line">               <span class="keyword">return</span>;</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           <span class="keyword">if</span> (ngx_accept_mutex_held) &#123;</span><br><span class="line">               flags |= NGX_POST_EVENTS;</span><br><span class="line">           &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">               <span class="keyword">if</span> (timer == NGX_TIMER_INFINITE</span><br><span class="line">                   || timer &gt; ngx_accept_mutex_delay)</span><br><span class="line">               &#123;</span><br><span class="line">                   timer = ngx_accept_mutex_delay;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1703,7 +1715,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-count">24</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -1726,7 +1738,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">5</span>
+                      
+                    
+                    <span class="site-state-item-count">6</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -1755,7 +1769,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">8</span>
+                      
+                    
+                    <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
