@@ -371,8 +371,11 @@
 </ol>
 </li>
 </ol>
-<h3 id="新的节点加入"><a href="#新的节点加入" class="headerlink" title="新的节点加入"></a>新的节点加入</h3><p>todo</p>
-<h3 id="异常case"><a href="#异常case" class="headerlink" title="异常case"></a>异常case</h3><p>todo</p>
+<h3 id="异常case"><a href="#异常case" class="headerlink" title="异常case"></a>异常case</h3><p>一旦leader发给follower的数据出现超时等异常</p>
+<ol>
+<li>raft:会不断重试，并且接口是幂等的</li>
+<li>Zab:follower会断开与leader之间的连接，重新加入该集群</li>
+</ol>
 <h2 id="leader不在时"><a href="#leader不在时" class="headerlink" title="leader不在时"></a>leader不在时</h2><p>节点有3种状态，leader , follower，candidate/looking ,  zab多一种不参与选举的follower角色被称为Observer</p>
 <p>两种协议都有任期(朝代)的概念 term/epoch</p>
 <ol>
@@ -380,8 +383,7 @@
 <li>如果朝代相同，那么选取拥有更长日志的为leader，所以选举广播每个候选人都会发送自己的&lt;朝代、index&gt;</li>
 <li>如果&lt;朝代、index&gt;都相同那么ZAB会选机器编号最大的(一轮内重新投票, 会有一个子状态表示是一次选举)，raft会用新朝代选举</li>
 </ol>
-<h3 id="初始化选举"><a href="#初始化选举" class="headerlink" title="初始化选举"></a>初始化选举</h3><p>todo</p>
-<h3 id="运行过程中选举"><a href="#运行过程中选举" class="headerlink" title="运行过程中选举"></a>运行过程中选举</h3><h4 id="进入时机"><a href="#进入时机" class="headerlink" title="进入时机"></a>进入时机</h4><h5 id="raft"><a href="#raft" class="headerlink" title="raft"></a>raft</h5><p>follower有一个选举时间，在该时间内如果未收到leader的心跳信息，则follower转变成candidate，自增term发起新一轮的投票，leader遇到新的term则自动转变成follower的状态</p>
+<h4 id="重新选举进入时机"><a href="#重新选举进入时机" class="headerlink" title="重新选举进入时机"></a>重新选举进入时机</h4><h5 id="raft"><a href="#raft" class="headerlink" title="raft"></a>raft</h5><p>follower有一个选举时间，在该时间内如果未收到leader的心跳信息，则follower转变成candidate，自增term发起新一轮的投票，leader遇到新的term则自动转变成follower的状态</p>
 <h5 id="ZAB"><a href="#ZAB" class="headerlink" title="ZAB"></a>ZAB</h5><p>leader和follower都有各自的检测超时方式，leader是检测是否过半follower心跳回复了，follower检测leader是否发送心跳了。一旦leader检测失败，则leader进入LOOKING状态，其他follower过一段时间因收不到leader心跳也会进入LOOKING状态，从而出发新的leader选举</p>
 <h3 id="日志同步"><a href="#日志同步" class="headerlink" title="日志同步"></a>日志同步</h3><h4 id="raft-1"><a href="#raft-1" class="headerlink" title="raft"></a>raft</h4><p>Leader发生切换的时候，新Leader的日志和Follower的日志可能会存在不一致的情形。这时Follower需要对自身的日志进行截断处理，再从截断的位置重新同步日志。Leader自身的日志是Append-Only的，它永远不会抹掉自身的任何日志。<br>标准的策略是Leader当选后立即向所有节点广播AppendEntries消息，携带最后一条日志的信息。Follower收到消息后和自己的日志进行比对，如果最后一条日志和自己的不匹配就回绝Leader。<br>Leader被打击后，就会开始回退一步，携带最后两条日志，重新向拒绝自己的Follower发送AppendEntries消息。如果Follower发现消息中两条日志的第一条还是和自己的不匹配，那就继续拒绝，然后Leader被打击后继续后退重试。如果匹配的话，那么就把消息中的日志项覆盖掉本地的日志，于是同步就成功了，一致性就实现了。</p>
 <h4 id="zab"><a href="#zab" class="headerlink" title="zab"></a>zab</h4><h5 id="已经被处理的消息不能丢"><a href="#已经被处理的消息不能丢" class="headerlink" title="已经被处理的消息不能丢"></a>已经被处理的消息不能丢</h5><p>当 leader 收到合法数量 follower 的 ACKs 后，就向各个 follower 广播 COMMIT 命令，同时也会在本地执行 COMMIT 并向连接的客户端返回「成功」。但是如果在各个 follower 在收到 COMMIT 命令前 leader 就挂了，导致剩下的服务器并没有执行都这条消息</p>
