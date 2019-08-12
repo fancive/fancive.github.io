@@ -103,20 +103,20 @@
   <meta name="keywords" content="翻译," />
 
 
-<meta name="description" content="避免大的堆内存导致的gc开销翻译自 Avoiding high GC overhead with large heaps  当分配的内存相对较小时，Go Garbage Collector（GC）运行得非常好，但是如果堆大小较大，GC最终可能会占用大量的CPU。 在极端情况下，它可能无法跟上程序的正常运行。  是什么问题?GC的工作是确2定可以释放哪些内存，并通过扫描内存来查找是否有内存指向这块内">
+<meta name="description" content="避免大的堆内存导致的gc开销翻译自 Avoiding high GC overhead with large heaps  当分配的内存相对较小时，Go Garbage Collector（GC）运行得非常好，但是如果堆大小较大，GC最终可能会占用大量的CPU。 在极端情况下，它可能无法跟上程序的正常运行。  是什么问题?GC的工作是确定可以释放哪些内存，并通过扫描内存来查找是否有内存指向这块内存">
 <meta name="keywords" content="翻译">
 <meta property="og:type" content="article">
 <meta property="og:title" content="避免大的堆内存导致的gc开销">
 <meta property="og:url" content="http://fancive.github.io/2019/08/05/避免大的堆内存导致的gc开销/index.html">
 <meta property="og:site_name" content="不眠之夜">
-<meta property="og:description" content="避免大的堆内存导致的gc开销翻译自 Avoiding high GC overhead with large heaps  当分配的内存相对较小时，Go Garbage Collector（GC）运行得非常好，但是如果堆大小较大，GC最终可能会占用大量的CPU。 在极端情况下，它可能无法跟上程序的正常运行。  是什么问题?GC的工作是确2定可以释放哪些内存，并通过扫描内存来查找是否有内存指向这块内">
+<meta property="og:description" content="避免大的堆内存导致的gc开销翻译自 Avoiding high GC overhead with large heaps  当分配的内存相对较小时，Go Garbage Collector（GC）运行得非常好，但是如果堆大小较大，GC最终可能会占用大量的CPU。 在极端情况下，它可能无法跟上程序的正常运行。  是什么问题?GC的工作是确定可以释放哪些内存，并通过扫描内存来查找是否有内存指向这块内存">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://blog.gopheracademy.com/postimages/advent-2018/large-heaps/stringslice.png">
 <meta property="og:image" content="https://blog.gopheracademy.com/postimages/advent-2018/large-heaps/stringtrick.png">
-<meta property="og:updated_time" content="2019-08-05T16:22:06.408Z">
+<meta property="og:updated_time" content="2019-08-05T16:28:44.071Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="避免大的堆内存导致的gc开销">
-<meta name="twitter:description" content="避免大的堆内存导致的gc开销翻译自 Avoiding high GC overhead with large heaps  当分配的内存相对较小时，Go Garbage Collector（GC）运行得非常好，但是如果堆大小较大，GC最终可能会占用大量的CPU。 在极端情况下，它可能无法跟上程序的正常运行。  是什么问题?GC的工作是确2定可以释放哪些内存，并通过扫描内存来查找是否有内存指向这块内">
+<meta name="twitter:description" content="避免大的堆内存导致的gc开销翻译自 Avoiding high GC overhead with large heaps  当分配的内存相对较小时，Go Garbage Collector（GC）运行得非常好，但是如果堆大小较大，GC最终可能会占用大量的CPU。 在极端情况下，它可能无法跟上程序的正常运行。  是什么问题?GC的工作是确定可以释放哪些内存，并通过扫描内存来查找是否有内存指向这块内存">
 <meta name="twitter:image" content="https://blog.gopheracademy.com/postimages/advent-2018/large-heaps/stringslice.png">
 
 
@@ -350,7 +350,7 @@
 <blockquote>
 <p>当分配的内存相对较小时，Go Garbage Collector（GC）运行得非常好，但是如果堆大小较大，GC最终可能会占用大量的CPU。 在极端情况下，它可能无法跟上程序的正常运行。</p>
 </blockquote>
-<h2 id="是什么问题"><a href="#是什么问题" class="headerlink" title="是什么问题?"></a>是什么问题?</h2><p>GC的工作是确2定可以释放哪些内存，并通过扫描内存来查找是否有内存指向这块内存。 简单地说，如果没有指向这块内存的指针，则这块内存可以释放。 这非常有效，但扫描的内存越多，所需的时间就越多。</p>
+<h2 id="是什么问题"><a href="#是什么问题" class="headerlink" title="是什么问题?"></a>是什么问题?</h2><p>GC的工作是确定可以释放哪些内存，并通过扫描内存来查找是否有内存指向这块内存。 简单地说，如果没有指向这块内存的指针，则这块内存可以释放。 这非常有效，但扫描的内存越多，所需的时间就越多。</p>
 <p>假设您已经编写了基于内存的数据库，或者您正在构建一个需要大量查找表的数据管道。 在这些情况下，您可能会分配数Gb 的内存。 在这种情况下，您可能会失去相当多的潜在性能用于GC。</p>
 <h2 id="这是个大问题吗？"><a href="#这是个大问题吗？" class="headerlink" title="这是个大问题吗？"></a>这是个大问题吗？</h2><p>这些问题常见吗？ 我们来看看吧！ 这是一个很小的演示程序。 我们分配了十亿（1e9）个8字节指针，因此大约有8 GB的内存。 然后我们强制GC并计算需要多长时间。 我们这样做了几次来获得稳定的耗时。 我们还调用runtime.KeepAlive( ) 来确保GC /编译器在此期间不会丢弃我们分配的内存。</p>
 <blockquote>
@@ -452,8 +452,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/08/05/避免大的堆内存导致的gc开销~/" rel="next" title="避免大的堆内存导致的gc开销">
-                <i class="fa fa-chevron-left"></i> 避免大的堆内存导致的gc开销
+              <a href="/2019/06/26/dfs合集/" rel="next" title="dfs合集">
+                <i class="fa fa-chevron-left"></i> dfs合集
               </a>
             
           </div>
@@ -461,6 +461,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/13/分布式系统的配置中心方案/" rel="prev" title="分布式系统的一致性协议 raft / zab">
+                分布式系统的一致性协议 raft / zab <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -561,7 +565,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">7</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
