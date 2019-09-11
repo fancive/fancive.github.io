@@ -255,6 +255,145 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/08/04/redis-list/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fancivez">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="不眠之夜">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/04/redis-list/" itemprop="url">redis_list</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-04T14:52:57+08:00">2018-08-04</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>redis 版本: v1.3.12</p>
+</blockquote>
+<h2 id="redis-list"><a href="#redis-list" class="headerlink" title="redis_list"></a>redis_list</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> &#123;</span></span><br><span class="line">    <span class="comment">// 前置节点</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">prev</span>;</span></span><br><span class="line">    <span class="comment">// 后置节点</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">next</span>;</span></span><br><span class="line">    <span class="comment">// 节点的值</span></span><br><span class="line">    <span class="keyword">void</span> *value;</span><br><span class="line">&#125; listNode;</span><br></pre></td></tr></table></figure>
+<p>redis 的链表节点是最简单的双向链表节点，表头和表尾都是NULL，没有环式链表。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">list</span> &#123;</span></span><br><span class="line">    listNode *head;</span><br><span class="line">    listNode *tail;</span><br><span class="line">    <span class="keyword">void</span> *(*dup)(<span class="keyword">void</span> *ptr);</span><br><span class="line">    <span class="keyword">void</span> (*<span class="built_in">free</span>)(<span class="keyword">void</span> *ptr);</span><br><span class="line">    <span class="keyword">int</span> (*match)(<span class="keyword">void</span> *ptr, <span class="keyword">void</span> *key);</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> len;</span><br><span class="line">&#125; <span class="built_in">list</span>;</span><br></pre></td></tr></table></figure>
+<p>链表容器中保存了表头和表尾，以及节点数量len，以及复制函数指针 <code>void *(*dup)(void *ptr);</code> 以及释放函数指针 <code>void (*free)(void *ptr)</code> 和值比较函数 <code>int (*match)(void *ptr, void *key)</code></p>
+<h3 id="为什么这么设计"><a href="#为什么这么设计" class="headerlink" title="为什么这么设计"></a>为什么这么设计</h3><ul>
+<li>使用<code>void *value</code>保存链表节点的值是为了存储多种数据类型</li>
+<li>链表容器中存储了 head 和 tail 是为了 O(1) 复杂度访问头尾节点</li>
+<li>存储len是为了在O(1)复杂度内获取链表长度</li>
+<li>三个函数指针是为了实现多态链表</li>
+</ul>
+<h3 id="横向比较"><a href="#横向比较" class="headerlink" title="横向比较"></a>横向比较</h3><p>nginx 中有两个链表，单链表 <code>ngx_list_t</code> 和双向链表 <code>ngx_queue_t</code> </p>
+<h4 id="ngx-list-t"><a href="#ngx-list-t" class="headerlink" title="ngx_list_t"></a>ngx_list_t</h4><p>ngx_list_t 中的每个链表节点都是一个数组，数组元素数量上限存储在链表容器 nalloc 中，数组每个元素大小存储在链表容器 size 中，链表节点中只保存已有的元素数量 nelts ， 以及存放元素的开始地址 elts， 以及下一个链表节点指针 next</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ngx_list_part_s</span> &#123;</span></span><br><span class="line">    <span class="keyword">void</span>             *elts;</span><br><span class="line">    <span class="keyword">ngx_uint_t</span>        nelts;</span><br><span class="line">    <span class="keyword">ngx_list_part_t</span>  *next;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="keyword">ngx_list_part_t</span>  *last;</span><br><span class="line">    <span class="keyword">ngx_list_part_t</span>   part;</span><br><span class="line">    <span class="keyword">size_t</span>            size;</span><br><span class="line">    <span class="keyword">ngx_uint_t</span>        nalloc;</span><br><span class="line">    <span class="keyword">ngx_pool_t</span>       *pool;</span><br><span class="line">&#125; <span class="keyword">ngx_list_t</span>;</span><br></pre></td></tr></table></figure>
+<h4 id="ngx-queue-t"><a href="#ngx-queue-t" class="headerlink" title="ngx_queue_t"></a><code>ngx_queue_t</code></h4><p>普通的双向链表</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ngx_queue_s</span> &#123;</span></span><br><span class="line">    <span class="keyword">ngx_queue_t</span>  *prev;</span><br><span class="line">    <span class="keyword">ngx_queue_t</span>  *next;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="ref"><a href="#ref" class="headerlink" title="ref"></a>ref</h2><p><a href="http://redisbook.com/index.html" target="_blank" rel="noopener">redisbook</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/08/04/redis-string/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1546,127 +1685,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/06/13/nginx-module/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="fancivez">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="不眠之夜">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/06/13/nginx-module/" itemprop="url">nginx_module</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-13T13:28:36+08:00">2018-06-13</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="ngx-module-s"><a href="#ngx-module-s" class="headerlink" title="ngx_module_s"></a>ngx_module_s</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ngx_module_s</span> &#123;</span></span><br><span class="line">    <span class="keyword">ngx_uint_t</span>            ctx_index;</span><br><span class="line">    <span class="keyword">ngx_uint_t</span>            index;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">ngx_uint_t</span>            spare0;</span><br><span class="line">    <span class="keyword">ngx_uint_t</span>            spare1;</span><br><span class="line">    <span class="keyword">ngx_uint_t</span>            spare2;</span><br><span class="line">    <span class="keyword">ngx_uint_t</span>            spare3;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">ngx_uint_t</span>            version;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span>                 *ctx;</span><br><span class="line">    <span class="keyword">ngx_command_t</span>        *commands;</span><br><span class="line">    <span class="keyword">ngx_uint_t</span>            type;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">ngx_int_t</span>           (*init_master)(<span class="keyword">ngx_log_t</span> *<span class="built_in">log</span>); <span class="comment">//没用到</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">ngx_int_t</span>           (*init_module)(<span class="keyword">ngx_cycle_t</span> *cycle);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">ngx_int_t</span>           (*init_process)(<span class="keyword">ngx_cycle_t</span> *cycle);</span><br><span class="line">    <span class="keyword">ngx_int_t</span>           (*init_thread)(<span class="keyword">ngx_cycle_t</span> *cycle); <span class="comment">//没用到</span></span><br><span class="line">    <span class="keyword">void</span>                (*exit_thread)(<span class="keyword">ngx_cycle_t</span> *cycle);  <span class="comment">//没用到</span></span><br><span class="line">    <span class="keyword">void</span>                (*exit_process)(<span class="keyword">ngx_cycle_t</span> *cycle);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span>                (*exit_master)(<span class="keyword">ngx_cycle_t</span> *cycle);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">uintptr_t</span>             spare_hook0;</span><br><span class="line">    <span class="keyword">uintptr_t</span>             spare_hook1;</span><br><span class="line">    <span class="keyword">uintptr_t</span>             spare_hook2;</span><br><span class="line">    <span class="keyword">uintptr_t</span>             spare_hook3;</span><br><span class="line">    <span class="keyword">uintptr_t</span>             spare_hook4;</span><br><span class="line">    <span class="keyword">uintptr_t</span>             spare_hook5;</span><br><span class="line">    <span class="keyword">uintptr_t</span>             spare_hook6;</span><br><span class="line">    <span class="keyword">uintptr_t</span>             spare_hook7;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1714,7 +1732,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-count">28</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -1745,7 +1763,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">9</span>
+                      
+                    
+                    <span class="site-state-item-count">10</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -1784,7 +1804,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">13</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">15</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
