@@ -3,6 +3,8 @@ title: swoole_reactor
 date: 2018-06-26 14:04:43
 tags:
 - swoole
+categories: 
+- 中间件
 ---
 
 # reactor

@@ -1,7 +1,8 @@
 ---
 title: swoole_boot
 date: 2018-06-22 23:02:24
-categories: "swoole"
+categories: 
+- 中间件
 tags: 
 - swoole
 - tech
@@ -13,7 +14,8 @@ tags:
 
 * minit
 * swoole_server->start()
-* 
+
+  
 
 ## MINIT && RINIT
 

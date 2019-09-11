@@ -1,6 +1,7 @@
 ---
 title: swoole_1_server.c
-date: 2018-05-29 20:11:19
+categories: 
+- 中间件
 tags:
 - swoole
 - tech
@@ -210,7 +211,7 @@ swListenPort* swServer_add_port(swServer *serv, int type, char *host, int port)
     serv->listen_port_num++;
     return ls;
 }
-``` 
+```
 ## listen swServer_start_proxy
 
 注册swServer_master_onAccept事件

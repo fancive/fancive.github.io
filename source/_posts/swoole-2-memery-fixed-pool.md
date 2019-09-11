@@ -1,6 +1,8 @@
 ---
 title: swoole_2_memery_fixed_pool
 date: 2018-05-30 20:17:18
+categories: 
+- 中间件
 tags: 
 - swoole
 - tech

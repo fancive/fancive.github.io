@@ -1,7 +1,7 @@
 ---
 title: 高效能程序员的修炼_chapter1
 date: 2019-05-09 21:33:14
-Categoris:
+categories:
 - 技术人生
 tags: 
 - 读书
