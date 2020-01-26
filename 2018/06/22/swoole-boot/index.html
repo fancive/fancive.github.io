@@ -103,18 +103,18 @@
   <meta name="keywords" content="tech,swoole," />
 
 
-<meta name="description" content="swoole 启动流程 minit swoole_server-&amp;gt;start()   MINIT &amp;amp;&amp;amp; RINITswoole作为php扩展在minit阶段启动，实现 PHP_MINIT_FUNCTION 宏和 PHP_RINIT_FUNCTION 宏 12345678910111213141516171819202122232425262728293031/* &amp;#123;">
+<meta name="description" content="swoole 启动流程 minit swoole_server-&amp;gt;start()  MINIT &amp;amp;&amp;amp; RINITswoole作为php扩展在minit阶段启动，实现 PHP_MINIT_FUNCTION 宏和 PHP_RINIT_FUNCTION 宏 12345678910111213141516171819202122232425262728293031/* &amp;#123;&amp;">
 <meta name="keywords" content="tech,swoole">
 <meta property="og:type" content="article">
 <meta property="og:title" content="swoole_boot">
 <meta property="og:url" content="http://fancive.github.io/2018/06/22/swoole-boot/index.html">
 <meta property="og:site_name" content="不眠之夜">
-<meta property="og:description" content="swoole 启动流程 minit swoole_server-&amp;gt;start()   MINIT &amp;amp;&amp;amp; RINITswoole作为php扩展在minit阶段启动，实现 PHP_MINIT_FUNCTION 宏和 PHP_RINIT_FUNCTION 宏 12345678910111213141516171819202122232425262728293031/* &amp;#123;">
+<meta property="og:description" content="swoole 启动流程 minit swoole_server-&amp;gt;start()  MINIT &amp;amp;&amp;amp; RINITswoole作为php扩展在minit阶段启动，实现 PHP_MINIT_FUNCTION 宏和 PHP_RINIT_FUNCTION 宏 12345678910111213141516171819202122232425262728293031/* &amp;#123;&amp;">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-01-05T13:25:02.356Z">
+<meta property="og:updated_time" content="2019-06-02T15:50:29.475Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="swoole_boot">
-<meta name="twitter:description" content="swoole 启动流程 minit swoole_server-&amp;gt;start()   MINIT &amp;amp;&amp;amp; RINITswoole作为php扩展在minit阶段启动，实现 PHP_MINIT_FUNCTION 宏和 PHP_RINIT_FUNCTION 宏 12345678910111213141516171819202122232425262728293031/* &amp;#123;">
+<meta name="twitter:description" content="swoole 启动流程 minit swoole_server-&amp;gt;start()  MINIT &amp;amp;&amp;amp; RINITswoole作为php扩展在minit阶段启动，实现 PHP_MINIT_FUNCTION 宏和 PHP_RINIT_FUNCTION 宏 12345678910111213141516171819202122232425262728293031/* &amp;#123;&amp;">
 
 
 
@@ -309,7 +309,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/swoole/" itemprop="url" rel="index"><span itemprop="name">swoole</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/中间件/" itemprop="url" rel="index"><span itemprop="name">中间件</span></a></span>
 
                 
                 
@@ -346,7 +346,6 @@
         <h1 id="swoole-启动"><a href="#swoole-启动" class="headerlink" title="swoole 启动"></a>swoole 启动</h1><h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><ul>
 <li>minit</li>
 <li>swoole_server-&gt;start()</li>
-<li></li>
 </ul>
 <h2 id="MINIT-amp-amp-RINIT"><a href="#MINIT-amp-amp-RINIT" class="headerlink" title="MINIT &amp;&amp; RINIT"></a>MINIT &amp;&amp; RINIT</h2><p>swoole作为php扩展在minit阶段启动，实现 PHP_MINIT_FUNCTION 宏和 PHP_RINIT_FUNCTION 宏</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/* &#123;&#123;&#123; PHP_MINIT_FUNCTION</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">PHP_MINIT_FUNCTION(swoole)</span><br><span class="line">&#123;</span><br><span class="line">    ZEND_INIT_MODULE_GLOBALS(swoole, php_swoole_init_globals, <span class="literal">NULL</span>);</span><br><span class="line">    REGISTER_INI_ENTRIES();</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// 常量</span></span><br><span class="line">    REGISTER_STRINGL_CONSTANT(<span class="string">"SWOOLE_VERSION"</span>, PHP_SWOOLE_VERSION, <span class="keyword">sizeof</span>(PHP_SWOOLE_VERSION) - <span class="number">1</span>, CONST_CS | CONST_PERSISTENT);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 类, swoole_server_methods数组包含start方法</span></span><br><span class="line">    SWOOLE_INIT_CLASS_ENTRY(swoole_server_ce, <span class="string">"swoole_server"</span>, <span class="string">"Swoole\\Server"</span>, swoole_server_methods);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//类属性</span></span><br><span class="line">    zend_declare_property_null(swoole_server_class_entry_ptr, ZEND_STRL(<span class="string">"onConnect"</span>), ZEND_ACC_PUBLIC TSRMLS_CC);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//swoole init</span></span><br><span class="line">    swoole_init();</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> SUCCESS;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">PHP_RINIT_FUNCTION(swoole)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//running</span></span><br><span class="line">    SwooleG.running = <span class="number">1</span>;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> SUCCESS;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -481,7 +480,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-count">27</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -504,7 +503,15 @@
                     
                       
                     
-                    <span class="site-state-item-count">5</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -533,7 +540,17 @@
                     
                       
                     
-                    <span class="site-state-item-count">8</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -589,7 +606,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.2" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.2" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.2',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="automation,mac," />
+
+
+<meta name="description" content="本文翻译自 applescript tutorial 3 脚本编辑器由于本教程非常“实操”，我们将立即编写脚本。要编写脚本，请使用系统中安装的脚本编辑器应用程序。您可以在计算机主硬盘上的应用程序文件夹中的applescript文件夹中找到此应用程序。现在导航到此文件夹并双击脚本编辑器图标以启动应用程序。  注意：以下描述和插图适用于Mac OSX 10.5中包含的脚本编辑器应用程序。早期版本将有不">
+<meta name="keywords" content="automation,mac">
+<meta property="og:type" content="article">
+<meta property="og:title" content="appleScript_tutorial_3">
+<meta property="og:url" content="http://fancive.github.io/2019/09/12/appleScript-tutorial-3/index.html">
+<meta property="og:site_name" content="不眠之夜">
+<meta property="og:description" content="本文翻译自 applescript tutorial 3 脚本编辑器由于本教程非常“实操”，我们将立即编写脚本。要编写脚本，请使用系统中安装的脚本编辑器应用程序。您可以在计算机主硬盘上的应用程序文件夹中的applescript文件夹中找到此应用程序。现在导航到此文件夹并双击脚本编辑器图标以启动应用程序。  注意：以下描述和插图适用于Mac OSX 10.5中包含的脚本编辑器应用程序。早期版本将有不">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://macosxautomation.com/applescript/firsttutorial/gfx/CH01_image02.jpg">
+<meta property="og:image" content="https://macosxautomation.com/applescript/firsttutorial/gfx/CH01_image03.jpg">
+<meta property="og:updated_time" content="2019-09-12T09:43:22.289Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="appleScript_tutorial_3">
+<meta name="twitter:description" content="本文翻译自 applescript tutorial 3 脚本编辑器由于本教程非常“实操”，我们将立即编写脚本。要编写脚本，请使用系统中安装的脚本编辑器应用程序。您可以在计算机主硬盘上的应用程序文件夹中的applescript文件夹中找到此应用程序。现在导航到此文件夹并双击脚本编辑器图标以启动应用程序。  注意：以下描述和插图适用于Mac OSX 10.5中包含的脚本编辑器应用程序。早期版本将有不">
+<meta name="twitter:image" content="https://macosxautomation.com/applescript/firsttutorial/gfx/CH01_image02.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://fancive.github.io/2019/09/12/appleScript-tutorial-3/"/>
+
+
+  <title>appleScript_tutorial_3 | 不眠之夜</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">不眠之夜</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2019/09/12/appleScript-tutorial-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fancivez">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="不眠之夜">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">appleScript_tutorial_3</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-12T16:10:54+08:00">2019-09-12</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/appleScript/" itemprop="url" rel="index"><span itemprop="name">appleScript</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文翻译自 <a href="https://macosxautomation.com/applescript/firsttutorial/02.html" target="_blank" rel="noopener">applescript tutorial 3</a></p>
+<h2 id="脚本编辑器"><a href="#脚本编辑器" class="headerlink" title="脚本编辑器"></a>脚本编辑器</h2><p>由于本教程非常“实操”，我们将立即编写脚本。要编写脚本，请使用系统中安装的脚本编辑器应用程序。您可以在计算机主硬盘上的应用程序文件夹中的applescript文件夹中找到此应用程序。现在导航到此文件夹并双击脚本编辑器图标以启动应用程序。</p>
+<blockquote>
+<p>注意：以下描述和插图适用于Mac OSX 10.5中包含的脚本编辑器应用程序。早期版本将有不同的设计。</p>
+</blockquote>
+<p><img src="https://macosxautomation.com/applescript/firsttutorial/gfx/CH01_image02.jpg" alt="img"></p>
+<p>启动后，脚本编辑器应用程序将显示一个称为脚本窗口的多面板窗口。此脚本窗口包含两个面板，顶部面板包含脚本文本，底部面板包含脚本描述、脚本结果或脚本日志，具体取决于面板下面的哪个选项卡已被选中。</p>
+<p><img src="https://macosxautomation.com/applescript/firsttutorial/gfx/CH01_image03.jpg" alt="img"></p>
+<p>默认情况下，脚本窗口非常小，因此在继续本教程之前，您可能需要扩展其大小。请注意，脚本编辑器和其他applescript工具在本书的其他地方有详细介绍。</p>
+<h3 id="我们第一个脚本"><a href="#我们第一个脚本" class="headerlink" title="我们第一个脚本"></a>我们第一个脚本</h3><p>您将以“tell statements”的形式编写一系列简单的脚本命令，开始学习applescript的过程。tell statement是以动词tell开头的单行脚本。此动词用于在特定应用程序或可编写脚本的对象上指示脚本操作。tell语句由两部分组成：</p>
+<ol>
+<li>对要编写脚本的对象的引用，以及</li>
+<li>要执行的操作。</li>
+</ol>
+<p>使用这种语法格式或语法，我们可以编写脚本，指示Finder执行我们希望的任何操作。这是我们的第一个剧本：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tell application "Finder" to close every window</span><br></pre></td></tr></table></figure>
+<p>在“脚本编辑器脚本”窗口的上面的面板中输入与“上面”完全相同的脚本（请确保将单词“finder”用英文双引号括起来）。单击“脚本”窗口上的“编译”按钮，确认脚本已正确写入，并准备好脚本以供使用。</p>
+<p>接下来，单击<em>“运行”</em>按钮播放脚本。操作系统将读取脚本并向finder应用程序发送适当的命令，然后finder应用程序将按照说明关闭所有打开的窗口。</p>
+<p>恭喜，您已经编写并运行了第一个applescript脚本！</p>
+<p>请注意，“finder”一词在脚本中用引号括起来。脚本中名称和文本数据总是被双引号括起。这样做是为了向脚本编辑器说明，引号内的内容是文本数据，在脚本编译以准备执行时不被视为命令或指令。</p>
+<p>从“脚本”窗口中删除上一个脚本，然后输入、编译并运行以下脚本：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tell application <span class="string">"Finder"</span> to open the startup disk</span><br></pre></td></tr></table></figure>
+<p>桌面上将出现一个新的Finder窗口，显示启动盘的内容。我们将使用这个新打开的窗口来检查finder窗口的属性</p>
+<h3 id="关于Finder窗口"><a href="#关于Finder窗口" class="headerlink" title="关于Finder窗口"></a>关于Finder窗口</h3><p>finder窗口与finder应用程序使用的其他窗口不同，它们显示文件夹的内容，并且可能包含工具栏和侧边栏。本章剩余的脚本示例在说到finder窗口时，我们将使用”finder窗口”而不是”窗口”。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/automation/" rel="tag"># automation</a>
+          
+            <a href="/tags/mac/" rel="tag"># mac</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/12/appleScript-tutorial-2/" rel="next" title="appleScript_tutorial_2">
+                <i class="fa fa-chevron-left"></i> appleScript_tutorial_2
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/12/appleScript-tutorial-4/" rel="prev" title="appleScript_tutorial_4">
+                appleScript_tutorial_4 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">fancivez</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">32</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">15</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#脚本编辑器"><span class="nav-number">1.</span> <span class="nav-text">脚本编辑器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#我们第一个脚本"><span class="nav-number">1.1.</span> <span class="nav-text">我们第一个脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于Finder窗口"><span class="nav-number">1.2.</span> <span class="nav-text">关于Finder窗口</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fancivez</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.0.2</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.2"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

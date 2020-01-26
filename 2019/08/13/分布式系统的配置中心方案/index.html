@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.2" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.2" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.2',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="分布式系统," />
+
+
+<meta name="description" content="引言如果需要构建大型的分布式系统，那么服务发现和配置管理是首先要考虑的问题，最近的几个面试中也经常被问到相关的问题，因此在这里总结一下，适用于分布式系统的配置管理/服务发现，或者其他 k/v 存储。 本文以raft和zab协议为例做比较。 关联raft 和 zookeeper 的 ZAB 都是 leader-based 一致性协议，通过选举一个proposer作为leader降低多个propose">
+<meta name="keywords" content="分布式系统">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式系统的一致性协议 raft &#x2F; zab">
+<meta property="og:url" content="http://fancive.github.io/2019/08/13/分布式系统的配置中心方案/index.html">
+<meta property="og:site_name" content="不眠之夜">
+<meta property="og:description" content="引言如果需要构建大型的分布式系统，那么服务发现和配置管理是首先要考虑的问题，最近的几个面试中也经常被问到相关的问题，因此在这里总结一下，适用于分布式系统的配置管理/服务发现，或者其他 k/v 存储。 本文以raft和zab协议为例做比较。 关联raft 和 zookeeper 的 ZAB 都是 leader-based 一致性协议，通过选举一个proposer作为leader降低多个propose">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-08-12T18:46:25.395Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="分布式系统的一致性协议 raft &#x2F; zab">
+<meta name="twitter:description" content="引言如果需要构建大型的分布式系统，那么服务发现和配置管理是首先要考虑的问题，最近的几个面试中也经常被问到相关的问题，因此在这里总结一下，适用于分布式系统的配置管理/服务发现，或者其他 k/v 存储。 本文以raft和zab协议为例做比较。 关联raft 和 zookeeper 的 ZAB 都是 leader-based 一致性协议，通过选举一个proposer作为leader降低多个propose">
+
+
+
+
+
+
+  <link rel="canonical" href="http://fancive.github.io/2019/08/13/分布式系统的配置中心方案/"/>
+
+
+  <title>分布式系统的一致性协议 raft / zab | 不眠之夜</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">不眠之夜</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2019/08/13/分布式系统的配置中心方案/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fancivez">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="不眠之夜">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">分布式系统的一致性协议 raft / zab</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-13T00:16:51+08:00">2019-08-13</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/服务治理/" itemprop="url" rel="index"><span itemprop="name">服务治理</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/服务治理/一致性协议/" itemprop="url" rel="index"><span itemprop="name">一致性协议</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>如果需要构建大型的分布式系统，那么服务发现和配置管理是首先要考虑的问题，最近的几个面试中也经常被问到相关的问题，因此在这里总结一下，适用于分布式系统的配置管理/服务发现，或者其他 k/v 存储。</p>
+<p>本文以raft和zab协议为例做比较。</p>
+<h2 id="关联"><a href="#关联" class="headerlink" title="关联"></a>关联</h2><p>raft 和 zookeeper 的 ZAB 都是 leader-based 一致性协议，通过选举一个proposer作为leader降低多个proposer引起的冲突问题，大致都可以分为两个阶段</p>
+<p>1）leader在时，由leader向follow同步日志</p>
+<p>2）leader不在时，用选举算法选出一个新leader</p>
+<h2 id="leader在时"><a href="#leader在时" class="headerlink" title="leader在时"></a>leader在时</h2><h3 id="日志复制过程"><a href="#日志复制过程" class="headerlink" title="日志复制过程"></a>日志复制过程</h3><p>raft 和 zab的处理流程基本一致</p>
+<ol>
+<li>client 连接leader(连接的是follower，则会转给leader)，这一点 raft 和 zab一致</li>
+<li>leader将请求转换成 entry(raft) 或者 proposal(ZAB)，并写入自己的日志中，得到日志index并发给follower</li>
+<li>follower接收到 entry 或者 proposal ， 会写入文件并回复OK</li>
+<li>leader如果接收到过半 OK，那么会更新leader的状态机，并回复客户端，此时<ol>
+<li>ZAB会立刻向follower发送提交请求</li>
+<li>raft会更新leader的 commit index</li>
+</ol>
+</li>
+<li>对于follower来说<ol>
+<li>ZAB接收到leader的提交请求会更新状态机</li>
+<li>raft会在下次心跳获取到leader 的 commit index 并更新自己的状态机</li>
+</ol>
+</li>
+</ol>
+<h3 id="异常case"><a href="#异常case" class="headerlink" title="异常case"></a>异常case</h3><p>一旦leader发给follower的数据出现超时等异常</p>
+<ol>
+<li>raft:会不断重试，并且接口是幂等的</li>
+<li>Zab:follower会断开与leader之间的连接，重新加入该集群</li>
+</ol>
+<h2 id="leader不在时"><a href="#leader不在时" class="headerlink" title="leader不在时"></a>leader不在时</h2><p>节点有3种状态，leader , follower，candidate/looking ,  zab多一种不参与选举的follower角色被称为Observer</p>
+<p>两种协议都有任期(朝代)的概念 term/epoch</p>
+<ol>
+<li>选主就是选出朝代离现在最近(最大)的一个</li>
+<li>如果朝代相同，那么选取拥有更长日志的为leader，所以选举广播每个候选人都会发送自己的&lt;朝代、index&gt;</li>
+<li>如果&lt;朝代、index&gt;都相同那么ZAB会选机器编号最大的(一轮内重新投票, 会有一个子状态表示是一次选举)，raft会用新朝代选举</li>
+</ol>
+<h4 id="重新选举进入时机"><a href="#重新选举进入时机" class="headerlink" title="重新选举进入时机"></a>重新选举进入时机</h4><h5 id="raft"><a href="#raft" class="headerlink" title="raft"></a>raft</h5><p>follower有一个选举时间，在该时间内如果未收到leader的心跳信息，则follower转变成candidate，自增term发起新一轮的投票，leader遇到新的term则自动转变成follower的状态</p>
+<h5 id="ZAB"><a href="#ZAB" class="headerlink" title="ZAB"></a>ZAB</h5><p>leader和follower都有各自的检测超时方式，leader是检测是否过半follower心跳回复了，follower检测leader是否发送心跳了。一旦leader检测失败，则leader进入LOOKING状态，其他follower过一段时间因收不到leader心跳也会进入LOOKING状态，从而出发新的leader选举</p>
+<h3 id="日志同步"><a href="#日志同步" class="headerlink" title="日志同步"></a>日志同步</h3><h4 id="raft-1"><a href="#raft-1" class="headerlink" title="raft"></a>raft</h4><p>Leader发生切换的时候，新Leader的日志和Follower的日志可能会存在不一致的情形。这时Follower需要对自身的日志进行截断处理，再从截断的位置重新同步日志。Leader自身的日志是Append-Only的，它永远不会抹掉自身的任何日志。<br>标准的策略是Leader当选后立即向所有节点广播AppendEntries消息，携带最后一条日志的信息。Follower收到消息后和自己的日志进行比对，如果最后一条日志和自己的不匹配就回绝Leader。<br>Leader被打击后，就会开始回退一步，携带最后两条日志，重新向拒绝自己的Follower发送AppendEntries消息。如果Follower发现消息中两条日志的第一条还是和自己的不匹配，那就继续拒绝，然后Leader被打击后继续后退重试。如果匹配的话，那么就把消息中的日志项覆盖掉本地的日志，于是同步就成功了，一致性就实现了。</p>
+<h4 id="zab"><a href="#zab" class="headerlink" title="zab"></a>zab</h4><h5 id="已经被处理的消息不能丢"><a href="#已经被处理的消息不能丢" class="headerlink" title="已经被处理的消息不能丢"></a>已经被处理的消息不能丢</h5><p>当 leader 收到合法数量 follower 的 ACKs 后，就向各个 follower 广播 COMMIT 命令，同时也会在本地执行 COMMIT 并向连接的客户端返回「成功」。但是如果在各个 follower 在收到 COMMIT 命令前 leader 就挂了，导致剩下的服务器并没有执行都这条消息</p>
+<p>由于所有提案被COMMIT 之前必须有大多数量的 Follower ACK，即大多数服务器已经将该 proposal写入日志文件。因此，新选出的Leader如果满足是大多数节点中proposal最多的，它就必然存有所有被COMMIT消息的proposal。</p>
+<p>接下来，新Leader与Follower 建立先进先出的队列， 先将自身有而Follower缺失的proposal发送给 它，再将这些 proposal的COMMIT命令发送给 Follower，这便保证了所有的Follower都保存了所有的 proposal、所有的Follower 都处理了所有的消息</p>
+<h5 id="被丢弃的消息不能再次出现"><a href="#被丢弃的消息不能再次出现" class="headerlink" title="被丢弃的消息不能再次出现"></a>被丢弃的消息不能再次出现</h5><p>当Leader 接收到消息请求生成 proposal后就挂了，其他Follower 并没有收到此proposal，因此新选出的Leader中必然不含这条消息。 此时，假如之前挂了的Leader 重新启动并注册成了Follower，它要与新的Leader保持一致，就必须要删除自己上旧的proposal</p>
+<p>Zab 通过巧妙的设计 zxid 来实现这一目的。一个 zxid 是64位，高 32 是纪元（epoch）编号，每经过一次 Leader选举产生一个新的Leader，其epoch 号 +1。低 32 位是消息计数器，每接收到一条消息这个值 +1，新Leader 选举后这个值重置为 0</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://yq.aliyun.com/articles/62901?spm=5176.100239.blogcont62555.13.XJ8eOB" target="_blank" rel="noopener">https://yq.aliyun.com/articles/62901?spm=5176.100239.blogcont62555.13.XJ8eOB</a></p>
+<p><a href="https://blog.csdn.net/zpoison/article/details/80615468" target="_blank" rel="noopener">https://blog.csdn.net/zpoison/article/details/80615468</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/27335748" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/27335748</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/分布式系统/" rel="tag"># 分布式系统</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/05/避免大的堆内存导致的gc开销/" rel="next" title="避免大的堆内存导致的gc开销">
+                <i class="fa fa-chevron-left"></i> 避免大的堆内存导致的gc开销
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">fancivez</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关联"><span class="nav-number">2.</span> <span class="nav-text">关联</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#leader在时"><span class="nav-number">3.</span> <span class="nav-text">leader在时</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#日志复制过程"><span class="nav-number">3.1.</span> <span class="nav-text">日志复制过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异常case"><span class="nav-number">3.2.</span> <span class="nav-text">异常case</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#leader不在时"><span class="nav-number">4.</span> <span class="nav-text">leader不在时</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#重新选举进入时机"><span class="nav-number">4.0.1.</span> <span class="nav-text">重新选举进入时机</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#raft"><span class="nav-number">4.0.1.1.</span> <span class="nav-text">raft</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ZAB"><span class="nav-number">4.0.1.2.</span> <span class="nav-text">ZAB</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#日志同步"><span class="nav-number">4.1.</span> <span class="nav-text">日志同步</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#raft-1"><span class="nav-number">4.1.1.</span> <span class="nav-text">raft</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#zab"><span class="nav-number">4.1.2.</span> <span class="nav-text">zab</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#已经被处理的消息不能丢"><span class="nav-number">4.1.2.1.</span> <span class="nav-text">已经被处理的消息不能丢</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#被丢弃的消息不能再次出现"><span class="nav-number">4.1.2.2.</span> <span class="nav-text">被丢弃的消息不能再次出现</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fancivez</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.0.2</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.2"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
