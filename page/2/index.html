@@ -255,438 +255,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/08/04/redis-string/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="fancivez">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="不眠之夜">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/08/04/redis-string/" itemprop="url">redis_string</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-04T00:05:45+08:00">2018-08-04</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>redis 版本: v1.3.12</p>
-</blockquote>
-<h1 id="redis-string-sds"><a href="#redis-string-sds" class="headerlink" title="redis_string(sds)"></a>redis_string(sds)</h1><p>结构声明</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sdshdr</span> &#123;</span></span><br><span class="line">    <span class="keyword">long</span> len;</span><br><span class="line">    <span class="keyword">long</span> <span class="built_in">free</span>;</span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>struct sdshdr是redis的字符串容器，比较与常规字符串，有几个特点</p>
-<ul>
-<li>支持O(1) 时间内获取字符串长度 sdslen</li>
-<li>不会因为长度溢出导致缓冲区溢出(buffer overflow)  strcat &lt;–&gt;sdscat</li>
-<li>支持空间预分配与惰性释放</li>
-<li>二进制安全</li>
-</ul>
-<h2 id="为什么这么设计"><a href="#为什么这么设计" class="headerlink" title="为什么这么设计"></a>为什么这么设计</h2><p>redis作为一个频繁更新的kv存储，每次更新都需要重新判断字符串长度防止 buffer overflow , 因此需要支持以下特性</p>
-<ul>
-<li>支持O(1) 时间内获取字符串长度</li>
-<li>支持空间预分配</li>
-<li>惰性释放</li>
-</ul>
-<p>用户不会只在 redis中存储字符串，可能有其他数据类型，因此可能会有 EOF,  所以存储类型必须是二进制安全的，否则造成截断。</p>
-<h2 id="横向比较"><a href="#横向比较" class="headerlink" title="横向比较"></a>横向比较</h2><p>nginx中的字符串容器设计</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="keyword">size_t</span>      len;</span><br><span class="line">    u_char     *data;</span><br><span class="line">&#125; <span class="keyword">ngx_str_t</span>;</span><br></pre></td></tr></table></figure>
-<p>比较与reids, nginx 中的字符串容器没有free 属性，因此获取字符串长度时间复杂度也为O(1),  但是获取字符串容器总长度的事件复杂度为 O(n)</p>
-<h2 id="ref"><a href="#ref" class="headerlink" title="ref"></a>ref</h2><p><a href="http://redisbook.com/index.html" target="_blank" rel="noopener">redisbook</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/08/03/程序员的价值/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="fancivez">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="不眠之夜">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/08/03/程序员的价值/" itemprop="url">程序员的价值</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-03T22:30:06+08:00">2018-08-03</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术人生/" itemprop="url" rel="index"><span itemprop="name">技术人生</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="为什么思考这个问题"><a href="#为什么思考这个问题" class="headerlink" title="为什么思考这个问题"></a>为什么思考这个问题</h2><p>为什么有这个问题呢？</p>
-<ol>
-<li>作为程序员因何而具有价值？</li>
-<li>程序员在这个阶段(3~5年)如何具备更大的价值？</li>
-<li>我的前景是什么？</li>
-</ol>
-<h2 id="如何思考这个问题"><a href="#如何思考这个问题" class="headerlink" title="如何思考这个问题"></a>如何思考这个问题</h2><ol>
-<li>其他职业的价值？</li>
-<li>供需关系？</li>
-<li>常见的优秀工程师和上升渠道？</li>
-</ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/06/26/swoole-reactor/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="fancivez">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="不眠之夜">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/06/26/swoole-reactor/" itemprop="url">swoole_reactor</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-26T14:04:43+08:00">2018-06-26</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/中间件/" itemprop="url" rel="index"><span itemprop="name">中间件</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="reactor"><a href="#reactor" class="headerlink" title="reactor"></a>reactor</h1><p>reactor的线程结构</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">swReactor</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="comment">// reactor的事件循环, 根据参数和内核选择事件模型比如swReactorEpoll</span></span><br><span class="line">    <span class="keyword">void</span> *object;m</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// swServer </span></span><br><span class="line">    <span class="keyword">void</span> *ptr;  <span class="comment">//reserve</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * last signal number</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">int</span> singal_no;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// epoll上挂的事件数量</span></span><br><span class="line">    <span class="keyword">uint32_t</span> event_num;</span><br><span class="line">    <span class="comment">// 对应epoll_wait 中的maxevents</span></span><br><span class="line">    <span class="keyword">uint32_t</span> max_event_num;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ??</span></span><br><span class="line">    <span class="keyword">uint32_t</span> check_timer :<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// swReactor_create() 中置1 reactor是否create</span></span><br><span class="line">    <span class="keyword">uint32_t</span> running :<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// swReactorEpoll_wait() 中置1 reactor开始工作</span></span><br><span class="line">    <span class="keyword">uint32_t</span> start :<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * disable accept new connection</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">uint32_t</span> disable_accept :<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">uint32_t</span> check_signalfd :<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * multi-thread reactor, cannot realloc sockets.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">uint32_t</span> thread :<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * reactor-&gt;wait timeout (millisecond) or -1</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">int32_t</span> timeout_msec;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">uint16_t</span> id; <span class="comment">//Reactor ID</span></span><br><span class="line">	<span class="keyword">uint16_t</span> flag; <span class="comment">//flag</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">uint32_t</span> max_socket;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> SW_USE_MALLOC_TRIM</span></span><br><span class="line">    <span class="keyword">time_t</span> last_malloc_trim_time;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> SW_USE_TIMEWHEEL</span></span><br><span class="line">    swTimeWheel *timewheel;</span><br><span class="line">    <span class="keyword">uint16_t</span> heartbeat_interval;</span><br><span class="line">    <span class="keyword">time_t</span> last_heartbeat_time;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * for thread</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    swConnection *socket_list;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * for process</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    swArray *socket_array;</span><br><span class="line"></span><br><span class="line">    swReactor_handle handle[SW_MAX_FDTYPE];        <span class="comment">//默认事件</span></span><br><span class="line">    swReactor_handle write_handle[SW_MAX_FDTYPE];  <span class="comment">//扩展事件1(一般为写事件)</span></span><br><span class="line">    swReactor_handle error_handle[SW_MAX_FDTYPE];  <span class="comment">//扩展事件2(一般为错误事件,如socket关闭)</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> (*add)(swReactor *, <span class="keyword">int</span> fd, <span class="keyword">int</span> fdtype);</span><br><span class="line">    <span class="keyword">int</span> (*<span class="built_in">set</span>)(swReactor *, <span class="keyword">int</span> fd, <span class="keyword">int</span> fdtype);</span><br><span class="line">    <span class="keyword">int</span> (*del)(swReactor *, <span class="keyword">int</span> fd);</span><br><span class="line">    <span class="keyword">int</span> (*wait)(swReactor *, struct timeval *);</span><br><span class="line">    <span class="keyword">void</span> (*<span class="built_in">free</span>)(swReactor *);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> (*setHandle)(swReactor *, <span class="keyword">int</span> fdtype, swReactor_handle);</span><br><span class="line">    swDefer_callback *defer_callback_list;</span><br><span class="line">    swDefer_callback idle_task;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span> (*onTimeout)(swReactor *);</span><br><span class="line">    <span class="keyword">void</span> (*onFinish)(swReactor *);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span> (*enable_accept)(swReactor *);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> (*write)(swReactor *, <span class="keyword">int</span>, <span class="keyword">void</span> *, <span class="keyword">int</span>);</span><br><span class="line">    <span class="keyword">int</span> (*close)(swReactor *, <span class="keyword">int</span>);</span><br><span class="line">    <span class="keyword">int</span> (*defer)(swReactor *, swCallback, <span class="keyword">void</span> *);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/06/22/swoole-boot/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1667,6 +1235,439 @@
 
 
     
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/05/30/swoole-2-memery-fixed-pool/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fancivez">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="不眠之夜">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/05/30/swoole-2-memery-fixed-pool/" itemprop="url">swoole_2_memery_fixed_pool</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-30T20:17:18+08:00">2018-05-30</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/中间件/" itemprop="url" rel="index"><span itemprop="name">中间件</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="swoole-内存模型-fiexdPool"><a href="#swoole-内存模型-fiexdPool" class="headerlink" title="swoole 内存模型 - fiexdPool"></a>swoole 内存模型 - fiexdPool</h1><h2 id="synopsis"><a href="#synopsis" class="headerlink" title="synopsis"></a>synopsis</h2><ul>
+<li>swFixedPool_slice 内存池元素</li>
+<li>swFixedPool 内存池。</li>
+</ul>
+<h3 id="文件"><a href="#文件" class="headerlink" title="文件"></a>文件</h3><ul>
+<li>FixedPool.c</li>
+<li>swool.h</li>
+</ul>
+<h2 id="声明"><a href="#声明" class="headerlink" title="声明"></a>声明</h2><h3 id="swFixedPool-slice"><a href="#swFixedPool-slice" class="headerlink" title="swFixedPool_slice"></a>swFixedPool_slice</h3><p>swFixedPool 是双向链表</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">swFixedPool_slice</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">uint8_t</span> lock; <span class="comment">// 是否空闲</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">swFixedPool_slice</span> *<span class="title">next</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">swFixedPool_slice</span> *<span class="title">pre</span>;</span></span><br><span class="line">    <span class="keyword">char</span> data[<span class="number">0</span>]; <span class="comment">// </span></span><br><span class="line"></span><br><span class="line">&#125; swFixedPool_slice;</span><br></pre></td></tr></table></figure>
+<p>swFixedPool<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">swFixedPool</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">void</span> *memory;</span><br><span class="line">    <span class="keyword">size_t</span> size;</span><br><span class="line"></span><br><span class="line">    swFixedPool_slice *head;</span><br><span class="line">    swFixedPool_slice *tail;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * total memory size</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">uint32_t</span> slice_num;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * memory usage</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">uint32_t</span> slice_use;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Fixed slice size, not include the memory used by swFixedPool_slice</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">uint32_t</span> slice_size;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * use shared memory</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">uint8_t</span> shared;</span><br><span class="line"></span><br><span class="line">&#125; swFixedPool;</span><br></pre></td></tr></table></figure></p>
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">swMemoryPool* <span class="title">swFixedPool_new</span><span class="params">(<span class="keyword">uint32_t</span> slice_num, <span class="keyword">uint32_t</span> slice_size, <span class="keyword">uint8_t</span> shared)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">size_t</span> size = slice_size * slice_num + slice_num * <span class="keyword">sizeof</span>(swFixedPool_slice);</span><br><span class="line">    <span class="comment">//slice大小*slice数量+MemoryPool头部大小+FixedPool头部大小</span></span><br><span class="line">    <span class="keyword">size_t</span> alloc_size = size + <span class="keyword">sizeof</span>(swFixedPool) + <span class="keyword">sizeof</span>(swMemoryPool);</span><br><span class="line">    <span class="keyword">void</span> *memory = (shared == <span class="number">1</span>) ? sw_shm_malloc(alloc_size) : sw_malloc(alloc_size);</span><br><span class="line"></span><br><span class="line">    swFixedPool *object = memory;</span><br><span class="line">    memory += <span class="keyword">sizeof</span>(swFixedPool);</span><br><span class="line">    bzero(object, <span class="keyword">sizeof</span>(swFixedPool));</span><br><span class="line"></span><br><span class="line">    object-&gt;shared = shared;</span><br><span class="line">    object-&gt;slice_num = slice_num;</span><br><span class="line">    object-&gt;slice_size = slice_size;</span><br><span class="line">    object-&gt;size = size;</span><br><span class="line"></span><br><span class="line">    swMemoryPool *pool = memory;</span><br><span class="line">    memory += <span class="keyword">sizeof</span>(swMemoryPool);</span><br><span class="line">    pool-&gt;object = object;</span><br><span class="line">    pool-&gt;alloc = swFixedPool_alloc;</span><br><span class="line">    pool-&gt;<span class="built_in">free</span> = swFixedPool_free;</span><br><span class="line">    pool-&gt;destroy = swFixedPool_destroy;</span><br><span class="line"></span><br><span class="line">    object-&gt;memory = memory;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * init linked list</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    swFixedPool_init(object);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> pool;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/05/09/6.828_lab1_1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fancivez">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="不眠之夜">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/05/09/6.828_lab1_1/" itemprop="url">6.828_lab1_1</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-09T22:52:56+08:00">2018-05-09</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/操作系统/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="6-828-1"><a href="#6-828-1" class="headerlink" title="6.828_1"></a>6.828_1</h1><h2 id="讲义"><a href="#讲义" class="headerlink" title="讲义"></a>讲义</h2><h3 id="Finding-and-breaking-at-an-address"><a href="#Finding-and-breaking-at-an-address" class="headerlink" title="Finding and breaking at an address"></a>Finding and breaking at an address</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">nm kernel | grep _start</span><br><span class="line">8010a48c D _binary_entryother_start</span><br><span class="line">8010a460 D _binary_initcode_start</span><br><span class="line">0010000c T _start</span><br></pre></td></tr></table></figure>
+<p>使用qemu启动xv6 kernel，并用gdb调试，在_start设置断点</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make qemu-gdb</span><br></pre></td></tr></table></figure>
+<p>保持<code>make qemu-gdb</code>运行，开启新的终端tab并进入相同目录</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">gdb</span><br><span class="line">...</span><br><span class="line">(gdb) br * 0x0010000c</span><br><span class="line">Breakpoint 1 at 0x10000c</span><br><span class="line">(gdb) c</span><br><span class="line">Continuing.</span><br><span class="line">The target architecture is assumed to be i386</span><br><span class="line">=&gt; 0x10000c:	mov    %cr4,%eax</span><br></pre></td></tr></table></figure>
+<h2 id="hw0"><a href="#hw0" class="headerlink" title="hw0"></a>hw0</h2><h3 id="What-is-on-the-stack"><a href="#What-is-on-the-stack" class="headerlink" title="What is on the stack?"></a>What is on the stack?</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">(gdb) info reg</span><br><span class="line">eax            0x0	0</span><br><span class="line">ecx            0x0	0</span><br><span class="line">edx            0x1f0	496</span><br><span class="line">ebx            0x10054	65620</span><br><span class="line">esp            0x7bcc	0x7bcc</span><br><span class="line">ebp            0x7bf8	0x7bf8</span><br><span class="line">esi            0x10054	65620</span><br><span class="line">edi            0x1144a8	1131688</span><br><span class="line">eip            0x10000c	0x10000c</span><br><span class="line">eflags         0x46	[ PF ZF ]</span><br><span class="line">cs             0x8	8</span><br><span class="line">ss             0x10	16</span><br><span class="line">ds             0x10	16</span><br><span class="line">es             0x10	16</span><br><span class="line">fs             0x0	0</span><br><span class="line">gs             0x0	0</span><br></pre></td></tr></table></figure>
+<p>清空段寄存器 DS、ES、SS</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># Zero data segment registers DS, ES, and SS.</span><br><span class="line"></span><br><span class="line">xorw    %ax,%ax             # Set %ax to zero</span><br><span class="line">movw    %ax,%ds             # -&gt; Data Segment</span><br><span class="line">movw    %ax,%es             # -&gt; Extra Segment</span><br><span class="line">movw    %ax,%ss             # -&gt; Stack Segment</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>确认 0x64和0x60 输出端口的高位为2，使第21位地址正常工作</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">seta20.1:</span><br><span class="line">  inb     $0x64,%al               # in byte 从端口 0x64 读 1 bype到 %al  0x60端口是数据端口,可以读出键盘数据,0x64是控制端口,用来发出控制信号</span><br><span class="line">  testb   $0x2,%al                # 逻辑与运算结果为零,就把ZF(零标志)置1;</span><br><span class="line">  jnz     seta20.1                   # jump if not zero (结果不为0则设置ZF为1,跳转)</span><br><span class="line"></span><br><span class="line">  movb    $0xd1,%al               # </span><br><span class="line">  outb    %al,$0x64                 # 写1 Byte 到 0x64端口</span><br><span class="line">  </span><br><span class="line">seta20.2:</span><br><span class="line">  inb     $0x64,%al               # Wait for not busy</span><br><span class="line">  testb   $0x2,%al</span><br><span class="line">  jnz     seta20.2</span><br><span class="line"></span><br><span class="line">  movb    $0xdf,%al               # 0xdf -&gt; port 0x60</span><br><span class="line">  outb    %al,$0x60</span><br></pre></td></tr></table></figure>
+<p>引导加载器执行 lgdt指令来把指向 gdt 的指针 gdtdesc加载到全局描述符表（GDT）寄存器中。将 %cr0 中的 CR0_PE 位置为1，从而开启保护模式</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">lgdt    gdtdesc</span><br><span class="line">movl    %cr0, %eax</span><br><span class="line">orl     $CR0_PE, %eax</span><br><span class="line">movl    %eax, %cr0</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">(gdb) x/24x $esp</span><br><span class="line">0x7bcc:	0x00007db3	0x00100000	0x00009516	0x00001000</span><br><span class="line">0x7bdc:	0x00000000	0x00000000	0x00000000	0x00000000</span><br><span class="line">0x7bec:	0x00000000	0x00000000	0x00000000	0x00000000</span><br><span class="line">0x7bfc:	0x00007c4d	0x8ec031fa	0x8ec08ed8	0xa864e4d0</span><br><span class="line">0x7c0c:	0xb0fa7502	0xe464e6d1	0x7502a864	0xe6dfb0fa</span><br><span class="line">0x7c1c:	0x16010f60	0x200f7c78	0xc88366c0	0xc0220f01</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure>
+<h3 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h3><ol>
+<li><a href="https://stackoverflow.com/questions/21078932/why-test-port-0x64-in-a-bootloader-before-switching-into-protected-mode?utm_medium=organic&amp;utm_source=google_rich_qa&amp;utm_campaign=google_rich_qa" target="_blank" rel="noopener">Why test port 0x64 in a bootloader before switching into protected mode?</a></li>
+<li><a href="https://stackoverflow.com/questions/28242830/syntax-of-x86-assembly-code" target="_blank" rel="noopener">Syntax of x86 assembly code</a></li>
+<li><a href="http://gaylord.iteye.com/blog/2248392" target="_blank" rel="noopener">bootasm.s解析</a></li>
+<li><a href="https://blog.theerrorlog.com/the-funny-design-of-a20.html" target="_blank" rel="noopener">PC的“有趣”设计：A20</a></li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/04/21/nginx-multiprocess/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fancivez">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="不眠之夜">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/21/nginx-multiprocess/" itemprop="url">nginx源码_多进程启动</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-21T10:48:55+08:00">2018-04-21</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="多进程启动"><a href="#多进程启动" class="headerlink" title="多进程启动"></a>多进程启动</h1><h2 id="ngx-master-process-cycle"><a href="#ngx-master-process-cycle" class="headerlink" title="ngx_master_process_cycle"></a><code>ngx_master_process_cycle</code></h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ngx_master_process_cycle(<span class="keyword">ngx_cycle_t</span> *cycle)</span><br></pre></td></tr></table></figure>
+<p>信号初始化</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sigemptyset(&amp;<span class="built_in">set</span>);</span><br><span class="line">sigaddset(&amp;<span class="built_in">set</span>, SIGCHLD);</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><h3 id="sigaddset"><a href="#sigaddset" class="headerlink" title="sigaddset"></a><code>sigaddset</code></h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sigaddset</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
   </section>
 
   
@@ -1714,7 +1715,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-count">24</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -1737,15 +1738,7 @@
                     
                       
                     
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-count">5</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -1778,13 +1771,7 @@
                     
                       
                     
-                      
-                    
-                      
-                    
-                      
-                    
-                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-count">10</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>

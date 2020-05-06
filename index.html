@@ -255,7 +255,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2019/08/13/分布式系统的配置中心方案/">
+    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2020/05/06/go-interface/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="fancivez">
@@ -274,7 +274,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/08/13/分布式系统的配置中心方案/" itemprop="url">分布式系统的一致性协议 raft / zab</a></h1>
+                <a class="post-title-link" href="/2020/05/06/go-interface/" itemprop="url">go-interface</a></h1>
         
 
         <div class="post-meta">
@@ -286,7 +286,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-13T00:16:51+08:00">2019-08-13</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-06T19:19:56+08:00">2020-05-06</time>
             
 
             
@@ -295,31 +295,6 @@
             
           </span>
 
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/服务治理/" itemprop="url" rel="index"><span itemprop="name">服务治理</span></a></span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/服务治理/一致性协议/" itemprop="url" rel="index"><span itemprop="name">一致性协议</span></a></span>
-
-                
-                
-              
-            </span>
           
 
           
@@ -350,546 +325,52 @@
       
         
           
-            <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>如果需要构建大型的分布式系统，那么服务发现和配置管理是首先要考虑的问题，最近的几个面试中也经常被问到相关的问题，因此在这里总结一下，适用于分布式系统的配置管理/服务发现，或者其他 k/v 存储。</p>
-<p>本文以raft和zab协议为例做比较。</p>
-<h2 id="关联"><a href="#关联" class="headerlink" title="关联"></a>关联</h2><p>raft 和 zookeeper 的 ZAB 都是 leader-based 一致性协议，通过选举一个proposer作为leader降低多个proposer引起的冲突问题，大致都可以分为两个阶段</p>
-<p>1）leader在时，由leader向follow同步日志</p>
-<p>2）leader不在时，用选举算法选出一个新leader</p>
-<h2 id="leader在时"><a href="#leader在时" class="headerlink" title="leader在时"></a>leader在时</h2><h3 id="日志复制过程"><a href="#日志复制过程" class="headerlink" title="日志复制过程"></a>日志复制过程</h3><p>raft 和 zab的处理流程基本一致</p>
-<ol>
-<li>client 连接leader(连接的是follower，则会转给leader)，这一点 raft 和 zab一致</li>
-<li>leader将请求转换成 entry(raft) 或者 proposal(ZAB)，并写入自己的日志中，得到日志index并发给follower</li>
-<li>follower接收到 entry 或者 proposal ， 会写入文件并回复OK</li>
-<li>leader如果接收到过半 OK，那么会更新leader的状态机，并回复客户端，此时<ol>
-<li>ZAB会立刻向follower发送提交请求</li>
-<li>raft会更新leader的 commit index</li>
-</ol>
-</li>
-<li>对于follower来说<ol>
-<li>ZAB接收到leader的提交请求会更新状态机</li>
-<li>raft会在下次心跳获取到leader 的 commit index 并更新自己的状态机</li>
-</ol>
-</li>
-</ol>
-<h3 id="异常case"><a href="#异常case" class="headerlink" title="异常case"></a>异常case</h3><p>一旦leader发给follower的数据出现超时等异常</p>
-<ol>
-<li>raft:会不断重试，并且接口是幂等的</li>
-<li>Zab:follower会断开与leader之间的连接，重新加入该集群</li>
-</ol>
-<h2 id="leader不在时"><a href="#leader不在时" class="headerlink" title="leader不在时"></a>leader不在时</h2><p>节点有3种状态，leader , follower，candidate/looking ,  zab多一种不参与选举的follower角色被称为Observer</p>
-<p>两种协议都有任期(朝代)的概念 term/epoch</p>
-<ol>
-<li>选主就是选出朝代离现在最近(最大)的一个</li>
-<li>如果朝代相同，那么选取拥有更长日志的为leader，所以选举广播每个候选人都会发送自己的&lt;朝代、index&gt;</li>
-<li>如果&lt;朝代、index&gt;都相同那么ZAB会选机器编号最大的(一轮内重新投票, 会有一个子状态表示是一次选举)，raft会用新朝代选举</li>
-</ol>
-<h4 id="重新选举进入时机"><a href="#重新选举进入时机" class="headerlink" title="重新选举进入时机"></a>重新选举进入时机</h4><h5 id="raft"><a href="#raft" class="headerlink" title="raft"></a>raft</h5><p>follower有一个选举时间，在该时间内如果未收到leader的心跳信息，则follower转变成candidate，自增term发起新一轮的投票，leader遇到新的term则自动转变成follower的状态</p>
-<h5 id="ZAB"><a href="#ZAB" class="headerlink" title="ZAB"></a>ZAB</h5><p>leader和follower都有各自的检测超时方式，leader是检测是否过半follower心跳回复了，follower检测leader是否发送心跳了。一旦leader检测失败，则leader进入LOOKING状态，其他follower过一段时间因收不到leader心跳也会进入LOOKING状态，从而出发新的leader选举</p>
-<h3 id="日志同步"><a href="#日志同步" class="headerlink" title="日志同步"></a>日志同步</h3><h4 id="raft-1"><a href="#raft-1" class="headerlink" title="raft"></a>raft</h4><p>Leader发生切换的时候，新Leader的日志和Follower的日志可能会存在不一致的情形。这时Follower需要对自身的日志进行截断处理，再从截断的位置重新同步日志。Leader自身的日志是Append-Only的，它永远不会抹掉自身的任何日志。<br>标准的策略是Leader当选后立即向所有节点广播AppendEntries消息，携带最后一条日志的信息。Follower收到消息后和自己的日志进行比对，如果最后一条日志和自己的不匹配就回绝Leader。<br>Leader被打击后，就会开始回退一步，携带最后两条日志，重新向拒绝自己的Follower发送AppendEntries消息。如果Follower发现消息中两条日志的第一条还是和自己的不匹配，那就继续拒绝，然后Leader被打击后继续后退重试。如果匹配的话，那么就把消息中的日志项覆盖掉本地的日志，于是同步就成功了，一致性就实现了。</p>
-<h4 id="zab"><a href="#zab" class="headerlink" title="zab"></a>zab</h4><h5 id="已经被处理的消息不能丢"><a href="#已经被处理的消息不能丢" class="headerlink" title="已经被处理的消息不能丢"></a>已经被处理的消息不能丢</h5><p>当 leader 收到合法数量 follower 的 ACKs 后，就向各个 follower 广播 COMMIT 命令，同时也会在本地执行 COMMIT 并向连接的客户端返回「成功」。但是如果在各个 follower 在收到 COMMIT 命令前 leader 就挂了，导致剩下的服务器并没有执行都这条消息</p>
-<p>由于所有提案被COMMIT 之前必须有大多数量的 Follower ACK，即大多数服务器已经将该 proposal写入日志文件。因此，新选出的Leader如果满足是大多数节点中proposal最多的，它就必然存有所有被COMMIT消息的proposal。</p>
-<p>接下来，新Leader与Follower 建立先进先出的队列， 先将自身有而Follower缺失的proposal发送给 它，再将这些 proposal的COMMIT命令发送给 Follower，这便保证了所有的Follower都保存了所有的 proposal、所有的Follower 都处理了所有的消息</p>
-<h5 id="被丢弃的消息不能再次出现"><a href="#被丢弃的消息不能再次出现" class="headerlink" title="被丢弃的消息不能再次出现"></a>被丢弃的消息不能再次出现</h5><p>当Leader 接收到消息请求生成 proposal后就挂了，其他Follower 并没有收到此proposal，因此新选出的Leader中必然不含这条消息。 此时，假如之前挂了的Leader 重新启动并注册成了Follower，它要与新的Leader保持一致，就必须要删除自己上旧的proposal</p>
-<p>Zab 通过巧妙的设计 zxid 来实现这一目的。一个 zxid 是64位，高 32 是纪元（epoch）编号，每经过一次 Leader选举产生一个新的Leader，其epoch 号 +1。低 32 位是消息计数器，每接收到一条消息这个值 +1，新Leader 选举后这个值重置为 0</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://yq.aliyun.com/articles/62901?spm=5176.100239.blogcont62555.13.XJ8eOB" target="_blank" rel="noopener">https://yq.aliyun.com/articles/62901?spm=5176.100239.blogcont62555.13.XJ8eOB</a></p>
-<p><a href="https://blog.csdn.net/zpoison/article/details/80615468" target="_blank" rel="noopener">https://blog.csdn.net/zpoison/article/details/80615468</a></p>
-<p><a href="https://zhuanlan.zhihu.com/p/27335748" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/27335748</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2019/08/05/避免大的堆内存导致的gc开销/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="fancivez">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="不眠之夜">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/05/避免大的堆内存导致的gc开销/" itemprop="url">避免大的堆内存导致的gc开销</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-05T22:36:16+08:00">2019-08-05</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/golang/" itemprop="url" rel="index"><span itemprop="name">golang</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="避免大的堆内存导致的gc开销"><a href="#避免大的堆内存导致的gc开销" class="headerlink" title="避免大的堆内存导致的gc开销"></a>避免大的堆内存导致的gc开销</h1><p>翻译自 <a href="https://blog.gopheracademy.com/advent-2018/avoid-gc-overhead-large-heaps/" target="_blank" rel="noopener">Avoiding high GC overhead with large heaps</a></p>
-<blockquote>
-<p>当分配的内存相对较小时，Go Garbage Collector（GC）运行得非常好，但是如果堆大小较大，GC最终可能会占用大量的CPU。 在极端情况下，它可能无法跟上程序的正常运行。</p>
+            <h2 id="译-Go-Interface-Values"><a href="#译-Go-Interface-Values" class="headerlink" title="# [译] Go Interface Values"></a># [译] Go Interface Values</h2><blockquote>
+<p>原文 (<a href="https://www.airs.com/blog/archives/281" target="_blank" rel="noopener">https://www.airs.com/blog/archives/281</a>)</p>
 </blockquote>
-<h2 id="是什么问题"><a href="#是什么问题" class="headerlink" title="是什么问题?"></a>是什么问题?</h2><p>GC的工作是确定可以释放哪些内存，并通过扫描内存来查找是否有内存指向这块内存。 简单地说，如果没有指向这块内存的指针，则这块内存可以释放。 这非常有效，但扫描的内存越多，所需的时间就越多。</p>
-<p>假设您已经编写了基于内存的数据库，或者您正在构建一个需要大量查找表的数据管道。 在这些情况下，您可能会分配数Gb 的内存。 在这种情况下，您可能会失去相当多的潜在性能用于GC。</p>
-<h2 id="这是个大问题吗？"><a href="#这是个大问题吗？" class="headerlink" title="这是个大问题吗？"></a>这是个大问题吗？</h2><p>这些问题常见吗？ 我们来看看吧！ 这是一个很小的演示程序。 我们分配了十亿（1e9）个8字节指针，因此大约有8 GB的内存。 然后我们强制GC并计算需要多长时间。 我们这样做了几次来获得稳定的耗时。 我们还调用runtime.KeepAlive( ) 来确保GC /编译器在此期间不会丢弃我们分配的内存。</p>
+<p>[toc]</p>
+<h2 id="原文翻译"><a href="#原文翻译" class="headerlink" title="原文翻译"></a>原文翻译</h2><p>虽然 Go 中interface 的指是灵活的，但它们也有令人困惑的方面。</p>
+<p>接口值例如—-一个interface类型的变量—-包含其他类型的值。 interface类型被称为静态类型，因为这是编译器在编译期看到的类型。 另一种类型只在运行时可见，称为动态类型(dynamic type)。 根据定义，动态类型可以是任何除了interface的其他类型。</p>
+<p>当通过赋值或函数调用复制一个 interface 值时，你是在复制动态类型里的值。 这通常是大多数类型通常的工作方式。 但是，使用 interface 的一个非常常见的情况是将动态类型作为指针使用。 在这种情况下，当你拷贝接口时，你拷贝的其实是指针，但是你不会拷贝指针指向的值。 在许多情况下，如果方法要更改值本身, 类型(type)的方法需要使用指针作为接收方(receiver)。 当 interface 必需的方法发生这种情况时，interface 实际上要求动态类型是指针类型。</p>
+<p>这意味着，技术上来说虽然 interface 总是作为一个值拷贝，但在实际使用中，它们的行为常常好像是通过引用拷贝的。 也就是说，尽管没有显式标记，接口对象通常充当指针的角色。 这可能会让你困惑，直到你明白到底发生了什么。</p>
+<p>在我上一篇文章中提到，对于 gccgo，一个 interface 总是包含一个指向值的指针。 现在我要纠正这个错误: 如果一个程序存储了包含了指针(或者<code>unsafe.Pointer</code>类型) 的 interface，那么存储在 interface 中的值就是指针本身。 也就是说，gccgo 不存储指向指针的指针(这需要分配堆空间来保存指针)。 这是一种自然的高效方法，因为实际上大多数接口对象都包含指针。</p>
+<p>这种高效的方法贯穿于方法的实现。 方法总是接受指针作为接收方(receiver)参数。 如果方法的接收方(receiver)类型实际上不是指针，那么指针将隐式解引用，并在方法代码的开头复制值。 这意味着当在接口上调用方法时，存储在接口中的值可以直接传递给方法，而不管动态类型是否是指针。 (和上一篇文章一样，gc 编译器做的事情有些不同。)</p>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>原文其实有点绕</p>
 <blockquote>
-<p>KeepAlive 将其参数标记为当前可达。这可以确保在调用 KeepAlive 的程序点之前，该对象不会被释放，并且其终结器不会运行。</p>
+<p>如果 <code>v</code> 是一个 <code>interface{}</code></p>
+<p>什么是interface?</p>
 </blockquote>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := <span class="built_in">make</span>([]*<span class="keyword">int</span>, <span class="number">1e9</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		start := time.Now()</span><br><span class="line">		runtime.GC()</span><br><span class="line">		fmt.Printf(<span class="string">"GC took %s\n"</span>, time.Since(start))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	runtime.KeepAlive(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在我的 MBP 2015 上，我得到以下输出。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GC took <span class="number">4.275752421s</span></span><br><span class="line">GC took <span class="number">1.465274593s</span></span><br><span class="line">GC took <span class="number">652.591348</span>ms</span><br><span class="line">GC took <span class="number">648.295749</span>ms</span><br><span class="line">GC took <span class="number">574.027934</span>ms</span><br><span class="line">GC took <span class="number">560.615987</span>ms</span><br><span class="line">GC took <span class="number">555.199337</span>ms</span><br><span class="line">GC took <span class="number">1.071215002s</span></span><br><span class="line">GC took <span class="number">544.226187</span>ms</span><br><span class="line">GC took <span class="number">545.682881</span>ms</span><br></pre></td></tr></table></figure>
-<p>GC会占用半秒钟的时间。为什么这会令人惊讶呢？我已经分配了10亿个指针。实际上每个指针检查的时间不到1纳秒。 查看指针的速度已经非常快了。</p>
-<h2 id="所以然后呢？"><a href="#所以然后呢？" class="headerlink" title="所以然后呢？"></a>所以然后呢？</h2><p>这似乎是一个根本问题。如果我们的应用程序需要在内存中维护一个大的查找表，或者如果我们的应用本身就是一个大的内存查找表，那么我们就遇到了一个问题。如果GC定期扫描我们分配的所有内存，我们将因为GC失去大量可用的处理能力。我们该怎么办？</p>
-<p>我们基本上有两个选择。我们要么将内存隐藏从GC中隐藏，要么使GC对它不感兴趣。</p>
-<h3 id="使GC对它不感兴趣"><a href="#使GC对它不感兴趣" class="headerlink" title="使GC对它不感兴趣"></a>使GC对它不感兴趣</h3><p>记忆怎么可能是无趣的？嗯，GC正在寻找指针。如果我们分配的对象的类型不包含指针怎么办？GC还会扫描它吗？</p>
-<p>我们可以试试。在下面的示例中，我们分配的内存大小与以前完全相同，但现在我们的分配中没有指针类型。我们分配了一个10亿个8字节int 的 slice，这也是大约8GB的内存。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">1e9</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		start := time.Now()</span><br><span class="line">		runtime.GC()</span><br><span class="line">		fmt.Printf(<span class="string">"GC took %s\n"</span>, time.Since(start))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	runtime.KeepAlive(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>再一次，我在 MBP 2015上运行了这个</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GC took <span class="number">350.941</span>µs</span><br><span class="line">GC took <span class="number">179.517</span>µs</span><br><span class="line">GC took <span class="number">169.442</span>µs</span><br><span class="line">GC took <span class="number">191.353</span>µs</span><br><span class="line">GC took <span class="number">126.585</span>µs</span><br><span class="line">GC took <span class="number">127.504</span>µs</span><br><span class="line">GC took <span class="number">111.425</span>µs</span><br><span class="line">GC took <span class="number">163.378</span>µs</span><br><span class="line">GC took <span class="number">145.257</span>µs</span><br><span class="line">GC took <span class="number">144.757</span>µs</span><br></pre></td></tr></table></figure>
-<p>对于完全相同大小的内存分配，GC的速度却要快1000倍。 事实证明，Go内存管理器知道每个被分配内存的类型，并会标记不包含指针的内存，以便GC不必扫描它们。 如果我们可以合理安排我们的内存表使之没有指针，那么我们就可以获得非常好的GC性能表现。</p>
-<h3 id="把内存从GC中隐藏起来"><a href="#把内存从GC中隐藏起来" class="headerlink" title="把内存从GC中隐藏起来"></a>把内存从GC中隐藏起来</h3><p>我们可以做的另一件事是向GC中隐藏我们分配的内存。如果我们直接向操作系统请求内存，GC永远不会发现它，因此不会扫描它。这比我们前面的例子要复杂一点！</p>
-<p>下面是我们对第一个程序的优化，我们分配了一个带有10亿（1E9）条目的[]*int。这次，我们使用mmap syscall直接从操作系统内核请求内存。注意：这个系统调用只适用Unix的操作系统上，但是在Windows上也可以做类似的事情。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"reflect"</span></span><br><span class="line">	<span class="string">"runtime"</span></span><br><span class="line">	<span class="string">"syscall"</span></span><br><span class="line">	<span class="string">"time"</span></span><br><span class="line">	<span class="string">"unsafe"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> example *<span class="keyword">int</span></span><br><span class="line">	slice := makeSlice(<span class="number">1e9</span>, unsafe.Sizeof(example))</span><br><span class="line">	a := *(*[]*<span class="keyword">int</span>)(unsafe.Pointer(&amp;slice))</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		start := time.Now()</span><br><span class="line">		runtime.GC()</span><br><span class="line">		fmt.Printf(<span class="string">"GC took %s\n"</span>, time.Since(start))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	runtime.KeepAlive(a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeSlice</span><span class="params">(<span class="built_in">len</span> <span class="keyword">int</span>, eltsize <span class="keyword">uintptr</span>)</span> <span class="title">reflect</span>.<span class="title">SliceHeader</span></span> &#123;</span><br><span class="line">	fd := <span class="number">-1</span></span><br><span class="line">	data, _, errno := syscall.Syscall6(</span><br><span class="line">		syscall.SYS_MMAP,</span><br><span class="line">		<span class="number">0</span>, <span class="comment">// address</span></span><br><span class="line">		<span class="keyword">uintptr</span>(<span class="built_in">len</span>)*eltsize,</span><br><span class="line">		syscall.PROT_READ|syscall.PROT_WRITE,</span><br><span class="line">		syscall.MAP_ANON|syscall.MAP_PRIVATE,</span><br><span class="line">		<span class="keyword">uintptr</span>(fd), <span class="comment">// No file descriptor</span></span><br><span class="line">		<span class="number">0</span>,           <span class="comment">// offset</span></span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">if</span> errno != <span class="number">0</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(errno)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> reflect.SliceHeader&#123;</span><br><span class="line">		Data: data,</span><br><span class="line">		Len:  <span class="built_in">len</span>,</span><br><span class="line">		Cap:  <span class="built_in">len</span>,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出是这样的</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GC took <span class="number">460.777</span>µs</span><br><span class="line">GC took <span class="number">206.805</span>µs</span><br><span class="line">GC took <span class="number">174.58</span>µs</span><br><span class="line">GC took <span class="number">193.697</span>µs</span><br><span class="line">GC took <span class="number">184.325</span>µs</span><br><span class="line">GC took <span class="number">142.556</span>µs</span><br><span class="line">GC took <span class="number">132.48</span>µs</span><br><span class="line">GC took <span class="number">155.853</span>µs</span><br><span class="line">GC took <span class="number">138.54</span>µs</span><br><span class="line">GC took <span class="number">159.04</span>µs</span><br></pre></td></tr></table></figure>
-<p>想要深入了解 <code>a := *(*[]*int)(unsafe.Pointer(&amp;slice))</code>可以通过  <a href="https://blog.gopheracademy.com/advent-2017/unsafe-pointer-and-system-calls/" target="_blank" rel="noopener">这个链接 </a> 查看</p>
-<p>现在，这部分内存对GC是不可见的。这有一个有趣的结果，即存储在这块内存中的指针不会阻止GC回收通过“正常方式”分配的内存。这会产生很坏的后果，很容易证明这一点。</p>
-<p>在这里，我们尝试将数字0、1和2存储在分配给堆的int中，并将指向它们的指针存储在分配给堆外mmap的slice 中。我们在”分配”和”存储”指向每个int的指针之后强制使用GC。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> example *<span class="keyword">int</span></span><br><span class="line">	slice := makeSlice(<span class="number">3</span>, unsafe.Sizeof(example))</span><br><span class="line">	a := *(*[]*<span class="keyword">int</span>)(unsafe.Pointer(&amp;slice))</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> j := <span class="keyword">range</span> a &#123;</span><br><span class="line">		a[j] = getMeAnInt(j)</span><br><span class="line"></span><br><span class="line">		fmt.Printf(<span class="string">"a[%d] is %X\n"</span>, j, a[j])</span><br><span class="line">		fmt.Printf(<span class="string">"*a[%d] is %d\n"</span>, j, *a[j])</span><br><span class="line"></span><br><span class="line">		runtime.GC()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	fmt.Println()</span><br><span class="line">	<span class="keyword">for</span> j := <span class="keyword">range</span> a &#123;</span><br><span class="line">		fmt.Printf(<span class="string">"*a[%d] is %d\n"</span>, j, *a[j])</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getMeAnInt</span><span class="params">(i <span class="keyword">int</span>)</span> *<span class="title">int</span></span> &#123;</span><br><span class="line">	b := i</span><br><span class="line">	<span class="keyword">return</span> &amp;b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>下面是我们的输出。 存储int的内存被释放，并可能在每个GC之后重复使用。 所以我们的数据并不像我们预期的那样，很幸运程序没有崩溃。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">a[0] is C000016090</span><br><span class="line">*a[0] is 0</span><br><span class="line">a[1] is C00008C030</span><br><span class="line">*a[1] is 1</span><br><span class="line">a[2] is C00008C030</span><br><span class="line">*a[2] is 2</span><br><span class="line"></span><br><span class="line">*a[0] is 0</span><br><span class="line">*a[1] is 811295018</span><br><span class="line">*a[2] is 811295018</span><br></pre></td></tr></table></figure>
-<p>如果我们以使用正常分配的[] * int，如下所示，我们得到预期的结果。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	a := <span class="built_in">make</span>([]*<span class="keyword">int</span>, <span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> j := <span class="keyword">range</span> a &#123;</span><br><span class="line">		a[j] = getMeAnInt(j)</span><br><span class="line"></span><br><span class="line">		fmt.Printf(<span class="string">"a[%d] is %X\n"</span>, j, a[j])</span><br><span class="line">		fmt.Printf(<span class="string">"*a[%d] is %d\n"</span>, j, *a[j])</span><br><span class="line"></span><br><span class="line">		runtime.GC()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	fmt.Println()</span><br><span class="line">	<span class="keyword">for</span> j := <span class="keyword">range</span> a &#123;</span><br><span class="line">		fmt.Printf(<span class="string">"*a[%d] is %d\n"</span>, j, *a[j])</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">a[0] is C00009A000</span><br><span class="line">*a[0] is 0</span><br><span class="line">a[1] is C00009A040</span><br><span class="line">*a[1] is 1</span><br><span class="line">a[2] is C00009A050</span><br><span class="line">*a[2] is 2</span><br><span class="line"></span><br><span class="line">*a[0] is 0</span><br><span class="line">*a[1] is 1</span><br><span class="line">*a[2] is 2</span><br></pre></td></tr></table></figure>
-<h3 id="问题的核心"><a href="#问题的核心" class="headerlink" title="问题的核心"></a>问题的核心</h3><p>因此，当我们在堆上分配大量内存时，以及当我们尝试通过将数据移动到我们自己的堆外分配来解决这个问题时，事实证明指针是问题所在。 如果我们可以避免我们分配内存中的任何指针，它们将不会导致GC开销，因此我们不需要使用任何堆外技巧。 如果我们使用堆外内存，那么我们需要避免存储指向堆分配的指针，除非这些指针也被GC可见的内存引用。</p>
-<h2 id="如何避免指针？"><a href="#如何避免指针？" class="headerlink" title="如何避免指针？"></a>如何避免指针？</h2><p>如果你有一个很大的堆，指针是必须避免的。但是你需要能够发现它们以避免它们，而且它们并不总是显而易见的。string、slice和 time.Time 都包含指针。如果你在内存中储存了大量的这些信息，可能需要采取一些步骤。</p>
-<p>当我遇到大堆的问题时，主要原因如下。</p>
+<p>Interface 同时是两种东西</p>
 <ol>
-<li>很多string</li>
-<li>使用time.time对象</li>
-<li>带slice 作为value 的map</li>
-<li>带 string 作为key的map</li>
+<li>一些方法的集合</li>
+<li>它自身也是一种类型</li>
 </ol>
-<p>关于处理这些问题的不同策略有很多可以说。 在这篇文章中，我将谈谈处理字符串的一个想法。</p>
-<h2 id="Strings"><a href="#Strings" class="headerlink" title="Strings"></a>Strings</h2><p><a href="https://syslog.ravelin.com/byte-vs-string-in-go-d645b67ca7ff" target="_blank" rel="noopener">什么是字符串</a>？ 它有两个部分。 有字符串 header，告诉你字符串有多长，以及底层数据在哪里。 然后是基础数据，它只是一个字节序列。</p>
-<p>将字符串变量传递给函数时，写入堆栈的是字符串header，如果类型是 []string，则它是slice 中出现的字符header。</p>
-<p>字符串 header 由<code>reflect.StringHeader</code>描述，如下所示。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> StringHeader <span class="keyword">struct</span> &#123;</span><br><span class="line">	Data <span class="keyword">uintptr</span></span><br><span class="line">	Len  <span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>字符串header 包含指针，因此我们要避免存储字符串！</p>
+<blockquote>
+<p><code>interface{}</code> type, the <strong>empty interface</strong> is the interface that has no methods.</p>
+</blockquote>
+<p>由于没有 implements 关键字，所有类型都至少实现了<strong>empty interface</strong>， 这意味着，如果你编写一个将 <code>interface{}</code>作为参数的函数，则可以为该函数传任何值作为参数。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">DoSomething</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">   <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>令人困惑的地方在于</p>
+<blockquote>
+<p>初学者倾向于相信“ v 是任何类型的” ，但这是错误的。 v 不是任何类型的; 它是 <code>interface{}</code>类型的。</p>
+</blockquote>
+<p>当向 DoSomething 函数传递一个值时，Go 运行时将执行类型转换(如果必要) ，并将该值转换为<strong><code>interface{}</code></strong>值。 所有值在运行时只有一种类型，而 <code>v</code>的静态类型是<strong><code>interface{}</code></strong>。</p>
+<h2 id="russ的说法"><a href="#russ的说法" class="headerlink" title="russ的说法"></a>russ的说法</h2><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Stringer <span class="keyword">interface</span> &#123;</span><br><span class="line">    String() <span class="keyword">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接口值表示为包含两个单词的一对(单词)，</p>
 <ol>
-<li>如果您的字符串只需要几个固定值，那么请考虑使用整数常量</li>
-<li>如果您将日期和时间存储为字符串，则可能会解析它们并将日期或时间存储为整数</li>
-<li>如果你从根本上需要保持很多字符串，那么请继续阅读……</li>
+<li>指向存储在接口中的类型信息的指针</li>
+<li>指向相关数据的指针。 </li>
 </ol>
-<p>假设我们存储了一亿个字符串。 为简单起见，我们假设这是一个巨大的全局<code>var mystrings []</code>字符串。</p>
-<p>底层的<code>mystrings</code>是一个<code>reflect.SliceHeader</code>，看起来类似于我们刚刚看到的<code>reflect.StringHeader</code>。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> SliceHeader <span class="keyword">struct</span> &#123;</span><br><span class="line">	Data <span class="keyword">uintptr</span></span><br><span class="line">	Len  <span class="keyword">int</span></span><br><span class="line">	Cap  <span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>对于<code>mystrings</code>，Len和Cap将各自为100,000,000，而Data将指向一个足够大的内存，足以容纳100,000,000个<code>StringHeaders</code>。 该内存包含指针，因此将由GC扫描。</p>
-<p>字符串本身包括两部分。 此 slice 中包含的<code>StringHeaders</code>和每个字符串单独分配且不包含指针的Data。 从GC的角度来看，有问题是字符串 header，而不是字符串数据本身。 字符串数据不包含指针，因此不会扫描。 庞大的字符串 header数组确实包含指针，因此必须在每个GC周期进行扫描。</p>
-<p><img src="https://blog.gopheracademy.com/postimages/advent-2018/large-heaps/stringslice.png" alt="A big string slice"></p>
-<p>我们能做些什么呢？ 如果所有字符串字节都在单个内存中，我们可以通过偏移量跟踪内存中每个字符串的开头和结尾。 通过跟踪偏移量，我们的byte slice 中不再有指针，GC不再受到困扰。</p>
-<p><img src="https://blog.gopheracademy.com/postimages/advent-2018/large-heaps/stringtrick.png" alt="Use offsets instead of pointers"></p>
-<p>我们通过这样做放弃的是为单个字符串释放内存的能力，并且我们增加了一些将字符串体复制到大 byte slice 的开销。</p>
-<p>下面是一个演示这个想法的小程序。我们将创建100000000个字符串，将字符串中的字节复制到一个大byte slice 中，并存储偏移量。然后我们将显示gc时间仍然很短，并演示通过显示前10个字符串来检索字符串。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"runtime"</span></span><br><span class="line">	<span class="string">"strconv"</span></span><br><span class="line">	<span class="string">"time"</span></span><br><span class="line">	<span class="string">"unsafe"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> stringBytes []<span class="keyword">byte</span></span><br><span class="line">	<span class="keyword">var</span> stringOffsets []<span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">1e8</span>; i++ &#123;</span><br><span class="line">		val := strconv.Itoa(i)</span><br><span class="line"></span><br><span class="line">		stringBytes = <span class="built_in">append</span>(stringBytes, val...)</span><br><span class="line">		stringOffsets = <span class="built_in">append</span>(stringOffsets, <span class="built_in">len</span>(stringBytes))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	runtime.GC()</span><br><span class="line">	start := time.Now()</span><br><span class="line">	runtime.GC()</span><br><span class="line">	fmt.Printf(<span class="string">"GC took %s\n"</span>, time.Since(start))</span><br><span class="line"></span><br><span class="line">	sStart := <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		sEnd := stringOffsets[i]</span><br><span class="line">		bytes := stringBytes[sStart:sEnd]</span><br><span class="line">		stringVal := *(*<span class="keyword">string</span>)(unsafe.Pointer(&amp;bytes))</span><br><span class="line">		fmt.Println(stringVal)</span><br><span class="line"></span><br><span class="line">		sStart = sEnd</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">GC took 187.082µs</span><br><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td></tr></table></figure>
-<p>这里的原则是，如果不需要释放字符串，可以转换为更大的数据块中的索引，并避免有大量指针。如果你感兴趣的话，我已经建立了一个稍微复杂一点的<a href="https://github.com/philpearl/stringbank" target="_blank" rel="noopener">东西</a>，遵循这个原则。</p>
-<p>我以前在博客中提到过遇到由大型堆引起的GC<a href="https://syslog.ravelin.com/go-and-a-not-tiny-amount-of-memory-a7a9430d4d22" target="_blank" rel="noopener">问题</a>。事实上，每次我碰到这个问题，我都会感到惊讶，我震惊的是，我又写了一篇关于它的博客。希望这篇文章可以帮助你们解决问题</p>
-<p>以下是一些处理这些问题的有用资源。</p>
-<ol>
-<li><a href="https://github.com/philpearl/stringbank" target="_blank" rel="noopener">https://github.com/philpearl/stringbank</a></li>
-<li><a href="https://github.com/philpearl/intern" target="_blank" rel="noopener">https://github.com/philpearl/intern</a></li>
-<li><a href="https://github.com/philpearl/symboltab" target="_blank" rel="noopener">https://github.com/philpearl/symboltab</a></li>
-</ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2019/06/26/dfs合集/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="fancivez">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="不眠之夜">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/06/26/dfs合集/" itemprop="url">dfs合集</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-26T11:56:01+08:00">2019-06-26</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/算法/" itemprop="url" rel="index"><span itemprop="name">算法</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="DFS"><a href="#DFS" class="headerlink" title="DFS"></a>DFS</h2><h2 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h2><p>DFS (Depth First Search)是深度优先遍历，是一种穷举算法。主要思想是在解法树中沿某条路径遍历+回溯，一般用于求”所有解”问题(全排列、全组合)。</p>
-<h2 id="算法框架"><a href="#算法框架" class="headerlink" title="算法框架"></a>算法框架</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">DFS</span><span class="params">(dep <span class="keyword">int</span>,  maxDep <span class="keyword">int</span>...)</span></span>		&#123;</span><br><span class="line">  <span class="keyword">if</span> (找到解 || dep == maxDep) &#123;</span><br><span class="line">    	<span class="keyword">return</span> </span><br><span class="line">  &#125;</span><br><span class="line">  DFS(dep+<span class="number">1</span>, maxDep...)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="排列-permutation"><a href="#排列-permutation" class="headerlink" title="排列 permutation"></a>排列 permutation</h3><p>permutation (n , d ) , n个元素中取d个</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  nums 原数组</span></span><br><span class="line"><span class="comment">  dep  深度</span></span><br><span class="line"><span class="comment">  n    一共取n个</span></span><br><span class="line"><span class="comment">  used 第i个元素是否使用</span></span><br><span class="line"><span class="comment">  curr 当前的解集合</span></span><br><span class="line"><span class="comment">  ans  总的解集合</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">perm</span><span class="params">(nums []<span class="keyword">int</span>, dep <span class="keyword">int</span>, n <span class="keyword">int</span>, used <span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">bool</span>, curr []<span class="keyword">int</span>, ans *[][]<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> dep == n &#123;</span><br><span class="line">		tmp := <span class="built_in">make</span>([]<span class="keyword">int</span>, n)</span><br><span class="line">		<span class="built_in">copy</span>(tmp, curr)</span><br><span class="line">		*ans = <span class="built_in">append</span>(*ans, tmp)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(nums); i++ &#123;</span><br><span class="line">		<span class="keyword">if</span> !used[i] &#123;</span><br><span class="line">			used[i] = <span class="literal">true</span></span><br><span class="line">			<span class="comment">// push</span></span><br><span class="line">			curr = <span class="built_in">append</span>(curr, nums[i])</span><br><span class="line">			perm(nums, dep+<span class="number">1</span>, n, used, curr, ans)</span><br><span class="line">			<span class="comment">// pop</span></span><br><span class="line">			curr = curr[:<span class="built_in">len</span>(curr)<span class="number">-1</span>]</span><br><span class="line">			used[i] = <span class="literal">false</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="组合combination"><a href="#组合combination" class="headerlink" title="组合combination"></a>组合combination</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  nums 原数组</span></span><br><span class="line"><span class="comment">  dep  深度</span></span><br><span class="line"><span class="comment">  n    一共取n个</span></span><br><span class="line"><span class="comment">  start 未被使用的起始点</span></span><br><span class="line"><span class="comment">  curr 当前的解集合</span></span><br><span class="line"><span class="comment">  ans  总的解集合</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">comb</span><span class="params">(nums []<span class="keyword">int</span>, dep <span class="keyword">int</span>, n <span class="keyword">int</span>, start <span class="keyword">int</span>, curr []<span class="keyword">int</span>, ans *[][]<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> dep == n &#123;</span><br><span class="line">		tmp := <span class="built_in">make</span>([]<span class="keyword">int</span>, n)</span><br><span class="line">		<span class="built_in">copy</span>(tmp, curr)</span><br><span class="line">		*ans = <span class="built_in">append</span>(*ans, tmp)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i := start; i &lt; <span class="built_in">len</span>(nums); i++ &#123;</span><br><span class="line">		curr = <span class="built_in">append</span>(curr, nums[i])</span><br><span class="line">		comb(nums, dep+<span class="number">1</span>, n, i+<span class="number">1</span>, curr, ans)</span><br><span class="line">		curr = curr[:<span class="built_in">len</span>(curr)<span class="number">-1</span>]</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2019/06/25/golang的net-http包/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="fancivez">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="不眠之夜">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/06/25/golang的net-http包/" itemprop="url">golang的net/http包</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-25T13:04:23+08:00">2019-06-25</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/golang/" itemprop="url" rel="index"><span itemprop="name">golang</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="总览"><a href="#总览" class="headerlink" title="总览"></a>总览</h1><p><img src="https://fancivez-oss-blog.oss-cn-shanghai.aliyuncs.com/img/go-callvis_export.svg" alt="go/http"></p>
+<p>将 <code>b</code> 分配给 Stringer 类型的接口值会同时设置接口值的两个单词。</p>
+<p><img src="https://i.stack.imgur.com/H78Bz.png" alt="enter image description here"></p>
+<p>接口值中的第一个单词指向我所称的<code>**interface table**</code>或者 <strong>itable</strong></p>
+<p>Itable 以一些关于所涉及的类型的元数据开始，然后加上一个函数指针列表。 注意，itable 对应于  <strong>interface type</strong>，而不是动态类型。在我们的示例中, </p>
+<p> <code>Stringer</code> 持有类型Binary的itable 列出了用于满足Stringer的方法，而后者只是“ String”：Binary的其他方法（“ Get”）未在“ itable” 中出现。</p>
+<p> the itable for <code>Stringer</code> holding type Binary lists the methods used to satisfy Stringer, which is just <code>String</code>: Binary’s other methods (<code>Get</code>) make no appearance in the <code>itable</code>.</p>
+<p>接口值中的第二个单词指向实际数据，在这种情况下为b的副本。<br>赋值<code>var s Stringer = b</code> 产生b的副本，而不是指向b的指针，原因与<code>var c uint64 = b</code>产生副本的原因相同：如果b以后发生变化，则s和c应该具有原始值，而不是新值。<br>存储在接口中的值可能任意大，但是只有一个字专用于在接口结构中保存该值，因此该分配在堆上分配了一块内存，并将指针记录在一个字槽中。</p>
+<p><strong>The second word in the interface value points at the actual data</strong>, in this case a copy of <code>b</code>.<br>The assignment <code>var s Stringer = b</code> makes a copy of <code>b</code> rather than point at <code>b</code> for the same reason that <code>var c uint64 = b</code> makes a copy: if <code>b</code> later changes, <code>s</code> and <code>c</code> are supposed to have the original value, not the new one.<br>Values stored in interfaces might be arbitrarily large, but only one word is dedicated to holding the value in the interface structure, so the assignment allocates a chunk of memory on the heap and records the pointer in the one-word slot.</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://stackoverflow.com/questions/13511203/why-cant-i-assign-a-struct-to-an-interface" target="_blank" rel="noopener">https://stackoverflow.com/questions/13511203/why-cant-i-assign-a-struct-to-an-interface</a></p>
+<p><a href="https://stackoverflow.com/questions/23148812/whats-the-meaning-of-interface/23148998#23148998" target="_blank" rel="noopener">https://stackoverflow.com/questions/23148812/whats-the-meaning-of-interface/23148998#23148998</a></p>
 
           
         
@@ -1842,6 +1323,438 @@
 
 
     
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/08/04/redis-string/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fancivez">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="不眠之夜">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/04/redis-string/" itemprop="url">redis_string</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-04T00:05:45+08:00">2018-08-04</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>redis 版本: v1.3.12</p>
+</blockquote>
+<h1 id="redis-string-sds"><a href="#redis-string-sds" class="headerlink" title="redis_string(sds)"></a>redis_string(sds)</h1><p>结构声明</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sdshdr</span> &#123;</span></span><br><span class="line">    <span class="keyword">long</span> len;</span><br><span class="line">    <span class="keyword">long</span> <span class="built_in">free</span>;</span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>struct sdshdr是redis的字符串容器，比较与常规字符串，有几个特点</p>
+<ul>
+<li>支持O(1) 时间内获取字符串长度 sdslen</li>
+<li>不会因为长度溢出导致缓冲区溢出(buffer overflow)  strcat &lt;–&gt;sdscat</li>
+<li>支持空间预分配与惰性释放</li>
+<li>二进制安全</li>
+</ul>
+<h2 id="为什么这么设计"><a href="#为什么这么设计" class="headerlink" title="为什么这么设计"></a>为什么这么设计</h2><p>redis作为一个频繁更新的kv存储，每次更新都需要重新判断字符串长度防止 buffer overflow , 因此需要支持以下特性</p>
+<ul>
+<li>支持O(1) 时间内获取字符串长度</li>
+<li>支持空间预分配</li>
+<li>惰性释放</li>
+</ul>
+<p>用户不会只在 redis中存储字符串，可能有其他数据类型，因此可能会有 EOF,  所以存储类型必须是二进制安全的，否则造成截断。</p>
+<h2 id="横向比较"><a href="#横向比较" class="headerlink" title="横向比较"></a>横向比较</h2><p>nginx中的字符串容器设计</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="keyword">size_t</span>      len;</span><br><span class="line">    u_char     *data;</span><br><span class="line">&#125; <span class="keyword">ngx_str_t</span>;</span><br></pre></td></tr></table></figure>
+<p>比较与reids, nginx 中的字符串容器没有free 属性，因此获取字符串长度时间复杂度也为O(1),  但是获取字符串容器总长度的事件复杂度为 O(n)</p>
+<h2 id="ref"><a href="#ref" class="headerlink" title="ref"></a>ref</h2><p><a href="http://redisbook.com/index.html" target="_blank" rel="noopener">redisbook</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/08/03/程序员的价值/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fancivez">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="不眠之夜">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/08/03/程序员的价值/" itemprop="url">程序员的价值</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-03T22:30:06+08:00">2018-08-03</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术人生/" itemprop="url" rel="index"><span itemprop="name">技术人生</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="为什么思考这个问题"><a href="#为什么思考这个问题" class="headerlink" title="为什么思考这个问题"></a>为什么思考这个问题</h2><p>为什么有这个问题呢？</p>
+<ol>
+<li>作为程序员因何而具有价值？</li>
+<li>程序员在这个阶段(3~5年)如何具备更大的价值？</li>
+<li>我的前景是什么？</li>
+</ol>
+<h2 id="如何思考这个问题"><a href="#如何思考这个问题" class="headerlink" title="如何思考这个问题"></a>如何思考这个问题</h2><ol>
+<li>其他职业的价值？</li>
+<li>供需关系？</li>
+<li>常见的优秀工程师和上升渠道？</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2018/06/26/swoole-reactor/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fancivez">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="不眠之夜">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/06/26/swoole-reactor/" itemprop="url">swoole_reactor</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-26T14:04:43+08:00">2018-06-26</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/中间件/" itemprop="url" rel="index"><span itemprop="name">中间件</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="reactor"><a href="#reactor" class="headerlink" title="reactor"></a>reactor</h1><p>reactor的线程结构</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">swReactor</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="comment">// reactor的事件循环, 根据参数和内核选择事件模型比如swReactorEpoll</span></span><br><span class="line">    <span class="keyword">void</span> *object;m</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// swServer </span></span><br><span class="line">    <span class="keyword">void</span> *ptr;  <span class="comment">//reserve</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * last signal number</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">int</span> singal_no;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// epoll上挂的事件数量</span></span><br><span class="line">    <span class="keyword">uint32_t</span> event_num;</span><br><span class="line">    <span class="comment">// 对应epoll_wait 中的maxevents</span></span><br><span class="line">    <span class="keyword">uint32_t</span> max_event_num;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ??</span></span><br><span class="line">    <span class="keyword">uint32_t</span> check_timer :<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// swReactor_create() 中置1 reactor是否create</span></span><br><span class="line">    <span class="keyword">uint32_t</span> running :<span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// swReactorEpoll_wait() 中置1 reactor开始工作</span></span><br><span class="line">    <span class="keyword">uint32_t</span> start :<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * disable accept new connection</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">uint32_t</span> disable_accept :<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">uint32_t</span> check_signalfd :<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * multi-thread reactor, cannot realloc sockets.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">uint32_t</span> thread :<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * reactor-&gt;wait timeout (millisecond) or -1</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">int32_t</span> timeout_msec;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">uint16_t</span> id; <span class="comment">//Reactor ID</span></span><br><span class="line">	<span class="keyword">uint16_t</span> flag; <span class="comment">//flag</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">uint32_t</span> max_socket;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> SW_USE_MALLOC_TRIM</span></span><br><span class="line">    <span class="keyword">time_t</span> last_malloc_trim_time;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> SW_USE_TIMEWHEEL</span></span><br><span class="line">    swTimeWheel *timewheel;</span><br><span class="line">    <span class="keyword">uint16_t</span> heartbeat_interval;</span><br><span class="line">    <span class="keyword">time_t</span> last_heartbeat_time;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * for thread</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    swConnection *socket_list;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * for process</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    swArray *socket_array;</span><br><span class="line"></span><br><span class="line">    swReactor_handle handle[SW_MAX_FDTYPE];        <span class="comment">//默认事件</span></span><br><span class="line">    swReactor_handle write_handle[SW_MAX_FDTYPE];  <span class="comment">//扩展事件1(一般为写事件)</span></span><br><span class="line">    swReactor_handle error_handle[SW_MAX_FDTYPE];  <span class="comment">//扩展事件2(一般为错误事件,如socket关闭)</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> (*add)(swReactor *, <span class="keyword">int</span> fd, <span class="keyword">int</span> fdtype);</span><br><span class="line">    <span class="keyword">int</span> (*<span class="built_in">set</span>)(swReactor *, <span class="keyword">int</span> fd, <span class="keyword">int</span> fdtype);</span><br><span class="line">    <span class="keyword">int</span> (*del)(swReactor *, <span class="keyword">int</span> fd);</span><br><span class="line">    <span class="keyword">int</span> (*wait)(swReactor *, struct timeval *);</span><br><span class="line">    <span class="keyword">void</span> (*<span class="built_in">free</span>)(swReactor *);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> (*setHandle)(swReactor *, <span class="keyword">int</span> fdtype, swReactor_handle);</span><br><span class="line">    swDefer_callback *defer_callback_list;</span><br><span class="line">    swDefer_callback idle_task;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span> (*onTimeout)(swReactor *);</span><br><span class="line">    <span class="keyword">void</span> (*onFinish)(swReactor *);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span> (*enable_accept)(swReactor *);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> (*write)(swReactor *, <span class="keyword">int</span>, <span class="keyword">void</span> *, <span class="keyword">int</span>);</span><br><span class="line">    <span class="keyword">int</span> (*close)(swReactor *, <span class="keyword">int</span>);</span><br><span class="line">    <span class="keyword">int</span> (*defer)(swReactor *, swCallback, <span class="keyword">void</span> *);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
   </section>
 
   
@@ -1889,7 +1802,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-count">24</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -1912,15 +1825,7 @@
                     
                       
                     
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-count">5</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -1953,13 +1858,7 @@
                     
                       
                     
-                      
-                    
-                      
-                    
-                      
-                    
-                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-count">10</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
