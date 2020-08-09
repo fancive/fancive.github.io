@@ -632,10 +632,10 @@
       
         
           
-            <h2 id="译-Go-Interface-Values"><a href="#译-Go-Interface-Values" class="headerlink" title="# [译] Go Interface Values"></a># [译] Go Interface Values</h2><blockquote>
+            <h2 id="译-Go-Interface-Values"><a href="#译-Go-Interface-Values" class="headerlink" title="[译] Go Interface Values"></a>[译] Go Interface Values</h2><p>[toc]</p>
+<blockquote>
 <p>原文 (<a href="https://www.airs.com/blog/archives/281" target="_blank" rel="noopener">https://www.airs.com/blog/archives/281</a>)</p>
 </blockquote>
-<p>[toc]</p>
 <h2 id="原文翻译"><a href="#原文翻译" class="headerlink" title="原文翻译"></a>原文翻译</h2><p>虽然 Go 中interface 的指是灵活的，但它们也有令人困惑的方面。</p>
 <p>接口值例如—-一个interface类型的变量—-包含其他类型的值。 interface类型被称为静态类型，因为这是编译器在编译期看到的类型。 另一种类型只在运行时可见，称为动态类型(dynamic type)。 根据定义，动态类型可以是任何除了interface的其他类型。</p>
 <p>当通过赋值或函数调用复制一个 interface 值时，你是在复制动态类型里的值。 这通常是大多数类型通常的工作方式。 但是，使用 interface 的一个非常常见的情况是将动态类型作为指针使用。 在这种情况下，当你拷贝接口时，你拷贝的其实是指针，但是你不会拷贝指针指向的值。 在许多情况下，如果方法要更改值本身, 类型(type)的方法需要使用指针作为接收方(receiver)。 当 interface 必需的方法发生这种情况时，interface 实际上要求动态类型是指针类型。</p>
@@ -1144,7 +1144,6 @@
 <li>获取更多自由(autonomy)</li>
 </ol>
 <p>两者相辅相成，编程是实现这两个目标的工具之一，因此应关注高价值的工作(解决高价值的问题)，而在一个更长的尺度来看，编程并不一定是职业生涯中最重要的组成内容</p>
-<p>### </p>
 
           
         
