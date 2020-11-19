@@ -106,14 +106,14 @@
 <meta name="description" content="nginx源码_work负载均衡–accept_mutex nginx -v 1.9  0x01 引言accept_mutex是nginx各worker接收请求的负载均衡策略的实现的核心   ngx_accept_disabledngx_accept_disabled = 进程当前连接数/8 - 空闲连接数 ， 可见当前进程的连接数越多，ngx_accept_disabled越大 1ngx_acc">
 <meta name="keywords" content="tech,nginx">
 <meta property="og:type" content="article">
-<meta property="og:title" content="nginx源码_work负载均衡--accept_mutex">
+<meta property="og:title" content="nginx源码解析-accept_mutex">
 <meta property="og:url" content="http://fancive.github.io/2018/03/22/nginx-accept-mutex/index.html">
 <meta property="og:site_name" content="不眠之夜">
 <meta property="og:description" content="nginx源码_work负载均衡–accept_mutex nginx -v 1.9  0x01 引言accept_mutex是nginx各worker接收请求的负载均衡策略的实现的核心   ngx_accept_disabledngx_accept_disabled = 进程当前连接数/8 - 空闲连接数 ， 可见当前进程的连接数越多，ngx_accept_disabled越大 1ngx_acc">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-04-27T13:04:55.000Z">
+<meta property="og:updated_time" content="2020-11-19T14:50:45.576Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="nginx源码_work负载均衡--accept_mutex">
+<meta name="twitter:title" content="nginx源码解析-accept_mutex">
 <meta name="twitter:description" content="nginx源码_work负载均衡–accept_mutex nginx -v 1.9  0x01 引言accept_mutex是nginx各worker接收请求的负载均衡策略的实现的核心   ngx_accept_disabledngx_accept_disabled = 进程当前连接数/8 - 空闲连接数 ， 可见当前进程的连接数越多，ngx_accept_disabled越大 1ngx_acc">
 
 
@@ -124,7 +124,7 @@
   <link rel="canonical" href="http://fancive.github.io/2018/03/22/nginx-accept-mutex/"/>
 
 
-  <title>nginx源码_work负载均衡--accept_mutex | 不眠之夜</title>
+  <title>nginx源码解析-accept_mutex | 不眠之夜</title>
   
 
 
@@ -276,7 +276,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">nginx源码_work负载均衡--accept_mutex</h1>
+          <h1 class="post-title" itemprop="name headline">nginx源码解析-accept_mutex</h1>
         
 
         <div class="post-meta">
@@ -382,8 +382,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/01/31/cpu运行模式/" rel="next" title="cpu运行模式">
-                <i class="fa fa-chevron-left"></i> cpu运行模式
+              <a href="/2018/01/28/cache使用/" rel="next" title="cache使用">
+                <i class="fa fa-chevron-left"></i> cache使用
               </a>
             
           </div>
@@ -392,8 +392,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/04/21/nginx-multiprocess/" rel="prev" title="nginx源码_多进程启动">
-                nginx源码_多进程启动 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/04/21/nginx-multiprocess/" rel="prev" title="nginx源码解析-多进程启动">
+                nginx源码解析-多进程启动 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -468,7 +468,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">26</span>
+                    <span class="site-state-item-count">24</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>

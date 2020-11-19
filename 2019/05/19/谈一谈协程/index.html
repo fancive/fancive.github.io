@@ -111,7 +111,7 @@
 <meta property="og:site_name" content="不眠之夜">
 <meta property="og:description" content="what-什么是协程其他的相关概念进程进程产生的背景是cpu和RAM等设备的速度不匹配，因此产生了分时系统，借助时分复用技术在一个处理器上表现出并行的感觉。 进程 进程是资源调度的最小单位，是线程的容器。 线程线程 wiki 一条线程指的是进程中一个单一顺序的控制流。 同一进程中的多条线程将共享该进程中的全部系统资源，如虚拟地址空间，文件描述符和信号处理等等。但同一进程中的多个线程有各自的调用栈（">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-06-25T06:10:41.000Z">
+<meta property="og:updated_time" content="2020-11-19T14:51:50.819Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="谈一谈协程">
 <meta name="twitter:description" content="what-什么是协程其他的相关概念进程进程产生的背景是cpu和RAM等设备的速度不匹配，因此产生了分时系统，借助时分复用技术在一个处理器上表现出并行的感觉。 进程 进程是资源调度的最小单位，是线程的容器。 线程线程 wiki 一条线程指的是进程中一个单一顺序的控制流。 同一进程中的多条线程将共享该进程中的全部系统资源，如虚拟地址空间，文件描述符和信号处理等等。但同一进程中的多个线程有各自的调用栈（">
@@ -352,7 +352,10 @@
 <h4 id="协程"><a href="#协程" class="headerlink" title="协程"></a>协程</h4><h2 id="why-为什么需要协程"><a href="#why-为什么需要协程" class="headerlink" title="why-为什么需要协程"></a>why-为什么需要协程</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>起初人们喜欢同步编程，然后发现有一堆线程因为I/O卡在那里,并发上不去，资源严重浪费。</p>
 <p>然后出了异步（select,epoll,kqueue,etc）,将I/O操作交给内核线程,自己注册一个回调函数处理最终结果，但是项目大了容易陷入回调地狱</p>
 <p>于是发明了协程，写同步的代码，享受着异步带来的性能优势。</p>
-<h2 id="how-协程如何实现"><a href="#how-协程如何实现" class="headerlink" title="how-协程如何实现"></a>how-协程如何实现</h2><h3 id="背景-1"><a href="#背景-1" class="headerlink" title="背景"></a>背景</h3><h3 id="不同实现"><a href="#不同实现" class="headerlink" title="不同实现"></a>不同实现</h3><h4 id="golang"><a href="#golang" class="headerlink" title="golang"></a>golang</h4><h4 id="swoole"><a href="#swoole" class="headerlink" title="swoole"></a>swoole</h4><h4 id="libaco"><a href="#libaco" class="headerlink" title="libaco"></a>libaco</h4><p><a href="https://github.com/hnes/libaco/blob/master/README_zh.md#tutorials" target="_blank" rel="noopener">libaco</a></p>
+<h2 id="how-协程如何实现"><a href="#how-协程如何实现" class="headerlink" title="how-协程如何实现"></a>how-协程如何实现</h2><blockquote>
+<p> todo</p>
+</blockquote>
+<h3 id="背景-1"><a href="#背景-1" class="headerlink" title="背景"></a>背景</h3><h3 id="不同实现"><a href="#不同实现" class="headerlink" title="不同实现"></a>不同实现</h3><h4 id="golang"><a href="#golang" class="headerlink" title="golang"></a>golang</h4><h4 id="swoole"><a href="#swoole" class="headerlink" title="swoole"></a>swoole</h4><h4 id="libaco"><a href="#libaco" class="headerlink" title="libaco"></a>libaco</h4><p><a href="https://github.com/hnes/libaco/blob/master/README_zh.md#tutorials" target="_blank" rel="noopener">libaco</a></p>
 
       
     </div>
@@ -393,7 +396,7 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/05/06/go-interface/" rel="prev" title="go-interface">
+              <a href="/2020/05/06/[译] Go Interface Values/" rel="prev" title="go-interface">
                 go-interface <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -469,7 +472,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">26</span>
+                    <span class="site-state-item-count">24</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>

@@ -100,20 +100,20 @@
 
 
   
-  <meta name="keywords" content="tech,redis," />
+  <meta name="keywords" content="redis,tech," />
 
 
 <meta name="description" content="redis 版本: v1.3.12  redis_string(sds)结构声明 12345struct sdshdr &amp;#123;    long len;    long free;    char buf[];&amp;#125;; struct sdshdr是redis的字符串容器，比较与常规字符串，有几个特点  支持O(1) 时间内获取字符串长度 sdslen 不会因为长度溢出导致缓冲区溢出(">
-<meta name="keywords" content="tech,redis">
+<meta name="keywords" content="redis,tech">
 <meta property="og:type" content="article">
-<meta property="og:title" content="redis_string">
+<meta property="og:title" content="redis源码解析-string">
 <meta property="og:url" content="http://fancive.github.io/2018/08/04/redis-string/index.html">
 <meta property="og:site_name" content="不眠之夜">
 <meta property="og:description" content="redis 版本: v1.3.12  redis_string(sds)结构声明 12345struct sdshdr &amp;#123;    long len;    long free;    char buf[];&amp;#125;; struct sdshdr是redis的字符串容器，比较与常规字符串，有几个特点  支持O(1) 时间内获取字符串长度 sdslen 不会因为长度溢出导致缓冲区溢出(">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-01-05T13:25:02.000Z">
+<meta property="og:updated_time" content="2020-11-19T14:49:02.802Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="redis_string">
+<meta name="twitter:title" content="redis源码解析-string">
 <meta name="twitter:description" content="redis 版本: v1.3.12  redis_string(sds)结构声明 12345struct sdshdr &amp;#123;    long len;    long free;    char buf[];&amp;#125;; struct sdshdr是redis的字符串容器，比较与常规字符串，有几个特点  支持O(1) 时间内获取字符串长度 sdslen 不会因为长度溢出导致缓冲区溢出(">
 
 
@@ -124,7 +124,7 @@
   <link rel="canonical" href="http://fancive.github.io/2018/08/04/redis-string/"/>
 
 
-  <title>redis_string | 不眠之夜</title>
+  <title>redis源码解析-string | 不眠之夜</title>
   
 
 
@@ -276,7 +276,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">redis_string</h1>
+          <h1 class="post-title" itemprop="name headline">redis源码解析-string</h1>
         
 
         <div class="post-meta">
@@ -365,9 +365,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/tech/" rel="tag"># tech</a>
-          
             <a href="/tags/redis/" rel="tag"># redis</a>
+          
+            <a href="/tags/tech/" rel="tag"># tech</a>
           
         </div>
       
@@ -380,8 +380,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/08/03/程序员的价值/" rel="next" title="程序员的价值">
-                <i class="fa fa-chevron-left"></i> 程序员的价值
+              <a href="/2018/06/26/swoole-reactor/" rel="next" title="swoole源码解析-reactor结构体">
+                <i class="fa fa-chevron-left"></i> swoole源码解析-reactor结构体
               </a>
             
           </div>
@@ -390,8 +390,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/08/04/redis-list/" rel="prev" title="redis_list">
-                redis_list <i class="fa fa-chevron-right"></i>
+              <a href="/2018/08/04/redis-list/" rel="prev" title="redis源码解析-list">
+                redis源码解析-list <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -466,7 +466,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">26</span>
+                    <span class="site-state-item-count">24</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>

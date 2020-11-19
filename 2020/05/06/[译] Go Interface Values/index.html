@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.2" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.2" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.2',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="golang," />
+
+
+<meta name="description" content="[译] Go Interface Values[toc]  原文 (https://www.airs.com/blog/archives/281)  原文翻译虽然 Go 中interface 的指是灵活的，但它们也有令人困惑的方面。 接口值例如—-一个interface类型的变量—-包含其他类型的值。 interface类型被称为静态类型，因为这是编译器在编译期看到的类型。 另一种类型只在运行时可">
+<meta name="keywords" content="golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go-interface">
+<meta property="og:url" content="http://fancive.github.io/2020/05/06/[译] Go Interface Values/index.html">
+<meta property="og:site_name" content="不眠之夜">
+<meta property="og:description" content="[译] Go Interface Values[toc]  原文 (https://www.airs.com/blog/archives/281)  原文翻译虽然 Go 中interface 的指是灵活的，但它们也有令人困惑的方面。 接口值例如—-一个interface类型的变量—-包含其他类型的值。 interface类型被称为静态类型，因为这是编译器在编译期看到的类型。 另一种类型只在运行时可">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.stack.imgur.com/H78Bz.png">
+<meta property="og:updated_time" content="2020-08-09T07:20:31.975Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="go-interface">
+<meta name="twitter:description" content="[译] Go Interface Values[toc]  原文 (https://www.airs.com/blog/archives/281)  原文翻译虽然 Go 中interface 的指是灵活的，但它们也有令人困惑的方面。 接口值例如—-一个interface类型的变量—-包含其他类型的值。 interface类型被称为静态类型，因为这是编译器在编译期看到的类型。 另一种类型只在运行时可">
+<meta name="twitter:image" content="https://i.stack.imgur.com/H78Bz.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://fancive.github.io/2020/05/06/[译] Go Interface Values/"/>
+
+
+  <title>go-interface | 不眠之夜</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">不眠之夜</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://fancive.github.io/2020/05/06/[译] Go Interface Values/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fancivez">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="不眠之夜">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">go-interface</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-06T19:19:56+08:00">2020-05-06</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="译-Go-Interface-Values"><a href="#译-Go-Interface-Values" class="headerlink" title="[译] Go Interface Values"></a>[译] Go Interface Values</h2><p>[toc]</p>
+<blockquote>
+<p>原文 (<a href="https://www.airs.com/blog/archives/281" target="_blank" rel="noopener">https://www.airs.com/blog/archives/281</a>)</p>
+</blockquote>
+<h2 id="原文翻译"><a href="#原文翻译" class="headerlink" title="原文翻译"></a>原文翻译</h2><p>虽然 Go 中interface 的指是灵活的，但它们也有令人困惑的方面。</p>
+<p>接口值例如—-一个interface类型的变量—-包含其他类型的值。 interface类型被称为静态类型，因为这是编译器在编译期看到的类型。 另一种类型只在运行时可见，称为动态类型(dynamic type)。 根据定义，动态类型可以是任何除了interface的其他类型。</p>
+<p>当通过赋值或函数调用复制一个 interface 值时，你是在复制动态类型里的值。 这通常是大多数类型通常的工作方式。 但是，使用 interface 的一个非常常见的情况是将动态类型作为指针使用。 在这种情况下，当你拷贝接口时，你拷贝的其实是指针，但是你不会拷贝指针指向的值。 在许多情况下，如果方法要更改值本身, 类型(type)的方法需要使用指针作为接收方(receiver)。 当 interface 必需的方法发生这种情况时，interface 实际上要求动态类型是指针类型。</p>
+<p>这意味着，技术上来说虽然 interface 总是作为一个值拷贝，但在实际使用中，它们的行为常常好像是通过引用拷贝的。 也就是说，尽管没有显式标记，接口对象通常充当指针的角色。 这可能会让你困惑，直到你明白到底发生了什么。</p>
+<p>在我上一篇文章中提到，对于 gccgo，一个 interface 总是包含一个指向值的指针。 现在我要纠正这个错误: 如果一个程序存储了包含了指针(或者<code>unsafe.Pointer</code>类型) 的 interface，那么存储在 interface 中的值就是指针本身。 也就是说，gccgo 不存储指向指针的指针(这需要分配堆空间来保存指针)。 这是一种自然的高效方法，因为实际上大多数接口对象都包含指针。</p>
+<p>这种高效的方法贯穿于方法的实现。 方法总是接受指针作为接收方(receiver)参数。 如果方法的接收方(receiver)类型实际上不是指针，那么指针将隐式解引用，并在方法代码的开头复制值。 这意味着当在接口上调用方法时，存储在接口中的值可以直接传递给方法，而不管动态类型是否是指针。 (和上一篇文章一样，gc 编译器做的事情有些不同。)</p>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>原文其实有点绕</p>
+<blockquote>
+<p>如果 <code>v</code> 是一个 <code>interface{}</code></p>
+<p>什么是interface?</p>
+</blockquote>
+<p>Interface 同时是两种东西</p>
+<ol>
+<li>一些方法的集合</li>
+<li>它自身也是一种类型</li>
+</ol>
+<blockquote>
+<p><code>interface{}</code> type, the <strong>empty interface</strong> is the interface that has no methods.</p>
+</blockquote>
+<p>由于没有 implements 关键字，所有类型都至少实现了<strong>empty interface</strong>， 这意味着，如果你编写一个将 <code>interface{}</code>作为参数的函数，则可以为该函数传任何值作为参数。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">DoSomething</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">   <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>令人困惑的地方在于</p>
+<blockquote>
+<p>初学者倾向于相信“ v 是任何类型的” ，但这是错误的。 v 不是任何类型的; 它是 <code>interface{}</code>类型的。</p>
+</blockquote>
+<p>当向 DoSomething 函数传递一个值时，Go 运行时将执行类型转换(如果必要) ，并将该值转换为<strong><code>interface{}</code></strong>值。 所有值在运行时只有一种类型，而 <code>v</code>的静态类型是<strong><code>interface{}</code></strong>。</p>
+<h2 id="russ的说法"><a href="#russ的说法" class="headerlink" title="russ的说法"></a>russ的说法</h2><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Stringer <span class="keyword">interface</span> &#123;</span><br><span class="line">    String() <span class="keyword">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接口值表示为包含两个单词的一对(单词)，</p>
+<ol>
+<li>指向存储在接口中的类型信息的指针</li>
+<li>指向相关数据的指针。 </li>
+</ol>
+<p>将 <code>b</code> 分配给 Stringer 类型的接口值会同时设置接口值的两个单词。</p>
+<p><img src="https://i.stack.imgur.com/H78Bz.png" alt="enter image description here"></p>
+<p>接口值中的第一个单词指向我所称的<code>**interface table**</code>或者 <strong>itable</strong></p>
+<p>Itable 以一些关于所涉及的类型的元数据开始，然后加上一个函数指针列表。 注意，itable 对应于  <strong>interface type</strong>，而不是动态类型。在我们的示例中, </p>
+<p> <code>Stringer</code> 持有类型Binary的itable 列出了用于满足Stringer的方法，而后者只是“ String”：Binary的其他方法（“ Get”）未在“ itable” 中出现。</p>
+<p> the itable for <code>Stringer</code> holding type Binary lists the methods used to satisfy Stringer, which is just <code>String</code>: Binary’s other methods (<code>Get</code>) make no appearance in the <code>itable</code>.</p>
+<p>接口值中的第二个单词指向实际数据，在这种情况下为b的副本。<br>赋值<code>var s Stringer = b</code> 产生b的副本，而不是指向b的指针，原因与<code>var c uint64 = b</code>产生副本的原因相同：如果b以后发生变化，则s和c应该具有原始值，而不是新值。<br>存储在接口中的值可能任意大，但是只有一个字专用于在接口结构中保存该值，因此该分配在堆上分配了一块内存，并将指针记录在一个字槽中。</p>
+<p><strong>The second word in the interface value points at the actual data</strong>, in this case a copy of <code>b</code>.<br>The assignment <code>var s Stringer = b</code> makes a copy of <code>b</code> rather than point at <code>b</code> for the same reason that <code>var c uint64 = b</code> makes a copy: if <code>b</code> later changes, <code>s</code> and <code>c</code> are supposed to have the original value, not the new one.<br>Values stored in interfaces might be arbitrarily large, but only one word is dedicated to holding the value in the interface structure, so the assignment allocates a chunk of memory on the heap and records the pointer in the one-word slot.</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://stackoverflow.com/questions/13511203/why-cant-i-assign-a-struct-to-an-interface" target="_blank" rel="noopener">https://stackoverflow.com/questions/13511203/why-cant-i-assign-a-struct-to-an-interface</a></p>
+<p><a href="https://stackoverflow.com/questions/23148812/whats-the-meaning-of-interface/23148998#23148998" target="_blank" rel="noopener">https://stackoverflow.com/questions/23148812/whats-the-meaning-of-interface/23148998#23148998</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/golang/" rel="tag"># golang</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/19/谈一谈协程/" rel="next" title="谈一谈协程">
+                <i class="fa fa-chevron-left"></i> 谈一谈协程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/31/go-谈谈stirng转byte/" rel="prev" title="golang-谈谈stirng转byte">
+                golang-谈谈stirng转byte <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">fancivez</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">24</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#译-Go-Interface-Values"><span class="nav-number">1.</span> <span class="nav-text">[译] Go Interface Values</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原文翻译"><span class="nav-number">2.</span> <span class="nav-text">原文翻译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充"><span class="nav-number">3.</span> <span class="nav-text">补充</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#russ的说法"><span class="nav-number">4.</span> <span class="nav-text">russ的说法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fancivez</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.0.2</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.2"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
