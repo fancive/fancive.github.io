@@ -111,7 +111,7 @@
 <meta property="og:site_name" content="不眠之夜">
 <meta property="og:description" content="[toc] 0x01 背景最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是321234func main() &amp;#123;	s1 := &amp;quot;abc&amp;quot;	fmt.Println(cap([]byte(s1)))&amp;#125; 0x02 探究那么这是为什么呢，首先看汇编 -N 禁止优化-S 输出汇编代码-">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-11-19T14:50:56.583Z">
+<meta property="og:updated_time" content="2020-11-29T13:08:46.850Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="golang-谈谈stirng转byte">
 <meta name="twitter:description" content="[toc] 0x01 背景最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是321234func main() &amp;#123;	s1 := &amp;quot;abc&amp;quot;	fmt.Println(cap([]byte(s1)))&amp;#125; 0x02 探究那么这是为什么呢，首先看汇编 -N 禁止优化-S 输出汇编代码-">
@@ -315,6 +315,24 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/编程语言/" itemprop="url" rel="index"><span itemprop="name">编程语言</span></a></span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -529,7 +547,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">5</span>
+                      
+                    
+                    <span class="site-state-item-count">6</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
