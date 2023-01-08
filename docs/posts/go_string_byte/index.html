@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html
+  class="not-ready text-sm lg:text-base"
+  style="--bg: #faf6f1"
+  lang="zh-cn"
+>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, shrink-to-fit=no"
+  />
+
+  
+  <title>string to byte - </title>
+
+  
+  <meta name="theme-color" />
+  
+  <meta name="description" content="0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32
+func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
+ -N 禁止优化 -S 输出汇编代码 -l 禁止内联
+ go build -gcflags=&#34;-N -l -S&#34; go.go 得到以下代码
+&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc0 0x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0 0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX 0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX 0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX) 0x0012 00018 (/home/xxx/go.go:5)	JLS	283 0x0018 00024 (/home/xxx/go." />
+  <meta
+    name="author"
+    content=""
+  />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="http://fancive.github.io/main.min.css" />
+
+  
+  <script
+    defer
+    src="http://fancive.github.io/highlight.min.js"
+    onload="hljs.initHighlightingOnLoad();"
+  ></script>
+  
+
+  
+   
+  <link rel="preload" as="image" href="http://fancive.github.io/theme.png" />
+
+  
+  
+  
+  <link rel="preload" as="image" href="https://www.gravatar.com/avatar/685870d31cf494e52f9ef75f98a3d096?s=160&amp;d=identicon" />
+  
+  
+
+  
+  <link rel="preload" as="image" href="http://fancive.github.io/github.svg" />
+  
+
+  
+  <link rel="icon" href="http://fancive.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" href="http://fancive.github.io/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.96.0" />
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="string to byte" />
+<meta property="og:description" content="0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32
+func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
+ -N 禁止优化 -S 输出汇编代码 -l 禁止内联
+ go build -gcflags=&#34;-N -l -S&#34; go.go 得到以下代码
+&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc0 0x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0 0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX 0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX 0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX) 0x0012 00018 (/home/xxx/go.go:5)	JLS	283 0x0018 00024 (/home/xxx/go." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://fancive.github.io/posts/go_string_byte/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2020-05-31T21:30:28+08:00" />
+<meta property="article:modified_time" content="2020-05-31T21:30:28+08:00" />
+
+
+  
+  <meta itemprop="name" content="string to byte">
+<meta itemprop="description" content="0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32
+func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
+ -N 禁止优化 -S 输出汇编代码 -l 禁止内联
+ go build -gcflags=&#34;-N -l -S&#34; go.go 得到以下代码
+&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc0 0x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0 0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX 0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX 0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX) 0x0012 00018 (/home/xxx/go.go:5)	JLS	283 0x0018 00024 (/home/xxx/go."><meta itemprop="datePublished" content="2020-05-31T21:30:28+08:00" />
+<meta itemprop="dateModified" content="2020-05-31T21:30:28+08:00" />
+<meta itemprop="wordCount" content="776">
+<meta itemprop="keywords" content="" />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="string to byte"/>
+<meta name="twitter:description" content="0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32
+func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
+ -N 禁止优化 -S 输出汇编代码 -l 禁止内联
+ go build -gcflags=&#34;-N -l -S&#34; go.go 得到以下代码
+&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc0 0x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0 0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX 0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX 0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX) 0x0012 00018 (/home/xxx/go.go:5)	JLS	283 0x0018 00024 (/home/xxx/go."/>
+
+  
+  
+</head>
+
+  <body class="text-black duration-200 ease-out dark:text-white">
+    <header class="mx-auto flex h-[5rem] max-w-3xl px-8 lg:justify-center">
+  <div class="relative z-50 mr-auto flex items-center">
+    <a
+      class="-translate-x-[1px] -translate-y-0.5 text-3xl font-bold"
+      href="http://fancive.github.io/"
+      ></a
+    >
+    <a
+      class="btn-dark ml-6 h-6 w-6 shrink-0 cursor-pointer [background:url(./theme.png)_left_center/_auto_theme('spacing.6')_no-repeat] [transition:_background-position_0.4s_steps(5)] dark:[background-position:right]"
+    ></a>
+  </div>
+
+  <a
+    class="btn-menu relative z-50 -mr-8 flex h-[5rem] w-[5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2.5 lg:hidden"
+  ></a>
+
+  
+  <script>
+    
+    const htmlClass = document.documentElement.classList;
+    setTimeout(() => {
+      htmlClass.remove('not-ready');
+    }, 10);
+
+    
+    const btnMenu = document.querySelector('.btn-menu');
+    btnMenu.addEventListener('click', () => {
+      htmlClass.toggle('open');
+    });
+
+    
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    const lightBg = `"#faf6f1"`.replace(/"/g, '');
+    const setDark = (isDark) => {
+      metaTheme.setAttribute('content', isDark ? '#000' : lightBg);
+      htmlClass[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark);
+    };
+
+    
+    const darkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    if (htmlClass.contains('dark')) {
+      setDark(true);
+    } else {
+      const darkVal = localStorage.getItem('dark');
+      setDark(darkVal ? darkVal === 'true' : darkScheme.matches);
+    }
+
+    
+    darkScheme.addEventListener('change', (event) => {
+      setDark(event.matches);
+    });
+
+    
+    const btnDark = document.querySelector('.btn-dark');
+    btnDark.addEventListener('click', () => {
+      setDark(localStorage.getItem('dark') !== 'true');
+    });
+  </script>
+
+  <div
+    class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 dark:bg-black lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"
+  >
+    
+    
+
+    
+    <nav
+      class="mt-12 flex justify-center space-x-10 dark:invert lg:mt-0 lg:ml-12 lg:items-center lg:space-x-6"
+    >
+      
+      <a
+        class="h-8 w-8 [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6"
+        style="--url: url(./github.svg)"
+        href=" https://github.com/fancive "
+        target="_blank"
+      ></a>
+      
+    </nav>
+    
+  </div>
+</header>
+
+
+    <main
+      class="prose prose-neutral relative mx-auto min-h-[calc(100%-10rem)] max-w-3xl px-8 pt-20 pb-32 dark:prose-invert"
+    >
+      
+
+<article>
+  <header class="mb-20">
+    <h1 class="!my-0 pb-2.5">string to byte</h1>
+
+    
+    <div class="text-sm opacity-60">
+      
+      <time>May 31, 2020</time>
+      
+      
+    </div>
+    
+  </header>
+
+  <section><h2 id="0x01-背景">0x01 背景</h2>
+<p>最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">s1</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;abc&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(cap([]byte(<span style="color:#a6e22e">s1</span>)))
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="0x02-探究">0x02 探究</h2>
+<p>那么这是为什么呢，首先看汇编</p>
+<blockquote>
+<p>-N 禁止优化
+-S 输出汇编代码
+-l 禁止内联</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">build</span> <span style="color:#f92672">-</span><span style="color:#a6e22e">gcflags</span>=<span style="color:#e6db74">&#34;-N -l -S&#34;</span> <span style="color:#66d9ef">go</span>.<span style="color:#66d9ef">go</span>
+</span></span></code></pre></div><p>得到以下代码</p>
+<pre tabindex="0"><code>&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc0
+	0x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0
+	0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX
+	0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX
+	0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX)
+	0x0012 00018 (/home/xxx/go.go:5)	JLS	283
+	0x0018 00024 (/home/xxx/go.go:5)	SUBQ	$192, SP
+	0x001f 00031 (/home/xxx/go.go:5)	MOVQ	BP, 184(SP)
+	0x0027 00039 (/home/xxx/go.go:5)	LEAQ	184(SP), BP
+	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$0, gclocals·7d2d5fca80364273fb07d5820a76fef4(SB)
+	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$1, gclocals·4dc9e0f0c3406fbbbbd2ec99068e8282(SB)
+	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$2, gclocals·8dcadbff7c52509cfe2d26e4d7d24689(SB)
+	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$3, &#34;&#34;.main.stkobj(SB)
+	0x002f 00047 (/home/xxx/go.go:6)	PCDATA	$0, $1
+	0x002f 00047 (/home/xxx/go.go:6)	PCDATA	$1, $0
+	0x002f 00047 (/home/xxx/go.go:6)	LEAQ	go.string.&#34;abc&#34;(SB), AX
+	0x0036 00054 (/home/xxx/go.go:6)	MOVQ	AX, &#34;&#34;.s1+104(SP)
+	0x003b 00059 (/home/xxx/go.go:6)	MOVQ	$3, &#34;&#34;.s1+112(SP)
+	0x0044 00068 (/home/xxx/go.go:7)	PCDATA	$0, $2
+	0x0044 00068 (/home/xxx/go.go:7)	LEAQ	&#34;&#34;..autotmp_4+56(SP), CX
+	0x0049 00073 (/home/xxx/go.go:7)	PCDATA	$0, $1
+	0x0049 00073 (/home/xxx/go.go:7)	MOVQ	CX, (SP)
+	0x004d 00077 (/home/xxx/go.go:7)	PCDATA	$0, $0
+	0x004d 00077 (/home/xxx/go.go:7)	MOVQ	AX, 8(SP)
+	0x0052 00082 (/home/xxx/go.go:7)	MOVQ	$3, 16(SP)
+	0x005b 00091 (/home/xxx/go.go:7)	CALL	runtime.stringtoslicebyte(SB)
+	0x0060 00096 (/home/xxx/go.go:7)	MOVQ	40(SP), AX
+	0x0065 00101 (/home/xxx/go.go:7)	MOVQ	32(SP), CX
+	0x006a 00106 (/home/xxx/go.go:7)	PCDATA	$0, $3
+	0x006a 00106 (/home/xxx/go.go:7)	MOVQ	24(SP), DX
+	0x006f 00111 (/home/xxx/go.go:7)	PCDATA	$0, $0
+	0x006f 00111 (/home/xxx/go.go:7)	MOVQ	DX, &#34;&#34;..autotmp_2+160(SP)
+	0x0077 00119 (/home/xxx/go.go:7)	MOVQ	CX, &#34;&#34;..autotmp_2+168(SP)
+	0x007f 00127 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_2+176(SP)
+	0x0087 00135 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_3+48(SP)
+	0x008c 00140 (/home/xxx/go.go:7)	MOVQ	AX, (SP)
+	0x0090 00144 (/home/xxx/go.go:7)	CALL	runtime.convT64(SB)
+	0x0095 00149 (/home/xxx/go.go:7)	PCDATA	$0, $1
+	0x0095 00149 (/home/xxx/go.go:7)	MOVQ	8(SP), AX
+	0x009a 00154 (/home/xxx/go.go:7)	PCDATA	$0, $0
+	0x009a 00154 (/home/xxx/go.go:7)	PCDATA	$1, $1
+	0x009a 00154 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_5+96(SP)
+	0x009f 00159 (/home/xxx/go.go:7)	PCDATA	$1, $2
+	0x009f 00159 (/home/xxx/go.go:7)	XORPS	X0, X0
+	0x00a2 00162 (/home/xxx/go.go:7)	MOVUPS	X0, &#34;&#34;..autotmp_1+120(SP)
+	0x00a7 00167 (/home/xxx/go.go:7)	PCDATA	$0, $1
+	0x00a7 00167 (/home/xxx/go.go:7)	PCDATA	$1, $1
+	0x00a7 00167 (/home/xxx/go.go:7)	LEAQ	&#34;&#34;..autotmp_1+120(SP), AX
+	0x00ac 00172 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_7+88(SP)
+	0x00b1 00177 (/home/xxx/go.go:7)	TESTB	AL, (AX)
+	0x00b3 00179 (/home/xxx/go.go:7)	PCDATA	$0, $2
+	0x00b3 00179 (/home/xxx/go.go:7)	PCDATA	$1, $0
+	0x00b3 00179 (/home/xxx/go.go:7)	MOVQ	&#34;&#34;..autotmp_5+96(SP), CX
+	0x00b8 00184 (/home/xxx/go.go:7)	PCDATA	$0, $4
+	0x00b8 00184 (/home/xxx/go.go:7)	LEAQ	type.int(SB), DX
+	0x00bf 00191 (/home/xxx/go.go:7)	PCDATA	$0, $2
+	0x00bf 00191 (/home/xxx/go.go:7)	MOVQ	DX, &#34;&#34;..autotmp_1+120(SP)
+	0x00c4 00196 (/home/xxx/go.go:7)	PCDATA	$0, $1
+	0x00c4 00196 (/home/xxx/go.go:7)	MOVQ	CX, &#34;&#34;..autotmp_1+128(SP)
+	0x00cc 00204 (/home/xxx/go.go:7)	TESTB	AL, (AX)
+	0x00ce 00206 (/home/xxx/go.go:7)	JMP	208
+	0x00d0 00208 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_6+136(SP)
+	0x00d8 00216 (/home/xxx/go.go:7)	MOVQ	$1, &#34;&#34;..autotmp_6+144(SP)
+	0x00e4 00228 (/home/xxx/go.go:7)	MOVQ	$1, &#34;&#34;..autotmp_6+152(SP)
+	0x00f0 00240 (/home/xxx/go.go:7)	PCDATA	$0, $0
+	0x00f0 00240 (/home/xxx/go.go:7)	MOVQ	AX, (SP)
+	0x00f4 00244 (/home/xxx/go.go:7)	MOVQ	$1, 8(SP)
+	0x00fd 00253 (/home/xxx/go.go:7)	MOVQ	$1, 16(SP)
+	0x0106 00262 (/home/xxx/go.go:7)	CALL	fmt.Println(SB)
+	0x010b 00267 (/home/xxx/go.go:9)	MOVQ	184(SP), BP
+	0x0113 00275 (/home/xxx/go.go:9)	ADDQ	$192, SP
+	0x011a 00282 (/home/xxx/go.go:9)	RET
+	0x011b 00283 (/home/xxx/go.go:9)	NOP
+	0x011b 00283 (/home/xxx/go.go:5)	PCDATA	$1, $-1
+	0x011b 00283 (/home/xxx/go.go:5)	PCDATA	$0, $-1
+	0x011b 00283 (/home/xxx/go.go:5)	CALL	runtime.morestack_noctxt(SB)
+	0x0120 00288 (/home/xxx/go.go:5)	JMP	0
+</code></pre><p>声明部分</p>
+<pre tabindex="0"><code>&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc0
+	0x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0
+	0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX
+	0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX
+	0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX)
+	0x0012 00018 (/home/xxx/go.go:5)	JLS	283
+	0x0018 00024 (/home/xxx/go.go:5)	SUBQ	$192, SP
+	0x001f 00031 (/home/xxx/go.go:5)	MOVQ	BP, 184(SP)
+	0x0027 00039 (/home/xxx/go.go:5)	LEAQ	184(SP), BP
+</code></pre><p>main函数声明</p>
+<pre tabindex="0"><code>0x0000 00000 (/home/xxx/go.go:3)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0
+</code></pre><ol>
+<li>“”.main(被链接之后名字会变成main.main) 是一个全局的函数符号，存储在.text` 段中，该函数的地址是相对于整个地址空间起始位置的一个固定的偏移量。</li>
+<li>$192-0 它分配了 192 字节的栈帧，且不接收参数，不返回值。$192-0 中的 192 代表局部变量字节数总和，-0 代表在 192 的地址基础上空出0的长度作为传入和返回对象, 即没有参数和返回值</li>
+</ol>
+<pre tabindex="0"><code>0x0000 00000 (/home/xxx/go.go:3)	MOVQ	(TLS), CX
+</code></pre><ol>
+<li>TLS 是一个由 runtime 维护的虚拟寄存器，保存了指向当前 g 的指针，这个 g 的数据结构会跟踪 goroutine 运行时的所有状态值</li>
+<li>将当前 *g 保存到 CX</li>
+</ol>
+<pre tabindex="0"><code>0x0009 00009 (/home/xxx/go.go:3)	CMPQ	SP, 16(CX)
+</code></pre><p>看一看 runtime 源代码中对于 g 的定义:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">g</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">stack</span>       <span style="color:#a6e22e">stack</span>   <span style="color:#75715e">// 16 bytes
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// stackguard0 is the stack pointer compared in the Go stack growth prologue.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// It is stack.lo+StackGuard normally, but can be StackPreempt to trigger a preemption.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">stackguard0</span> <span style="color:#66d9ef">uintptr</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">stackguard1</span> <span style="color:#66d9ef">uintptr</span>
+</span></span></code></pre></div><p>我们可以看到 16(CX) 对应的是 g.stackguard0，是 runtime 维护的一个阈值，该值会被拿来与栈指针(stack-pointer)进行比较以判断一个 goroutine 是否马上要用完当前的栈空间。</p>
+<pre tabindex="0"><code>0x0012 00018 (/home/xxx/go.go:5)	JLS	283
+jumps to 283 if SP &lt;= g.stackguard0
+
+0x0018 00024 (/home/xxx/go.go:5)	SUBQ	$192, SP
+</code></pre><p>main 作为调用者，通过对虚拟栈指针(stack-pointer)寄存器做减法，将其栈帧大小增加了 192 个字节(回忆一下栈是向低地址方向增长，所以这里的 SUBQ 指令是将栈帧的大小调整得更大了)。</p>
+<pre tabindex="0"><code>0x001f 00031 (/home/xxx/go.go:5)	MOVQ	BP, 184(SP)
+</code></pre><p>8 个字节(183(SP)-192(SP)) 用来存储当前帧指针 BP (这是一个实际存在的寄存器)的值，以支持栈的展开和方便调试</p>
+<pre tabindex="0"><code>0x0027 00039 (/home/xxx/go.go:5)	LEAQ	184(SP), BP
+</code></pre><p>跟着栈的增长，LEAQ 指令计算出帧指针的新地址，并将其存储到 BP 寄存器中。</p>
+<h3 id="看下字符串处理部分">看下字符串处理部分</h3>
+<pre tabindex="0"><code>0x002f 00047 (/Users/fancivez/tmp/go.go:6)	LEAQ	go.string.&#34;abc&#34;(SB), AX
+0x0036 00054 (/Users/fancivez/tmp/go.go:6)	MOVQ	AX, &#34;&#34;.s1+104(SP)
+0x003b 00059 (/Users/fancivez/tmp/go.go:6)	MOVQ	$3, &#34;&#34;.s1+112(SP)
+0x0044 00068 (/Users/fancivez/tmp/go.go:7)	PCDATA	$0, $2
+0x0044 00068 (/Users/fancivez/tmp/go.go:7)	LEAQ	&#34;&#34;..autotmp_4+56(SP), CX
+0x0049 00073 (/Users/fancivez/tmp/go.go:7)	PCDATA	$0, $1
+0x0049 00073 (/Users/fancivez/tmp/go.go:7)	MOVQ	CX, (SP)
+0x004d 00077 (/Users/fancivez/tmp/go.go:7)	PCDATA	$0, $0
+0x004d 00077 (/Users/fancivez/tmp/go.go:7)	MOVQ	AX, 8(SP)
+0x0052 00082 (/Users/fancivez/tmp/go.go:7)	MOVQ	$3, 16(SP)
+0x005b 00091 (/Users/fancivez/tmp/go.go:7)	CALL	runtime.stringtoslicebyte(SB)
+0x002f 00047 (/Users/fancivez/tmp/go.go:6)	LEAQ	go.string.&#34;abc&#34;(SB), AX
+</code></pre><p>取字面值的地址,(字面值的数据在.data区域分配)</p>
+<pre tabindex="0"><code>0x0036 00054 (/Users/fancivez/tmp/go.go:6)	MOVQ	AX, &#34;&#34;.s1+104(SP)
+</code></pre><p>将数据地址移动到栈指针104字节位置</p>
+<pre tabindex="0"><code>0x003b 00059 (/Users/fancivez/tmp/go.go:6)	MOVQ	$3, &#34;&#34;.s1+112(SP)
+</code></pre><p>把字符串长度(3)移动到112字节位置</p>
+<pre tabindex="0"><code>0x005b 00091 (/Users/fancivez/tmp/go.go:7)	CALL	runtime.stringtoslicebyte(SB)
+</code></pre><h2 id="参考">参考</h2>
+<ol>
+<li><a href="https://xargin.com/go-and-plan9-asm/">https://xargin.com/go-and-plan9-asm/</a></li>
+<li><a href="https://golang.org/doc/asm">https://golang.org/doc/asm</a></li>
+<li><a href="https://www.youtube.com/watch?v=KINIAgRpkDA">https://www.youtube.com/watch?v=KINIAgRpkDA</a></li>
+<li><a href="https://www.cnblogs.com/yjf512/p/6132868.html">https://www.cnblogs.com/yjf512/p/6132868.html</a></li>
+</ol>
+</section>
+
+  
+  
+
+  
+  
+  
+  <nav
+    class="mt-24 flex rounded-lg bg-black/[3%] p-1.5 text-lg dark:bg-white/[8%]"
+  >
+    
+    <a
+      class="flex w-1/2 items-center rounded-md p-6 pr-3 no-underline hover:bg-black/[2%]"
+      href="http://fancive.github.io/posts/design_pattern_used_in_filebeat/"
+      ><span class="mr-1.5">←</span><span>Design pattern used in filebeat</span></a
+    >
+    
+    
+    <a
+      class="ml-auto flex w-1/2 items-center justify-end rounded-md p-6 pl-3 no-underline hover:bg-black/[2%]"
+      href="http://fancive.github.io/posts/go_interface/"
+      ><span>[翻译]go interface</span><span class="ml-1.5">→</span></a
+    >
+    
+  </nav>
+  
+
+  
+  
+</article>
+
+
+    </main>
+
+    <footer
+  class="opaco mx-auto flex h-[5rem] max-w-3xl items-center px-8 text-[0.9em] opacity-60"
+>
+  <div class="mr-auto">
+    &copy; 2023
+    <a class="link" href="http://fancive.github.io/"></a>
+  </div>
+  <a class="link mx-6" href="https://gohugo.io/" rel="noopener" target="_blank"
+    >Powered by Hugo️️</a
+  >️
+  <a
+    class="link"
+    href="https://github.com/nanxiaobei/hugo-paper"
+    rel="noopener"
+    target="_blank"
+    >▷ Paper 6</a
+  >
+</footer>
+
+  </body>
+</html>

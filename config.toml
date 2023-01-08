@@ -1,4 +1,16 @@
-baseURL = 'http://example.org/'
+baseURL = 'http://fancive.github.io/'
 languageCode = 'zh-cn'
-title = 'My New Hugo Site'
-theme = "anatole"
+title = ''
+theme = "paper"
+publishDir = "docs"
+
+[params]
+    # color style
+    color = 'linen'                   # linen, wheat, gray, light
+
+    # header social icons
+    github = 'fancive'         # github.com/YOUR_GITHUB_ID
+    name = 'fancivez'
+    bio = 'golang fan'
+    avatar = 'fancivez@gmail.com'         # Gravatar email or image url
+

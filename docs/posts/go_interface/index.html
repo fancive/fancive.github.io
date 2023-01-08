@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html
+  class="not-ready text-sm lg:text-base"
+  style="--bg: #faf6f1"
+  lang="zh-cn"
+>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, shrink-to-fit=no"
+  />
+
+  
+  <title>[翻译]go interface - </title>
+
+  
+  <meta name="theme-color" />
+  
+  <meta name="description" content="[译] Go Interface Values  原文 (https://www.airs.com/blog/archives/281)
+ 原文翻译 虽然 Go 中interface 的指是灵活的，但它们也有令人困惑的方面。
+接口值例如—-一个interface类型的变量—-包含其他类型的值。 interface类型被称为静态类型，因为这是编译器在编译期看到的类型。 另一种类型只在运行时可见，称为动态类型(dynamic type)。 根据定义，动态类型可以是任何除了interface的其他类型。
+当通过赋值或函数调用复制一个 interface 值时，你是在复制动态类型里的值。 这通常是大多数类型通常的工作方式。 但是，使用 interface 的一个非常常见的情况是将动态类型作为指针使用。 在这种情况下，当你拷贝接口时，你拷贝的其实是指针，但是你不会拷贝指针指向的值。 在许多情况下，如果方法要更改值本身, 类型(type)的方法需要使用指针作为接收方(receiver)。 当 interface 必需的方法发生这种情况时，interface 实际上要求动态类型是指针类型。
+这意味着，技术上来说虽然 interface 总是作为一个值拷贝，但在实际使用中，它们的行为常常好像是通过引用拷贝的。 也就是说，尽管没有显式标记，接口对象通常充当指针的角色。 这可能会让你困惑，直到你明白到底发生了什么。
+在我上一篇文章中提到，对于 gccgo，一个 interface 总是包含一个指向值的指针。 现在我要纠正这个错误: 如果一个程序存储了包含了指针(或者unsafe.Pointer类型) 的 interface，那么存储在 interface 中的值就是指针本身。 也就是说，gccgo 不存储指向指针的指针(这需要分配堆空间来保存指针)。 这是一种自然的高效方法，因为实际上大多数接口对象都包含指针。
+这种高效的方法贯穿于方法的实现。 方法总是接受指针作为接收方(receiver)参数。 如果方法的接收方(receiver)类型实际上不是指针，那么指针将隐式解引用，并在方法代码的开头复制值。 这意味着当在接口上调用方法时，存储在接口中的值可以直接传递给方法，而不管动态类型是否是指针。 (和上一篇文章一样，gc 编译器做的事情有些不同。)
+补充  原文其实有点绕
+  如果 v 是一个 interface{}
+ 什么是interface?
+Interface 同时是两种东西
+ 一些方法的集合 它自身也是一种类型   interface{} type, the empty interface is the interface that has no methods." />
+  <meta
+    name="author"
+    content=""
+  />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="http://fancive.github.io/main.min.css" />
+
+  
+  <script
+    defer
+    src="http://fancive.github.io/highlight.min.js"
+    onload="hljs.initHighlightingOnLoad();"
+  ></script>
+  
+
+  
+   
+  <link rel="preload" as="image" href="http://fancive.github.io/theme.png" />
+
+  
+  
+  
+  <link rel="preload" as="image" href="https://www.gravatar.com/avatar/685870d31cf494e52f9ef75f98a3d096?s=160&amp;d=identicon" />
+  
+  
+
+  
+  <link rel="preload" as="image" href="http://fancive.github.io/github.svg" />
+  
+
+  
+  <link rel="icon" href="http://fancive.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" href="http://fancive.github.io/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.96.0" />
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="[翻译]go interface" />
+<meta property="og:description" content="[译] Go Interface Values  原文 (https://www.airs.com/blog/archives/281)
+ 原文翻译 虽然 Go 中interface 的指是灵活的，但它们也有令人困惑的方面。
+接口值例如—-一个interface类型的变量—-包含其他类型的值。 interface类型被称为静态类型，因为这是编译器在编译期看到的类型。 另一种类型只在运行时可见，称为动态类型(dynamic type)。 根据定义，动态类型可以是任何除了interface的其他类型。
+当通过赋值或函数调用复制一个 interface 值时，你是在复制动态类型里的值。 这通常是大多数类型通常的工作方式。 但是，使用 interface 的一个非常常见的情况是将动态类型作为指针使用。 在这种情况下，当你拷贝接口时，你拷贝的其实是指针，但是你不会拷贝指针指向的值。 在许多情况下，如果方法要更改值本身, 类型(type)的方法需要使用指针作为接收方(receiver)。 当 interface 必需的方法发生这种情况时，interface 实际上要求动态类型是指针类型。
+这意味着，技术上来说虽然 interface 总是作为一个值拷贝，但在实际使用中，它们的行为常常好像是通过引用拷贝的。 也就是说，尽管没有显式标记，接口对象通常充当指针的角色。 这可能会让你困惑，直到你明白到底发生了什么。
+在我上一篇文章中提到，对于 gccgo，一个 interface 总是包含一个指向值的指针。 现在我要纠正这个错误: 如果一个程序存储了包含了指针(或者unsafe.Pointer类型) 的 interface，那么存储在 interface 中的值就是指针本身。 也就是说，gccgo 不存储指向指针的指针(这需要分配堆空间来保存指针)。 这是一种自然的高效方法，因为实际上大多数接口对象都包含指针。
+这种高效的方法贯穿于方法的实现。 方法总是接受指针作为接收方(receiver)参数。 如果方法的接收方(receiver)类型实际上不是指针，那么指针将隐式解引用，并在方法代码的开头复制值。 这意味着当在接口上调用方法时，存储在接口中的值可以直接传递给方法，而不管动态类型是否是指针。 (和上一篇文章一样，gc 编译器做的事情有些不同。)
+补充  原文其实有点绕
+  如果 v 是一个 interface{}
+ 什么是interface?
+Interface 同时是两种东西
+ 一些方法的集合 它自身也是一种类型   interface{} type, the empty interface is the interface that has no methods." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://fancive.github.io/posts/go_interface/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2020-05-06T22:20:18+08:00" />
+<meta property="article:modified_time" content="2020-05-06T22:20:18+08:00" />
+
+
+  
+  <meta itemprop="name" content="[翻译]go interface">
+<meta itemprop="description" content="[译] Go Interface Values  原文 (https://www.airs.com/blog/archives/281)
+ 原文翻译 虽然 Go 中interface 的指是灵活的，但它们也有令人困惑的方面。
+接口值例如—-一个interface类型的变量—-包含其他类型的值。 interface类型被称为静态类型，因为这是编译器在编译期看到的类型。 另一种类型只在运行时可见，称为动态类型(dynamic type)。 根据定义，动态类型可以是任何除了interface的其他类型。
+当通过赋值或函数调用复制一个 interface 值时，你是在复制动态类型里的值。 这通常是大多数类型通常的工作方式。 但是，使用 interface 的一个非常常见的情况是将动态类型作为指针使用。 在这种情况下，当你拷贝接口时，你拷贝的其实是指针，但是你不会拷贝指针指向的值。 在许多情况下，如果方法要更改值本身, 类型(type)的方法需要使用指针作为接收方(receiver)。 当 interface 必需的方法发生这种情况时，interface 实际上要求动态类型是指针类型。
+这意味着，技术上来说虽然 interface 总是作为一个值拷贝，但在实际使用中，它们的行为常常好像是通过引用拷贝的。 也就是说，尽管没有显式标记，接口对象通常充当指针的角色。 这可能会让你困惑，直到你明白到底发生了什么。
+在我上一篇文章中提到，对于 gccgo，一个 interface 总是包含一个指向值的指针。 现在我要纠正这个错误: 如果一个程序存储了包含了指针(或者unsafe.Pointer类型) 的 interface，那么存储在 interface 中的值就是指针本身。 也就是说，gccgo 不存储指向指针的指针(这需要分配堆空间来保存指针)。 这是一种自然的高效方法，因为实际上大多数接口对象都包含指针。
+这种高效的方法贯穿于方法的实现。 方法总是接受指针作为接收方(receiver)参数。 如果方法的接收方(receiver)类型实际上不是指针，那么指针将隐式解引用，并在方法代码的开头复制值。 这意味着当在接口上调用方法时，存储在接口中的值可以直接传递给方法，而不管动态类型是否是指针。 (和上一篇文章一样，gc 编译器做的事情有些不同。)
+补充  原文其实有点绕
+  如果 v 是一个 interface{}
+ 什么是interface?
+Interface 同时是两种东西
+ 一些方法的集合 它自身也是一种类型   interface{} type, the empty interface is the interface that has no methods."><meta itemprop="datePublished" content="2020-05-06T22:20:18+08:00" />
+<meta itemprop="dateModified" content="2020-05-06T22:20:18+08:00" />
+<meta itemprop="wordCount" content="289">
+<meta itemprop="keywords" content="" />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="[翻译]go interface"/>
+<meta name="twitter:description" content="[译] Go Interface Values  原文 (https://www.airs.com/blog/archives/281)
+ 原文翻译 虽然 Go 中interface 的指是灵活的，但它们也有令人困惑的方面。
+接口值例如—-一个interface类型的变量—-包含其他类型的值。 interface类型被称为静态类型，因为这是编译器在编译期看到的类型。 另一种类型只在运行时可见，称为动态类型(dynamic type)。 根据定义，动态类型可以是任何除了interface的其他类型。
+当通过赋值或函数调用复制一个 interface 值时，你是在复制动态类型里的值。 这通常是大多数类型通常的工作方式。 但是，使用 interface 的一个非常常见的情况是将动态类型作为指针使用。 在这种情况下，当你拷贝接口时，你拷贝的其实是指针，但是你不会拷贝指针指向的值。 在许多情况下，如果方法要更改值本身, 类型(type)的方法需要使用指针作为接收方(receiver)。 当 interface 必需的方法发生这种情况时，interface 实际上要求动态类型是指针类型。
+这意味着，技术上来说虽然 interface 总是作为一个值拷贝，但在实际使用中，它们的行为常常好像是通过引用拷贝的。 也就是说，尽管没有显式标记，接口对象通常充当指针的角色。 这可能会让你困惑，直到你明白到底发生了什么。
+在我上一篇文章中提到，对于 gccgo，一个 interface 总是包含一个指向值的指针。 现在我要纠正这个错误: 如果一个程序存储了包含了指针(或者unsafe.Pointer类型) 的 interface，那么存储在 interface 中的值就是指针本身。 也就是说，gccgo 不存储指向指针的指针(这需要分配堆空间来保存指针)。 这是一种自然的高效方法，因为实际上大多数接口对象都包含指针。
+这种高效的方法贯穿于方法的实现。 方法总是接受指针作为接收方(receiver)参数。 如果方法的接收方(receiver)类型实际上不是指针，那么指针将隐式解引用，并在方法代码的开头复制值。 这意味着当在接口上调用方法时，存储在接口中的值可以直接传递给方法，而不管动态类型是否是指针。 (和上一篇文章一样，gc 编译器做的事情有些不同。)
+补充  原文其实有点绕
+  如果 v 是一个 interface{}
+ 什么是interface?
+Interface 同时是两种东西
+ 一些方法的集合 它自身也是一种类型   interface{} type, the empty interface is the interface that has no methods."/>
+
+  
+  
+</head>
+
+  <body class="text-black duration-200 ease-out dark:text-white">
+    <header class="mx-auto flex h-[5rem] max-w-3xl px-8 lg:justify-center">
+  <div class="relative z-50 mr-auto flex items-center">
+    <a
+      class="-translate-x-[1px] -translate-y-0.5 text-3xl font-bold"
+      href="http://fancive.github.io/"
+      ></a
+    >
+    <a
+      class="btn-dark ml-6 h-6 w-6 shrink-0 cursor-pointer [background:url(./theme.png)_left_center/_auto_theme('spacing.6')_no-repeat] [transition:_background-position_0.4s_steps(5)] dark:[background-position:right]"
+    ></a>
+  </div>
+
+  <a
+    class="btn-menu relative z-50 -mr-8 flex h-[5rem] w-[5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2.5 lg:hidden"
+  ></a>
+
+  
+  <script>
+    
+    const htmlClass = document.documentElement.classList;
+    setTimeout(() => {
+      htmlClass.remove('not-ready');
+    }, 10);
+
+    
+    const btnMenu = document.querySelector('.btn-menu');
+    btnMenu.addEventListener('click', () => {
+      htmlClass.toggle('open');
+    });
+
+    
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    const lightBg = `"#faf6f1"`.replace(/"/g, '');
+    const setDark = (isDark) => {
+      metaTheme.setAttribute('content', isDark ? '#000' : lightBg);
+      htmlClass[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark);
+    };
+
+    
+    const darkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    if (htmlClass.contains('dark')) {
+      setDark(true);
+    } else {
+      const darkVal = localStorage.getItem('dark');
+      setDark(darkVal ? darkVal === 'true' : darkScheme.matches);
+    }
+
+    
+    darkScheme.addEventListener('change', (event) => {
+      setDark(event.matches);
+    });
+
+    
+    const btnDark = document.querySelector('.btn-dark');
+    btnDark.addEventListener('click', () => {
+      setDark(localStorage.getItem('dark') !== 'true');
+    });
+  </script>
+
+  <div
+    class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 dark:bg-black lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"
+  >
+    
+    
+
+    
+    <nav
+      class="mt-12 flex justify-center space-x-10 dark:invert lg:mt-0 lg:ml-12 lg:items-center lg:space-x-6"
+    >
+      
+      <a
+        class="h-8 w-8 [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6"
+        style="--url: url(./github.svg)"
+        href=" https://github.com/fancive "
+        target="_blank"
+      ></a>
+      
+    </nav>
+    
+  </div>
+</header>
+
+
+    <main
+      class="prose prose-neutral relative mx-auto min-h-[calc(100%-10rem)] max-w-3xl px-8 pt-20 pb-32 dark:prose-invert"
+    >
+      
+
+<article>
+  <header class="mb-20">
+    <h1 class="!my-0 pb-2.5">[翻译]go interface</h1>
+
+    
+    <div class="text-sm opacity-60">
+      
+      <time>May 6, 2020</time>
+      
+      
+    </div>
+    
+  </header>
+
+  <section><h2 id="译-go-interface-values">[译] Go Interface Values</h2>
+<blockquote>
+<p>原文 (<a href="https://www.airs.com/blog/archives/281">https://www.airs.com/blog/archives/281</a>)</p>
+</blockquote>
+<h2 id="原文翻译">原文翻译</h2>
+<p>虽然 Go 中interface 的指是灵活的，但它们也有令人困惑的方面。</p>
+<p>接口值例如—-一个interface类型的变量—-包含其他类型的值。 interface类型被称为静态类型，因为这是编译器在编译期看到的类型。 另一种类型只在运行时可见，称为动态类型(dynamic type)。 根据定义，动态类型可以是任何除了interface的其他类型。</p>
+<p>当通过赋值或函数调用复制一个 interface 值时，你是在复制动态类型里的值。 这通常是大多数类型通常的工作方式。 但是，使用 interface 的一个非常常见的情况是将动态类型作为指针使用。 在这种情况下，当你拷贝接口时，你拷贝的其实是指针，但是你不会拷贝指针指向的值。 在许多情况下，如果方法要更改值本身, 类型(type)的方法需要使用指针作为接收方(receiver)。 当 interface 必需的方法发生这种情况时，interface 实际上要求动态类型是指针类型。</p>
+<p>这意味着，技术上来说虽然 interface 总是作为一个值拷贝，但在实际使用中，它们的行为常常好像是通过引用拷贝的。 也就是说，尽管没有显式标记，接口对象通常充当指针的角色。 这可能会让你困惑，直到你明白到底发生了什么。</p>
+<p>在我上一篇文章中提到，对于 gccgo，一个 interface 总是包含一个指向值的指针。 现在我要纠正这个错误: 如果一个程序存储了包含了指针(或者unsafe.Pointer类型) 的 interface，那么存储在 interface 中的值就是指针本身。 也就是说，gccgo 不存储指向指针的指针(这需要分配堆空间来保存指针)。 这是一种自然的高效方法，因为实际上大多数接口对象都包含指针。</p>
+<p>这种高效的方法贯穿于方法的实现。 方法总是接受指针作为接收方(receiver)参数。 如果方法的接收方(receiver)类型实际上不是指针，那么指针将隐式解引用，并在方法代码的开头复制值。 这意味着当在接口上调用方法时，存储在接口中的值可以直接传递给方法，而不管动态类型是否是指针。 (和上一篇文章一样，gc 编译器做的事情有些不同。)</p>
+<h3 id="补充">补充</h3>
+<blockquote>
+<p>原文其实有点绕</p>
+</blockquote>
+<blockquote>
+<p>如果 v 是一个 interface{}</p>
+</blockquote>
+<p>什么是interface?</p>
+<p>Interface 同时是两种东西</p>
+<ol>
+<li>一些方法的集合</li>
+<li>它自身也是一种类型</li>
+</ol>
+<blockquote>
+<p>interface{} type, the empty interface is the interface that has no methods.</p>
+</blockquote>
+<p>由于没有 implements 关键字，所有类型都至少实现了empty interface， 这意味着，如果你编写一个将 interface{}作为参数的函数，则可以为该函数传任何值作为参数。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">DoSomething</span>(<span style="color:#a6e22e">v</span> <span style="color:#66d9ef">interface</span>{}) {
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>令人困惑的地方在于</p>
+<blockquote>
+<p>初学者倾向于相信“ v 是任何类型的” ，但这是错误的。
+v 不是任何类型的; 它是 interface{}类型的。</p>
+</blockquote>
+<p>当向 DoSomething 函数传递一个值时，Go 运行时将执行类型转换(如果必要) ，并将该值转换为interface{}值。 所有值在运行时只有一种类型，而 v的静态类型是interface{}。</p>
+<p>russ的说法</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Stringer</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">String</span>() <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>接口值表示为包含两个单词的一对(单词)，</p>
+<ol>
+<li>指向存储在接口中的类型信息的指针</li>
+<li>指向相关数据的指针。</li>
+</ol>
+<p>将 b 分配给 Stringer 类型的接口值会同时设置接口值的两个单词。</p>
+<p><img src="https://i.stack.imgur.com/H78Bz.png" alt="interface"></p>
+<p>接口值中的第一个单词指向我所称的<strong>interface table</strong>或者 itable</p>
+<p>Itable 以一些关于所涉及的类型的元数据开始，然后加上一个函数指针列表。 注意，itable 对应于 interface type，而不是动态类型。在我们的示例中,</p>
+<p>Stringer 持有类型Binary的itable 列出了用于满足Stringer的方法，而后者只是“ String”：Binary的其他方法（“ Get”）未在“ itable” 中出现。</p>
+<p>the itable for Stringer holding type Binary lists the methods used to satisfy Stringer, which is just String: Binary’s other methods (Get) make no appearance in the itable.</p>
+<p>接口值中的第二个单词指向实际数据，在这种情况下为b的副本。
+赋值var s Stringer = b 产生b的副本，而不是指向b的指针，原因与var c uint64 = b产生副本的原因相同：如果b以后发生变化，则s和c应该具有原始值，而不是新值。
+存储在接口中的值可能任意大，但是只有一个字专用于在接口结构中保存该值，因此该分配在堆上分配了一块内存，并将指针记录在一个字槽中。</p>
+<p>The second word in the interface value points at the actual data, in this case a copy of b.
+The assignment var s Stringer = b makes a copy of b rather than point at b for the same reason that var c uint64 = b makes a copy: if b later changes, s and c are supposed to have the original value, not the new one.
+Values stored in interfaces might be arbitrarily large, but only one word is dedicated to holding the value in the interface structure, so the assignment allocates a chunk of memory on the heap and records the pointer in the one-word slot.</p>
+<h2 id="参考">参考</h2>
+<ol>
+<li><a href="https://stackoverflow.com/questions/13511203/why-cant-i-assign-a-struct-to-an-interface">https://stackoverflow.com/questions/13511203/why-cant-i-assign-a-struct-to-an-interface</a></li>
+<li><a href="https://stackoverflow.com/questions/23148812/whats-the-meaning-of-interface/23148998#23148998">https://stackoverflow.com/questions/23148812/whats-the-meaning-of-interface/23148998#23148998</a></li>
+</ol>
+</section>
+
+  
+  
+
+  
+  
+  
+  <nav
+    class="mt-24 flex rounded-lg bg-black/[3%] p-1.5 text-lg dark:bg-white/[8%]"
+  >
+    
+    <a
+      class="flex w-1/2 items-center rounded-md p-6 pr-3 no-underline hover:bg-black/[2%]"
+      href="http://fancive.github.io/posts/go_string_byte/"
+      ><span class="mr-1.5">←</span><span>string to byte</span></a
+    >
+    
+    
+  </nav>
+  
+
+  
+  
+</article>
+
+
+    </main>
+
+    <footer
+  class="opaco mx-auto flex h-[5rem] max-w-3xl items-center px-8 text-[0.9em] opacity-60"
+>
+  <div class="mr-auto">
+    &copy; 2023
+    <a class="link" href="http://fancive.github.io/"></a>
+  </div>
+  <a class="link mx-6" href="https://gohugo.io/" rel="noopener" target="_blank"
+    >Powered by Hugo️️</a
+  >️
+  <a
+    class="link"
+    href="https://github.com/nanxiaobei/hugo-paper"
+    rel="noopener"
+    target="_blank"
+    >▷ Paper 6</a
+  >
+</footer>
+
+  </body>
+</html>
