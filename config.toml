@@ -1,4 +1,4 @@
-baseURL = 'http://fancive.github.io/'
+baseURL = 'https://fancive.github.io/'
 languageCode = 'zh-cn'
 title = ''
 theme = "paper"

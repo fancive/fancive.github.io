@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on </title>
-    <link>http://fancive.github.io/posts/</link>
+    <link>https://fancive.github.io/posts/</link>
     <description>Recent content in Posts on </description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 16 Sep 2020 22:15:59 +0800</lastBuildDate><atom:link href="http://fancive.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 16 Sep 2020 22:15:59 +0800</lastBuildDate><atom:link href="https://fancive.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Design pattern used in filebeat</title>
-      <link>http://fancive.github.io/posts/design_pattern_used_in_filebeat/</link>
+      <link>https://fancive.github.io/posts/design_pattern_used_in_filebeat/</link>
       <pubDate>Wed, 16 Sep 2020 22:15:59 +0800</pubDate>
       
-      <guid>http://fancive.github.io/posts/design_pattern_used_in_filebeat/</guid>
+      <guid>https://fancive.github.io/posts/design_pattern_used_in_filebeat/</guid>
       <description>registry 与 lazyinit 结合 filebeat/input.New
 f, err = GetFactory(input.config.Type) GetFactory
 func GetFactory(name string) (Factory, error) {  if _, exists := registry[name]; !exists {  return nil, fmt.Errorf(&amp;#34;Error creating input. No such input type exist: &amp;#39;%v&amp;#39;&amp;#34;, name)  }  return registry[name], nil } 注册
@@ -22,10 +22,10 @@ func (b *bus) Publish(e Event) {  b.</description>
     
     <item>
       <title>string to byte</title>
-      <link>http://fancive.github.io/posts/go_string_byte/</link>
+      <link>https://fancive.github.io/posts/go_string_byte/</link>
       <pubDate>Sun, 31 May 2020 21:30:28 +0800</pubDate>
       
-      <guid>http://fancive.github.io/posts/go_string_byte/</guid>
+      <guid>https://fancive.github.io/posts/go_string_byte/</guid>
       <description>0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32
 func main() { 	s1 := &amp;#34;abc&amp;#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
  -N 禁止优化 -S 输出汇编代码 -l 禁止内联
@@ -35,10 +35,10 @@ func main() { 	s1 := &amp;#34;abc&amp;#34; 	fmt.Println(cap([]byte(s1))) } 0x02 
     
     <item>
       <title>[翻译]go interface</title>
-      <link>http://fancive.github.io/posts/go_interface/</link>
+      <link>https://fancive.github.io/posts/go_interface/</link>
       <pubDate>Wed, 06 May 2020 22:20:18 +0800</pubDate>
       
-      <guid>http://fancive.github.io/posts/go_interface/</guid>
+      <guid>https://fancive.github.io/posts/go_interface/</guid>
       <description>[译] Go Interface Values  原文 (https://www.airs.com/blog/archives/281)
  原文翻译 虽然 Go 中interface 的指是灵活的，但它们也有令人困惑的方面。
 接口值例如—-一个interface类型的变量—-包含其他类型的值。 interface类型被称为静态类型，因为这是编译器在编译期看到的类型。 另一种类型只在运行时可见，称为动态类型(dynamic type)。 根据定义，动态类型可以是任何除了interface的其他类型。
