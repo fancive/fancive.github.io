@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>filebeat on fancivez</title>
+    <link>https://fancive.github.io/tags/filebeat/</link>
+    <description>Recent content in filebeat on fancivez</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 16 Sep 2020 22:15:59 +0800</lastBuildDate><atom:link href="https://fancive.github.io/tags/filebeat/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Design pattern used in filebeat</title>
+      <link>https://fancive.github.io/posts/design_pattern_used_in_filebeat/</link>
+      <pubDate>Wed, 16 Sep 2020 22:15:59 +0800</pubDate>
+      
+      <guid>https://fancive.github.io/posts/design_pattern_used_in_filebeat/</guid>
+      <description>registry 与 lazyinit 结合 filebeat/input.New
+f, err = GetFactory(input.config.Type) GetFactory
+func GetFactory(name string) (Factory, error) {  if _, exists := registry[name]; !exists {  return nil, fmt.Errorf(&amp;#34;Error creating input. No such input type exist: &amp;#39;%v&amp;#39;&amp;#34;, name)  }  return registry[name], nil } 注册
+func init() {  err := input.Register(&amp;#34;log&amp;#34;, NewInput)  if err != nil {  panic(err)  } } observer publish
+func (b *bus) Publish(e Event) {  b.</description>
+    </item>
+    
+  </channel>
+</rss>

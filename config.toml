@@ -1,8 +1,49 @@
 baseURL = 'https://fancive.github.io/'
-languageCode = 'zh-cn'
-title = ''
-theme = "paper"
+languageCode = "en"
+DefaultContentLanguage = "en"
+title = 'fancivez'
+theme = "den"
 publishDir = "docs"
+
+[taxonomies]
+    category = "categories"
+    tag = "tags"
+    series = "series"
+
+
+[languages]
+    [languages.en]
+        weight = 1
+    [languages.fr]
+        weight = 2
+
+[sitemap]
+    changefreq = "monthly"
+    priority = 0.5
+    filename = "sitemap.xml"
+
+
+[menu]
+    [[menu.main]]
+        identifier = "home"
+        name = "home"
+        url = "/"
+        weight = 10
+    [[menu.main]]
+        identifier = "categories"
+        name = "categories"
+        url = "/categories/"
+        weight = 10
+    [[menu.main]]
+        identifier = "about"
+        name = "About"
+        url = "/about/"
+        weight = 10
+    [[menu.main]]
+        identifier = "contact"
+        name = "Contact"
+        url = "/contact/"
+        weight = 10
 
 [params]
     # color style
@@ -13,4 +54,9 @@ publishDir = "docs"
     name = 'fancivez'
     bio = 'golang fan'
     avatar = 'fancivez@gmail.com'         # Gravatar email or image url
+    description = ""
 
+    siteLogoImage = "images/globe.svg"     # shown besides logoTitle
+    headerImage = "images/background.jpg"
+    logoTitle = "fancivez" # shown on top-left, default: title
+    dateFormatToUse = "2006-01-02"

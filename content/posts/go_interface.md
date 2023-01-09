@@ -1,6 +1,12 @@
 ---
 title: "[翻译]go interface"
 date: 2020-05-06T22:20:18+08:00
+
+categories:
+- Go
+
+tags:
+- go runtime
 ---
 
 ## [译] Go Interface Values

@@ -1,6 +1,13 @@
 ---
 title: "string to byte"
 date: 2020-05-31T21:30:28+08:00
+
+categories:
+- Go
+
+tags:
+- go runtime
+- 翻译
 ---
 
 

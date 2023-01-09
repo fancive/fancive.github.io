@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:webfeeds="http://webfeeds.org/rss/1.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title></title>
+    <title>fancivez</title>
     <link>https://fancive.github.io/</link>
-    <description>Recent content on </description>
+    <description>Recent content on fancivez</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>zh-cn</language>
-    <lastBuildDate>Wed, 16 Sep 2020 22:15:59 +0800</lastBuildDate><atom:link href="https://fancive.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language>
+    <lastBuildDate>Wed, 16 Sep 2020 22:15:59 +0800</lastBuildDate>
+    
+    <atom:link href="https://fancive.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
     <item>
       <title>Design pattern used in filebeat</title>
       <link>https://fancive.github.io/posts/design_pattern_used_in_filebeat/</link>
@@ -51,6 +55,24 @@ func main() { 	s1 := &amp;#34;abc&amp;#34; 	fmt.Println(cap([]byte(s1))) } 0x02 
  什么是interface?
 Interface 同时是两种东西
  一些方法的集合 它自身也是一种类型   interface{} type, the empty interface is the interface that has no methods.</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>https://fancive.github.io/about/</link>
+      <pubDate>Thu, 28 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://fancive.github.io/about/</guid>
+      <description> golang developer  </description>
+    </item>
+    
+    <item>
+      <title>Contact</title>
+      <link>https://fancive.github.io/contact/</link>
+      <pubDate>Thu, 28 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://fancive.github.io/contact/</guid>
+      <description> github.com/fancive  </description>
     </item>
     
   </channel>

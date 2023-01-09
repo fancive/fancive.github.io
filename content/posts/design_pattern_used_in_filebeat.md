@@ -1,6 +1,12 @@
 ---
 title: "Design pattern used in filebeat"
 date: 2020-09-16T22:15:59+08:00
+
+categories:
+- Go
+
+tags:
+- filebeat
 ---
 
 ## registry 与 lazyinit 结合
