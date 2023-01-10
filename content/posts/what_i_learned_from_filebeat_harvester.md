@@ -1,6 +1,7 @@
 ---
 title: "我从filebeat-harvester中学到什么"
 date: 2022-11-28T14:13:14+08:00
+featured_image: ""
 
 categories:
 - Go

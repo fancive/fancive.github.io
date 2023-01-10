@@ -1,6 +1,7 @@
 ---
 title: "[翻译]go interface"
 date: 2020-05-06T22:20:18+08:00
+featured_image: ""
 
 categories:
 - Go

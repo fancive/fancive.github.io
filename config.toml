@@ -1,9 +1,13 @@
 baseURL = 'https://fancive.github.io/'
-languageCode = "en"
+languageCode = "en-us"
 DefaultContentLanguage = "en"
+disqusShortname = ""
 title = ''
-theme = "den"
+theme = "ananke"
 publishDir = "docs"
+preserveTaxonomyNames = true
+SectionPagesMenu = "main"
+Paginate = 3 # this is set low for demonstrating with dummy content. Set to a higher number
 
 [taxonomies]
     category = "categories"
@@ -14,8 +18,7 @@ publishDir = "docs"
 [languages]
     [languages.en]
         weight = 1
-    [languages.fr]
-        weight = 2
+        title = "Home"
 
 [sitemap]
     changefreq = "monthly"
@@ -43,7 +46,6 @@ publishDir = "docs"
 [params]
     # color style
     color = 'linen'                   # linen, wheat, gray, light
-
     # header social icons
     github = 'fancive'         # github.com/YOUR_GITHUB_ID
     name = 'fancivez'
@@ -54,3 +56,16 @@ publishDir = "docs"
     headerImage = "images/background.jpg"
     logoTitle = "home" # shown on top-left, default: title
     dateFormatToUse = "2006-01-02"
+    background_color_class = "bg-black"
+
+[params.giscus]
+    data_repo="fancive/blog_discussion"
+    data_repo_id="R_kgDOIwDUDQ"
+    data_category="Announcements"
+    data_category_id="DIC_kwDOIwDUDc4CTgRN"
+    data_mapping="pathname"
+    data_reactions_enabled="1"
+    data_emit_metadata="0"
+    data_theme="preferred_color_scheme"
+    data_lang="zh-CN"
+    crossorigin="anonymous"

@@ -1,6 +1,7 @@
 ---
 title: "string to byte"
 date: 2020-05-31T21:30:28+08:00
+featured_image: ""
 
 categories:
 - Go
