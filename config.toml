@@ -18,7 +18,7 @@ Paginate = 9 # this is set low for demonstrating with dummy content. Set to a hi
 [languages]
     [languages.en]
         weight = 1
-        title = "Home"
+        title = "fancivez"
 
 [sitemap]
     changefreq = "monthly"
