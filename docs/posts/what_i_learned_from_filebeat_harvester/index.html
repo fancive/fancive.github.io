@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta name="generator" content="Hugo 0.96.0" />
+  <meta charset="utf-8">
+  <title>我从filebeat-harvester中学到什么 · fancivez</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="总体流程 filebeat 对每个path都会创建一个 harvester, harvester 负责逐行读取文件内容。它的上游是 input , input 负责管理harvester, 它的下游是 output, output 负责消费每一行消息。
+通过阅读harvester代码，我学习到了如何管理多个相互依赖的协程的生命周期，具体可以拆分为4个问题
+ 为主协程添加超时控制协程 主协程结束如何关闭超时控制协程和其他协程(monitorFileSize) 关闭协程时如何控制不同job间的先后执行顺序 如何从外部关闭任务，并等待清理完成  超时控制协程 (h *Harvester)Run() 方法里，创建新协程，消费2个事件
+ 超时事件 closeTimeout 主任务结束标志 h.done  一旦接收到其中一个事件，那么会调用 stop 并关闭 reader
+// Closes reader after timeout or when done channel is closed 	// This routine is also responsible to properly stop the reader go func(source string) {  closeTimeout := make(&amp;lt;-chan time.Time)  // starts close_timeout timer  if h." />
+
+
+<link rel="canonical" href="https://fancive.github.io/posts/what_i_learned_from_filebeat_harvester/" />
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+<link rel="stylesheet" href="https://fancive.github.io/css/den.css">
+
+
+
+
+<meta property="og:title" content="我从filebeat-harvester中学到什么" />
+<meta property="og:description" content="总体流程 filebeat 对每个path都会创建一个 harvester, harvester 负责逐行读取文件内容。它的上游是 input , input 负责管理harvester, 它的下游是 output, output 负责消费每一行消息。
+通过阅读harvester代码，我学习到了如何管理多个相互依赖的协程的生命周期，具体可以拆分为4个问题
+ 为主协程添加超时控制协程 主协程结束如何关闭超时控制协程和其他协程(monitorFileSize) 关闭协程时如何控制不同job间的先后执行顺序 如何从外部关闭任务，并等待清理完成  超时控制协程 (h *Harvester)Run() 方法里，创建新协程，消费2个事件
+ 超时事件 closeTimeout 主任务结束标志 h.done  一旦接收到其中一个事件，那么会调用 stop 并关闭 reader
+// Closes reader after timeout or when done channel is closed 	// This routine is also responsible to properly stop the reader go func(source string) {  closeTimeout := make(&lt;-chan time.Time)  // starts close_timeout timer  if h." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fancive.github.io/posts/what_i_learned_from_filebeat_harvester/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-11-28T14:13:14+08:00" />
+<meta property="article:modified_time" content="2022-11-28T14:13:14+08:00" />
+
+<meta itemprop="name" content="我从filebeat-harvester中学到什么">
+<meta itemprop="description" content="总体流程 filebeat 对每个path都会创建一个 harvester, harvester 负责逐行读取文件内容。它的上游是 input , input 负责管理harvester, 它的下游是 output, output 负责消费每一行消息。
+通过阅读harvester代码，我学习到了如何管理多个相互依赖的协程的生命周期，具体可以拆分为4个问题
+ 为主协程添加超时控制协程 主协程结束如何关闭超时控制协程和其他协程(monitorFileSize) 关闭协程时如何控制不同job间的先后执行顺序 如何从外部关闭任务，并等待清理完成  超时控制协程 (h *Harvester)Run() 方法里，创建新协程，消费2个事件
+ 超时事件 closeTimeout 主任务结束标志 h.done  一旦接收到其中一个事件，那么会调用 stop 并关闭 reader
+// Closes reader after timeout or when done channel is closed 	// This routine is also responsible to properly stop the reader go func(source string) {  closeTimeout := make(&lt;-chan time.Time)  // starts close_timeout timer  if h."><meta itemprop="datePublished" content="2022-11-28T14:13:14+08:00" />
+<meta itemprop="dateModified" content="2022-11-28T14:13:14+08:00" />
+<meta itemprop="wordCount" content="449">
+<meta itemprop="keywords" content="filebeat," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="我从filebeat-harvester中学到什么"/>
+<meta name="twitter:description" content="总体流程 filebeat 对每个path都会创建一个 harvester, harvester 负责逐行读取文件内容。它的上游是 input , input 负责管理harvester, 它的下游是 output, output 负责消费每一行消息。
+通过阅读harvester代码，我学习到了如何管理多个相互依赖的协程的生命周期，具体可以拆分为4个问题
+ 为主协程添加超时控制协程 主协程结束如何关闭超时控制协程和其他协程(monitorFileSize) 关闭协程时如何控制不同job间的先后执行顺序 如何从外部关闭任务，并等待清理完成  超时控制协程 (h *Harvester)Run() 方法里，创建新协程，消费2个事件
+ 超时事件 closeTimeout 主任务结束标志 h.done  一旦接收到其中一个事件，那么会调用 stop 并关闭 reader
+// Closes reader after timeout or when done channel is closed 	// This routine is also responsible to properly stop the reader go func(source string) {  closeTimeout := make(&lt;-chan time.Time)  // starts close_timeout timer  if h."/>
+</head>
+<body>
+  
+  <div class="header-container" style="background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('https://fancive.github.io/images/background.jpg'); background-position: center; background-size: cover;">
+  <div class="container">
+  <nav class="header-nav navbar navbar-expand-md navbar-dark light-dark">
+    <div class="header-logo navbar-brand">
+      
+        <a class="float-left" href="https://fancive.github.io/">
+      
+        
+        <img class="mr20 header-logo-image" src="https://fancive.github.io/images/globe.svg" alt="logo">
+        
+        
+          fancivez
+         
+      </a>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="nav-menu collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        
+          <li class="nav-item">
+            
+              
+                <a class="nav-link" href="https://fancive.github.io/about/">About</a>
+              
+            
+          </li>
+        
+          <li class="nav-item">
+            
+              
+                <a class="nav-link" href="https://fancive.github.io/categories/">categories</a>
+              
+            
+          </li>
+        
+          <li class="nav-item">
+            
+              
+                <a class="nav-link" href="https://fancive.github.io/contact/">Contact</a>
+              
+            
+          </li>
+        
+          <li class="nav-item">
+            
+              
+                <a class="nav-link" href="https://fancive.github.io/">home</a>
+              
+            
+          </li>
+        
+        
+      </ul>
+    </div>
+  </nav>
+</div>
+
+<div class="container header-wrapper">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="header-content">
+        <h1 class="header-title">我从filebeat-harvester中学到什么</h1>
+        <p class="header-date">
+        2022-11-28
+          / In categories
+          <a href="https://fancive.github.io/categories/go/">Go</a>
+        </p>
+        
+        <div class="header-underline"></div>
+        
+          <div class="clearfix"></div>
+          <p class="float-right header-tags">
+              <i class="fas fa-tags" aria-hidden="true"></i>
+              <a href="https://fancive.github.io/tags/filebeat/">filebeat</a>
+          </p>
+        
+        
+
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div>
+  <main>
+<div class="container content">
+  <article>
+  <h3 id="总体流程">总体流程</h3>
+<p>filebeat 对每个path都会创建一个 <code>harvester</code>,  <code>harvester</code> 负责逐行读取文件内容。它的上游是 <code>input</code> , <code>input</code> 负责管理<code>harvester</code>, 它的下游是 <code>output</code>, <code>output</code> 负责消费每一行消息。</p>
+<p>通过阅读harvester代码，我学习到了如何管理多个相互依赖的协程的生命周期，具体可以拆分为4个问题</p>
+<ol>
+<li>为主协程添加超时控制协程</li>
+<li>主协程结束如何关闭超时控制协程和其他协程(<code>monitorFileSize</code>)</li>
+<li>关闭协程时如何控制不同job间的先后执行顺序</li>
+<li>如何从外部关闭任务，并等待清理完成</li>
+</ol>
+<h3 id="超时控制协程">超时控制协程</h3>
+<p><code>(h *Harvester)Run()</code> 方法里，创建新协程，消费2个事件</p>
+<ol>
+<li>超时事件 <code>closeTimeout</code></li>
+<li>主任务结束标志 <code>h.done</code></li>
+</ol>
+<p>一旦接收到其中一个事件，那么会调用 <code>stop</code> 并关闭 <code>reader</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// Closes reader after timeout or when done channel is closed
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// This routine is also responsible to properly stop the reader
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">source</span> <span style="color:#66d9ef">string</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">closeTimeout</span> <span style="color:#f92672">:=</span> make(<span style="color:#f92672">&lt;-</span><span style="color:#66d9ef">chan</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Time</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// starts close_timeout timer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">CloseTimeout</span> &gt; <span style="color:#ae81ff">0</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">closeTimeout</span> = <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">After</span>(<span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">CloseTimeout</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">select</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Applies when timeout is reached
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">closeTimeout</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Infof</span>(<span style="color:#e6db74">&#34;Closing harvester because close_timeout was reached: %s&#34;</span>, <span style="color:#a6e22e">source</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Required when reader loop returns and reader finished
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">done</span>:
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">stop</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">reader</span>.<span style="color:#a6e22e">Close</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;Failed to stop harvester for file: %v&#34;</span>, <span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}(<span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">state</span>.<span style="color:#a6e22e">Source</span>)
+</span></span></code></pre></div><h3 id="主协程关闭其他附属功能协程">主协程关闭其他附属功能协程</h3>
+<p>一句话，主要是通过调用 <code>stop</code> (在defer里)， <code>stop</code> 里会 <code>close(h.done)</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">done</span>:
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">stopWg</span>.<span style="color:#a6e22e">Done</span>()
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">defer</span> <span style="color:#66d9ef">func</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Channel to stop internal harvester routines
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">stop</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Makes sure file is properly closed when the harvester is stopped
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">cleanup</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">harvesterRunning</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Marks harvester stopping completed
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">stopWg</span>.<span style="color:#a6e22e">Done</span>()
+</span></span><span style="display:flex;"><span>}()
+</span></span></code></pre></div><p>其他协程会消费 <code>h.done</code></p>
+<ol>
+<li>Run 函数开头, 用于立刻停止</li>
+<li>超时控制协程，这里select 消费了2个chan (其中一个是h.done)</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">select</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Applies when timeout is reached
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">case</span><span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">closeTimeout</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Infof</span>(<span style="color:#e6db74">&#34;Closing harvester because close_timeout was reached: %s&#34;</span>, <span style="color:#a6e22e">source</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Required when reader loop returns and reader finished
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">case</span><span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">done</span>:
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol>
+<li>Run函数的for-loop，这里是主要的逻辑实现地方</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">for</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">select</span>{
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">case</span><span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">done</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 读文件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol>
+<li><code>monitorFileSize</code>监控文件大小协程，需要和主协程一起结束</li>
+<li><code>Run</code> 方法开始的地方，创建其他子协程之前</li>
+<li>逐行读文件的 <code>for-loop</code> 里</li>
+</ol>
+<h3 id="donewg-waitgroup"><code>doneWg</code> waitGroup</h3>
+<p>用来在主协程(<em><code>Run</code></em>)发送结束信号*<code>close*(h.done)</code>时等 <code>monitorFileSize</code>协程关闭</p>
+<p>2个问题，这个wg用来等什么协程，在哪等</p>
+<ol>
+<li>用来等的是<code>monitorFileSize</code>监控文件大小协程</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">doneWg</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+</span></span><span style="display:flex;"><span>   <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">monitorFileSize</span>()
+</span></span><span style="display:flex;"><span>   <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">doneWg</span>.<span style="color:#a6e22e">Done</span>()
+</span></span><span style="display:flex;"><span>}()
+</span></span></code></pre></div><ol>
+<li>在 <code>stop</code> 函数里等(小写stop)</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//stop is intended for internal use and closed thedone channel tostop execution
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">h</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Harvester</span>) <span style="color:#a6e22e">stop</span>() {
+</span></span><span style="display:flex;"><span>	  <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">stopOnce</span>.<span style="color:#a6e22e">Do</span>(<span style="color:#66d9ef">func</span>() {
+</span></span><span style="display:flex;"><span>				close(<span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">done</span>)
+</span></span><span style="display:flex;"><span>				<span style="color:#75715e">// Wait for goroutines monitoring h.done to terminate before closing source.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>				<span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">doneWg</span>.<span style="color:#a6e22e">Wait</span>()
+</span></span><span style="display:flex;"><span>	      <span style="color:#a6e22e">filesMetrics</span>.<span style="color:#a6e22e">Remove</span>(<span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">id</span>.<span style="color:#a6e22e">String</span>())
+</span></span><span style="display:flex;"><span>   })
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>那么 <code>stop</code> 函数在哪被调用呢？</p>
+<ol>
+<li><em><code>Run</code> 函数的的defer操作里</em></li>
+<li>超时控制的协程里</li>
+<li>外部调用 <code>Stop</code> 时</li>
+</ol>
+<p>这里有个疑问，为什么在 <code>stop</code> 里面要<code>h.doneWg.Wait()</code>, 看上去 <code>monitorFileSize</code> 即使不wait也能正常退出，后来再读后面代码发现是为了先执行 <code>monitorFileSize</code> 后执行 <code>cleanup</code> 关闭句柄并改变关闭状态</p>
+<p>这里可以看出，当主协程因为某种原因结束时，我们希望先等 <code>monitorFileSize</code> 协程先退出后再执行后续操作 <code>cleanup</code> ，这里的顺序是</p>
+<ol>
+<li><code>h.stop()</code></li>
+<li><code>h.monitorFileSize</code> 协程退出</li>
+<li><code>h.cleanup()</code></li>
+</ol>
+<h3 id="stopwg-waitgroup-结束完成"><code>stopWg</code> waitGroup, 结束完成</h3>
+<p>2个问题，这个wg用来等什么协程，在哪等</p>
+<ol>
+<li>用来等待*<code>Run</code>函数的defer也完成后再退出 (<em><code>cleanup</code>函数, 改变<code>Harvester</code>状态为关闭,并关闭句柄</em>)*</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">defer</span> <span style="color:#66d9ef">func</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Channel to stop internal harvester routines
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">stop</span>()
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Makes sure file is properly closed when the harvester is stopped
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">cleanup</span>()
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">harvesterRunning</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Marks harvester stopping completed
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">stopWg</span>.<span style="color:#a6e22e">Done</span>()
+</span></span><span style="display:flex;"><span>}()
+</span></span></code></pre></div><ol>
+<li>在 <em><code>Stop</code> 函数里等(大写)</em></li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//Stop stops harvester and waits for completion
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">h</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Harvester</span>)<span style="color:#a6e22e">Stop</span>() {
+</span></span><span style="display:flex;"><span>   <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">stop</span>()
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Prevent stopWg.Wait() to be called at the same time as stopWg.Add(1)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">stopLock</span>.<span style="color:#a6e22e">Lock</span>()
+</span></span><span style="display:flex;"><span>   <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">stopWg</span>.<span style="color:#a6e22e">Wait</span>()
+</span></span><span style="display:flex;"><span>   <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">stopLock</span>.<span style="color:#a6e22e">Unlock</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>可以看出，这个wg的用途是当外部关闭该任务时，保证 <code>stop</code> 和 <code>cleanup</code> 被执行完成</p>
+<h3 id="参考">参考</h3>
+<p>filebeat/input/log/harvester.go</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// Harvester contains all harvester related data
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Harvester</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">logp</span>.<span style="color:#a6e22e">Logger</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">id</span>     <span style="color:#a6e22e">uuid</span>.<span style="color:#a6e22e">UUID</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">config</span> <span style="color:#a6e22e">config</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">source</span> <span style="color:#a6e22e">harvester</span>.<span style="color:#a6e22e">Source</span> <span style="color:#75715e">// the source being watched
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// shutdown handling
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">done</span>     <span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">struct</span>{}
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">doneWg</span>   <span style="color:#f92672">*</span><span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">stopOnce</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">Once</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">stopWg</span>   <span style="color:#f92672">*</span><span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">stopLock</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">Mutex</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// internal harvester state
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">state</span>  <span style="color:#a6e22e">file</span>.<span style="color:#a6e22e">State</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">states</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">file</span>.<span style="color:#a6e22e">States</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">log</span>    <span style="color:#f92672">*</span><span style="color:#a6e22e">Log</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// file reader pipeline
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">reader</span>          <span style="color:#a6e22e">reader</span>.<span style="color:#a6e22e">Reader</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">encodingFactory</span> <span style="color:#a6e22e">encoding</span>.<span style="color:#a6e22e">EncodingFactory</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">encoding</span>        <span style="color:#a6e22e">encoding</span>.<span style="color:#a6e22e">Encoding</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// event/state publishing
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">outletFactory</span> <span style="color:#a6e22e">OutletFactory</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">publishState</span>  <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">file</span>.<span style="color:#a6e22e">State</span>) <span style="color:#66d9ef">bool</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">metrics</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">harvesterProgressMetrics</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">onTerminate</span> <span style="color:#66d9ef">func</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
+  </article>
+
+  
+  
+  
+
+
+</div>
+
+  </main><div class="footer gradient-2">
+  <div class="container footer-container ">
+    <div class="row">
+      <div class="col-xs-4 col-sm-3 col-md-3 col-lg-3">
+        <div class="footer-title">Sitemap</div>
+        <ul class="list-unstyled">
+            
+              
+                <li><a href="https://fancive.github.io/tags/">Tags</a></li>
+              
+              
+                <li><a href="https://fancive.github.io/categories/">Categories</a></li>
+              
+            
+            
+            
+            <li><a rel="alternate" type="application/rss&#43;xml" href="https://fancive.github.io/index.xml"><i class="fas fa-rss-square"></i> RSS Feed</a></li>
+            
+            
+            
+        </ul>
+      </div>
+      <div class="col-xs-4 col-sm-3 col-md-3 col-lg-3">
+        
+      </div>
+      <div class="col-xs-4 col-sm-3 col-md-3 col-lg-3">
+        
+      </div> 
+      <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+        <p class="pull-right text-right">
+          <small><em>Proudly powered by <a href="https://gohugo.io/" rel="noopener" target="_blank">Hugo</a></em></small><br/>
+          <small><em>Theme - <a href="https://github.com/shaform/hugo-theme-den" rel="noopener" target="_blank">Den</a></em></small><br/>
+          <small>
+            &copy; 
+            
+            2023
+          </small>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+</body>
+</html>
