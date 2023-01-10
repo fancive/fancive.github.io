@@ -3,11 +3,11 @@ languageCode = "en-us"
 DefaultContentLanguage = "en"
 disqusShortname = ""
 title = ''
-theme = "ananke"
+theme = "den"
 publishDir = "docs"
 preserveTaxonomyNames = true
 SectionPagesMenu = "main"
-Paginate = 3 # this is set low for demonstrating with dummy content. Set to a higher number
+Paginate = 9 # this is set low for demonstrating with dummy content. Set to a higher number
 
 [taxonomies]
     category = "categories"
@@ -42,7 +42,11 @@ Paginate = 3 # this is set low for demonstrating with dummy content. Set to a hi
         name = "Contact"
         url = "/contact/"
         weight = 10
-
+    [[menu.main]]
+        identifier = "contact"
+        name = "Tags"
+        url = "/tags/"
+        weight = 10
 [params]
     # color style
     color = 'linen'                   # linen, wheat, gray, light
