@@ -1,7 +1,7 @@
 baseURL = 'https://fancive.github.io/'
 languageCode = "en"
 DefaultContentLanguage = "en"
-title = 'fancivez'
+title = ''
 theme = "den"
 publishDir = "docs"
 
@@ -24,11 +24,6 @@ publishDir = "docs"
 
 
 [menu]
-    [[menu.main]]
-        identifier = "home"
-        name = "home"
-        url = "/"
-        weight = 10
     [[menu.main]]
         identifier = "categories"
         name = "categories"
@@ -54,9 +49,8 @@ publishDir = "docs"
     name = 'fancivez'
     bio = 'golang fan'
     avatar = 'fancivez@gmail.com'         # Gravatar email or image url
-    description = ""
-
+    description = "欢迎来到荷兰"
     siteLogoImage = "images/globe.svg"     # shown besides logoTitle
     headerImage = "images/background.jpg"
-    logoTitle = "fancivez" # shown on top-left, default: title
+    logoTitle = "home" # shown on top-left, default: title
     dateFormatToUse = "2006-01-02"
