@@ -5,7 +5,7 @@
     <link>https://fancive.github.io/tags/filebeat/</link>
     <description>Recent content in filebeat on fancivez</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
+    <language>en-us</language>
     <lastBuildDate>Mon, 28 Nov 2022 14:13:14 +0800</lastBuildDate><atom:link href="https://fancive.github.io/tags/filebeat/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>我从filebeat-harvester中学到什么</title>
@@ -15,7 +15,7 @@
       <guid>https://fancive.github.io/posts/what_i_learned_from_filebeat_harvester/</guid>
       <description>总体流程 filebeat 对每个path都会创建一个 harvester, harvester 负责逐行读取文件内容。它的上游是 input , input 负责管理harvester, 它的下游是 output, output 负责消费每一行消息。
 通过阅读harvester代码，我学习到了如何管理多个相互依赖的协程的生命周期，具体可以拆分为4个问题
- 为主协程添加超时控制协程 主协程结束如何关闭超时控制协程和其他协程(monitorFileSize) 关闭协程时如何控制不同job间的先后执行顺序 如何从外部关闭任务，并等待清理完成  超时控制协程 (h *Harvester)Run() 方法里，创建新协程，消费2个事件
+ 为主协程添加超时控制协程 主协程结束如何关闭超时控制协程和其他协程(monitorFileSize) 关闭协程时如何控制不同job间的先后执行顺序 如何从外部关闭任务，并等待清理完成  超时控制协程 (h *Harvester)Run() 方法里，会创建超时控制协程，在此协程中会消费2个事件
  超时事件 closeTimeout 主任务结束标志 h.done  一旦接收到其中一个事件，那么会调用 stop 并关闭 reader
 // Closes reader after timeout or when done channel is closed 	// This routine is also responsible to properly stop the reader go func(source string) {  closeTimeout := make(&amp;lt;-chan time.Time)  // starts close_timeout timer  if h.</description>
     </item>

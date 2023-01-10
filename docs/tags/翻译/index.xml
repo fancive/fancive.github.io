@@ -5,10 +5,10 @@
     <link>https://fancive.github.io/tags/%E7%BF%BB%E8%AF%91/</link>
     <description>Recent content in 翻译 on fancivez</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
+    <language>en-us</language>
     <lastBuildDate>Sun, 31 May 2020 21:30:28 +0800</lastBuildDate><atom:link href="https://fancive.github.io/tags/%E7%BF%BB%E8%AF%91/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>string to byte</title>
+      <title>go string to byte</title>
       <link>https://fancive.github.io/posts/go_string_byte/</link>
       <pubDate>Sun, 31 May 2020 21:30:28 +0800</pubDate>
       

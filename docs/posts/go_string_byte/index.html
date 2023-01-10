@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<html lang="en-us" itemscope itemtype="http://schema.org/WebPage">
 <head>
   <meta name="generator" content="Hugo 0.96.0" />
   <meta charset="utf-8">
-  <title>string to byte · fancivez</title>
+  <title>go string to byte · fancivez</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32
 func main() { 	s1 := &amp;#34;abc&amp;#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
@@ -21,7 +21,7 @@ func main() { 	s1 := &amp;#34;abc&amp;#34; 	fmt.Println(cap([]byte(s1))) } 0x02 
 
 
 
-<meta property="og:title" content="string to byte" />
+<meta property="og:title" content="go string to byte" />
 <meta property="og:description" content="0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32
 func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
  -N 禁止优化 -S 输出汇编代码 -l 禁止内联
@@ -30,9 +30,9 @@ func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 �
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fancive.github.io/posts/go_string_byte/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2020-05-31T21:30:28+08:00" />
-<meta property="article:modified_time" content="2020-05-31T21:30:28+08:00" />
+<meta property="article:modified_time" content="2020-05-31T21:30:28+08:00" /><meta property="og:site_name" content="fancivez" />
 
-<meta itemprop="name" content="string to byte">
+<meta itemprop="name" content="go string to byte">
 <meta itemprop="description" content="0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32
 func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
  -N 禁止优化 -S 输出汇编代码 -l 禁止内联
@@ -41,7 +41,7 @@ func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 �
 <meta itemprop="dateModified" content="2020-05-31T21:30:28+08:00" />
 <meta itemprop="wordCount" content="776">
 <meta itemprop="keywords" content="go runtime,翻译," /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="string to byte"/>
+<meta name="twitter:title" content="go string to byte"/>
 <meta name="twitter:description" content="0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32
 func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
  -N 禁止优化 -S 输出汇编代码 -l 禁止内联
@@ -61,7 +61,7 @@ func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 �
         <img class="mr20 header-logo-image" src="https://fancive.github.io/images/globe.svg" alt="logo">
         
         
-          fancivez
+          home
          
       </a>
     </div>
@@ -90,16 +90,14 @@ func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 �
           <li class="nav-item">
             
               
-                <a class="nav-link" href="https://fancive.github.io/contact/">Contact</a>
+                <a class="nav-link" href="https://fancive.github.io/tags/">Tags</a>
               
             
           </li>
         
           <li class="nav-item">
             
-              
-                <a class="nav-link" href="https://fancive.github.io/">home</a>
-              
+              <a class="nav-link" href="https://fancive.github.io/posts/">Posts</a>
             
           </li>
         
@@ -113,7 +111,7 @@ func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 �
   <div class="row">
     <div class="col-lg-12">
       <div class="header-content">
-        <h1 class="header-title">string to byte</h1>
+        <h1 class="header-title">go string to byte</h1>
         <p class="header-date">
         2020-05-31
           / In categories
