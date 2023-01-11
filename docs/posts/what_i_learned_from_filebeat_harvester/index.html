@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en-us" itemscope itemtype="http://schema.org/WebPage">
 <head>
-  <meta name="generator" content="Hugo 0.96.0" />
+  <meta name="generator" content="Hugo 0.109.0" />
   <meta charset="utf-8">
   <title>我从filebeat-harvester中学到什么 · fancivez</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="总体流程 filebeat 对每个path都会创建一个 harvester, harvester 负责逐行读取文件内容。它的上游是 input , input 负责管理harvester, 它的下游是 output, output 负责消费每一行消息。
 通过阅读harvester代码，我学习到了如何管理多个相互依赖的协程的生命周期，具体可以拆分为4个问题
- 为主协程添加超时控制协程 主协程结束如何关闭超时控制协程和其他协程(monitorFileSize) 关闭协程时如何控制不同job间的先后执行顺序 如何从外部关闭任务，并等待清理完成  超时控制协程 (h *Harvester)Run() 方法里，会创建超时控制协程，在此协程中会消费2个事件
- 超时事件 closeTimeout 主任务结束标志 h.done  一旦接收到其中一个事件，那么会调用 stop 并关闭 reader
-// Closes reader after timeout or when done channel is closed 	// This routine is also responsible to properly stop the reader go func(source string) {  closeTimeout := make(&amp;lt;-chan time.Time)  // starts close_timeout timer  if h." />
+为主协程添加超时控制协程 主协程结束如何关闭超时控制协程和其他协程(monitorFileSize) 关闭协程时如何控制不同job间的先后执行顺序 如何从外部关闭任务，并等待清理完成 超时控制协程 (h *Harvester)Run() 方法里，会创建超时控制协程，在此协程中会消费2个事件
+超时事件 closeTimeout 主任务结束标志 h.done 一旦接收到其中一个事件，那么会调用 stop 并关闭 reader
+// Closes reader after timeout or when done channel is closed // This routine is also responsible to properly stop the reader go func(source string) { closeTimeout := make(&amp;lt;-chan time.Time) // starts close_timeout timer if h.config.CloseTimeout &amp;gt; 0 { closeTimeout = time." />
 
 
 <link rel="canonical" href="https://fancive.github.io/posts/what_i_learned_from_filebeat_harvester/" />
@@ -24,29 +24,28 @@
 <meta property="og:title" content="我从filebeat-harvester中学到什么" />
 <meta property="og:description" content="总体流程 filebeat 对每个path都会创建一个 harvester, harvester 负责逐行读取文件内容。它的上游是 input , input 负责管理harvester, 它的下游是 output, output 负责消费每一行消息。
 通过阅读harvester代码，我学习到了如何管理多个相互依赖的协程的生命周期，具体可以拆分为4个问题
- 为主协程添加超时控制协程 主协程结束如何关闭超时控制协程和其他协程(monitorFileSize) 关闭协程时如何控制不同job间的先后执行顺序 如何从外部关闭任务，并等待清理完成  超时控制协程 (h *Harvester)Run() 方法里，会创建超时控制协程，在此协程中会消费2个事件
- 超时事件 closeTimeout 主任务结束标志 h.done  一旦接收到其中一个事件，那么会调用 stop 并关闭 reader
-// Closes reader after timeout or when done channel is closed 	// This routine is also responsible to properly stop the reader go func(source string) {  closeTimeout := make(&lt;-chan time.Time)  // starts close_timeout timer  if h." />
+为主协程添加超时控制协程 主协程结束如何关闭超时控制协程和其他协程(monitorFileSize) 关闭协程时如何控制不同job间的先后执行顺序 如何从外部关闭任务，并等待清理完成 超时控制协程 (h *Harvester)Run() 方法里，会创建超时控制协程，在此协程中会消费2个事件
+超时事件 closeTimeout 主任务结束标志 h.done 一旦接收到其中一个事件，那么会调用 stop 并关闭 reader
+// Closes reader after timeout or when done channel is closed // This routine is also responsible to properly stop the reader go func(source string) { closeTimeout := make(&lt;-chan time.Time) // starts close_timeout timer if h.config.CloseTimeout &gt; 0 { closeTimeout = time." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fancive.github.io/posts/what_i_learned_from_filebeat_harvester/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-11-28T14:13:14+08:00" />
 <meta property="article:modified_time" content="2022-11-28T14:13:14+08:00" /><meta property="og:site_name" content="fancivez" />
-
 <meta itemprop="name" content="我从filebeat-harvester中学到什么">
 <meta itemprop="description" content="总体流程 filebeat 对每个path都会创建一个 harvester, harvester 负责逐行读取文件内容。它的上游是 input , input 负责管理harvester, 它的下游是 output, output 负责消费每一行消息。
 通过阅读harvester代码，我学习到了如何管理多个相互依赖的协程的生命周期，具体可以拆分为4个问题
- 为主协程添加超时控制协程 主协程结束如何关闭超时控制协程和其他协程(monitorFileSize) 关闭协程时如何控制不同job间的先后执行顺序 如何从外部关闭任务，并等待清理完成  超时控制协程 (h *Harvester)Run() 方法里，会创建超时控制协程，在此协程中会消费2个事件
- 超时事件 closeTimeout 主任务结束标志 h.done  一旦接收到其中一个事件，那么会调用 stop 并关闭 reader
-// Closes reader after timeout or when done channel is closed 	// This routine is also responsible to properly stop the reader go func(source string) {  closeTimeout := make(&lt;-chan time.Time)  // starts close_timeout timer  if h."><meta itemprop="datePublished" content="2022-11-28T14:13:14+08:00" />
+为主协程添加超时控制协程 主协程结束如何关闭超时控制协程和其他协程(monitorFileSize) 关闭协程时如何控制不同job间的先后执行顺序 如何从外部关闭任务，并等待清理完成 超时控制协程 (h *Harvester)Run() 方法里，会创建超时控制协程，在此协程中会消费2个事件
+超时事件 closeTimeout 主任务结束标志 h.done 一旦接收到其中一个事件，那么会调用 stop 并关闭 reader
+// Closes reader after timeout or when done channel is closed // This routine is also responsible to properly stop the reader go func(source string) { closeTimeout := make(&lt;-chan time.Time) // starts close_timeout timer if h.config.CloseTimeout &gt; 0 { closeTimeout = time."><meta itemprop="datePublished" content="2022-11-28T14:13:14+08:00" />
 <meta itemprop="dateModified" content="2022-11-28T14:13:14+08:00" />
 <meta itemprop="wordCount" content="449">
 <meta itemprop="keywords" content="filebeat," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="我从filebeat-harvester中学到什么"/>
 <meta name="twitter:description" content="总体流程 filebeat 对每个path都会创建一个 harvester, harvester 负责逐行读取文件内容。它的上游是 input , input 负责管理harvester, 它的下游是 output, output 负责消费每一行消息。
 通过阅读harvester代码，我学习到了如何管理多个相互依赖的协程的生命周期，具体可以拆分为4个问题
- 为主协程添加超时控制协程 主协程结束如何关闭超时控制协程和其他协程(monitorFileSize) 关闭协程时如何控制不同job间的先后执行顺序 如何从外部关闭任务，并等待清理完成  超时控制协程 (h *Harvester)Run() 方法里，会创建超时控制协程，在此协程中会消费2个事件
- 超时事件 closeTimeout 主任务结束标志 h.done  一旦接收到其中一个事件，那么会调用 stop 并关闭 reader
-// Closes reader after timeout or when done channel is closed 	// This routine is also responsible to properly stop the reader go func(source string) {  closeTimeout := make(&lt;-chan time.Time)  // starts close_timeout timer  if h."/>
+为主协程添加超时控制协程 主协程结束如何关闭超时控制协程和其他协程(monitorFileSize) 关闭协程时如何控制不同job间的先后执行顺序 如何从外部关闭任务，并等待清理完成 超时控制协程 (h *Harvester)Run() 方法里，会创建超时控制协程，在此协程中会消费2个事件
+超时事件 closeTimeout 主任务结束标志 h.done 一旦接收到其中一个事件，那么会调用 stop 并关闭 reader
+// Closes reader after timeout or when done channel is closed // This routine is also responsible to properly stop the reader go func(source string) { closeTimeout := make(&lt;-chan time.Time) // starts close_timeout timer if h.config.CloseTimeout &gt; 0 { closeTimeout = time."/>
 
 <script type="application/javascript">
 var doNotTrack = false;
@@ -343,6 +342,37 @@ if (!doNotTrack) {
   
   
   
+<div class="disqus-comment">
+<div>
+<div class="comment-underline"></div>
+</div>
+<div class="btn btn-secondary disqus-button" id="load_disqus" onclick="load_disqus()">
+  Load Disqus Comments
+</div>
+<div id="disqus_thread"></div>
+<script>
+  var disqus_config = function () {
+    this.page.url = "https://fancive.github.io/posts/what_i_learned_from_filebeat_harvester/";
+  };
+  function load_disqus() {
+    
+    
+    if (window.location.hostname === 'localhost') return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'fancive-github-com';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    dsq.setAttribute('data-timestamp', +new Date());
+    (document.head || document.body).appendChild(dsq);
+
+    $('#load_disqus').remove();
+  };
+</script>
+<noscript>Please enable JavaScript to view the
+  <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+
+</div>
 
 
 </div>

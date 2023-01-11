@@ -1,7 +1,7 @@
 baseURL = 'https://fancive.github.io/'
 languageCode = "en-us"
 DefaultContentLanguage = "en"
-disqusShortname = ""
+disqusShortname = "fancive-github-com"
 title = ''
 theme = "den"
 publishDir = "docs"

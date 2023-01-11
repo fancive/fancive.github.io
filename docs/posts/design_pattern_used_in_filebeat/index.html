@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en-us" itemscope itemtype="http://schema.org/WebPage">
 <head>
-  <meta name="generator" content="Hugo 0.96.0" />
+  <meta name="generator" content="Hugo 0.109.0" />
   <meta charset="utf-8">
   <title>filebeat中使用的设计模式 · fancivez</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="registry 与 lazyinit 结合 filebeat/input.New
 f, err = GetFactory(input.config.Type) GetFactory
-func GetFactory(name string) (Factory, error) {  if _, exists := registry[name]; !exists {  return nil, fmt.Errorf(&amp;#34;Error creating input. No such input type exist: &amp;#39;%v&amp;#39;&amp;#34;, name)  }  return registry[name], nil } 注册
-func init() {  err := input.Register(&amp;#34;log&amp;#34;, NewInput)  if err != nil {  panic(err)  } } observer publish
-func (b *bus) Publish(e Event) {  b." />
+func GetFactory(name string) (Factory, error) { if _, exists := registry[name]; !exists { return nil, fmt.Errorf(&amp;#34;Error creating input. No such input type exist: &amp;#39;%v&amp;#39;&amp;#34;, name) } return registry[name], nil } 注册
+func init() { err := input.Register(&amp;#34;log&amp;#34;, NewInput) if err != nil { panic(err) } } observer publish
+func (b *bus) Publish(e Event) { b.RLock() defer b.RUnlock() logp.Debug(&amp;#34;bus&amp;#34;, &amp;#34;%s: %&#43;v&amp;#34;, b." />
 
 
 <link rel="canonical" href="https://fancive.github.io/posts/design_pattern_used_in_filebeat/" />
@@ -24,29 +24,28 @@ func (b *bus) Publish(e Event) {  b." />
 <meta property="og:title" content="filebeat中使用的设计模式" />
 <meta property="og:description" content="registry 与 lazyinit 结合 filebeat/input.New
 f, err = GetFactory(input.config.Type) GetFactory
-func GetFactory(name string) (Factory, error) {  if _, exists := registry[name]; !exists {  return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name)  }  return registry[name], nil } 注册
-func init() {  err := input.Register(&#34;log&#34;, NewInput)  if err != nil {  panic(err)  } } observer publish
-func (b *bus) Publish(e Event) {  b." />
+func GetFactory(name string) (Factory, error) { if _, exists := registry[name]; !exists { return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name) } return registry[name], nil } 注册
+func init() { err := input.Register(&#34;log&#34;, NewInput) if err != nil { panic(err) } } observer publish
+func (b *bus) Publish(e Event) { b.RLock() defer b.RUnlock() logp.Debug(&#34;bus&#34;, &#34;%s: %&#43;v&#34;, b." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fancive.github.io/posts/design_pattern_used_in_filebeat/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2020-09-16T22:15:59+08:00" />
 <meta property="article:modified_time" content="2020-09-16T22:15:59+08:00" /><meta property="og:site_name" content="fancivez" />
-
 <meta itemprop="name" content="filebeat中使用的设计模式">
 <meta itemprop="description" content="registry 与 lazyinit 结合 filebeat/input.New
 f, err = GetFactory(input.config.Type) GetFactory
-func GetFactory(name string) (Factory, error) {  if _, exists := registry[name]; !exists {  return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name)  }  return registry[name], nil } 注册
-func init() {  err := input.Register(&#34;log&#34;, NewInput)  if err != nil {  panic(err)  } } observer publish
-func (b *bus) Publish(e Event) {  b."><meta itemprop="datePublished" content="2020-09-16T22:15:59+08:00" />
+func GetFactory(name string) (Factory, error) { if _, exists := registry[name]; !exists { return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name) } return registry[name], nil } 注册
+func init() { err := input.Register(&#34;log&#34;, NewInput) if err != nil { panic(err) } } observer publish
+func (b *bus) Publish(e Event) { b.RLock() defer b.RUnlock() logp.Debug(&#34;bus&#34;, &#34;%s: %&#43;v&#34;, b."><meta itemprop="datePublished" content="2020-09-16T22:15:59+08:00" />
 <meta itemprop="dateModified" content="2020-09-16T22:15:59+08:00" />
 <meta itemprop="wordCount" content="222">
 <meta itemprop="keywords" content="filebeat," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="filebeat中使用的设计模式"/>
 <meta name="twitter:description" content="registry 与 lazyinit 结合 filebeat/input.New
 f, err = GetFactory(input.config.Type) GetFactory
-func GetFactory(name string) (Factory, error) {  if _, exists := registry[name]; !exists {  return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name)  }  return registry[name], nil } 注册
-func init() {  err := input.Register(&#34;log&#34;, NewInput)  if err != nil {  panic(err)  } } observer publish
-func (b *bus) Publish(e Event) {  b."/>
+func GetFactory(name string) (Factory, error) { if _, exists := registry[name]; !exists { return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name) } return registry[name], nil } 注册
+func init() { err := input.Register(&#34;log&#34;, NewInput) if err != nil { panic(err) } } observer publish
+func (b *bus) Publish(e Event) { b.RLock() defer b.RUnlock() logp.Debug(&#34;bus&#34;, &#34;%s: %&#43;v&#34;, b."/>
 
 <script type="application/javascript">
 var doNotTrack = false;
@@ -242,6 +241,37 @@ if (!doNotTrack) {
   
   
   
+<div class="disqus-comment">
+<div>
+<div class="comment-underline"></div>
+</div>
+<div class="btn btn-secondary disqus-button" id="load_disqus" onclick="load_disqus()">
+  Load Disqus Comments
+</div>
+<div id="disqus_thread"></div>
+<script>
+  var disqus_config = function () {
+    this.page.url = "https://fancive.github.io/posts/design_pattern_used_in_filebeat/";
+  };
+  function load_disqus() {
+    
+    
+    if (window.location.hostname === 'localhost') return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'fancive-github-com';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    dsq.setAttribute('data-timestamp', +new Date());
+    (document.head || document.body).appendChild(dsq);
+
+    $('#load_disqus').remove();
+  };
+</script>
+<noscript>Please enable JavaScript to view the
+  <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+
+</div>
 
 
 </div>
