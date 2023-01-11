@@ -47,6 +47,17 @@ f, err = GetFactory(input.config.Type) GetFactory
 func GetFactory(name string) (Factory, error) {  if _, exists := registry[name]; !exists {  return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name)  }  return registry[name], nil } 注册
 func init() {  err := input.Register(&#34;log&#34;, NewInput)  if err != nil {  panic(err)  } } observer publish
 func (b *bus) Publish(e Event) {  b."/>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'G-7N49ZFJ61J', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 </head>
 <body>
   

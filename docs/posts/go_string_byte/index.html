@@ -47,6 +47,17 @@ func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 �
  -N 禁止优化 -S 输出汇编代码 -l 禁止内联
  go build -gcflags=&#34;-N -l -S&#34; go.go 得到以下代码
 &#34;&#34;.main STEXT size=293 args=0x0 locals=0xc0 0x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0 0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX 0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX 0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX) 0x0012 00018 (/home/xxx/go.go:5)	JLS	283 0x0018 00024 (/home/xxx/go."/>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'G-7N49ZFJ61J', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 </head>
 <body>
   
