@@ -8,6 +8,8 @@ publishDir = "docs"
 preserveTaxonomyNames = true
 SectionPagesMenu = "main"
 Paginate = 9 # this is set low for demonstrating with dummy content. Set to a higher number
+googleAnalytics = "G-7N49ZFJ61J"
+
 
 [taxonomies]
     category = "categories"
@@ -73,3 +75,4 @@ Paginate = 9 # this is set low for demonstrating with dummy content. Set to a hi
     data_theme="preferred_color_scheme"
     data_lang="zh-CN"
     crossorigin="anonymous"
+
