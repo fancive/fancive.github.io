@@ -7,16 +7,16 @@
     <title>go string to byte | fancivez</title>
     <meta name="viewport" content="width=device-width,minimum-scale=1">
     <meta name="description" content="0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32
-func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
- -N 禁止优化 -S 输出汇编代码 -l 禁止内联
- go build -gcflags=&#34;-N -l -S&#34; go.go 得到以下代码
-&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc0 0x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0 0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX 0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX 0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX) 0x0012 00018 (/home/xxx/go.go:5)	JLS	283 0x0018 00024 (/home/xxx/go.">
-    <meta name="generator" content="Hugo 0.96.0" />
+func main() { s1 := &#34;abc&#34; fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
+-N 禁止优化 -S 输出汇编代码 -l 禁止内联
+go build -gcflags=&#34;-N -l -S&#34; go.go 得到以下代码
+&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc00x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-00x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX)0x0012 00018 (/home/xxx/go.go:5)	JLS	2830x0018 00024 (/home/xxx/go.go:5)	SUBQ	$192, SP0x001f 00031 (/home/xxx/go.">
+    <meta name="generator" content="Hugo 0.109.0">
     
     
     
     
-      <meta name="robots" content="noindex, nofollow">
+      <meta name="robots" content="index, follow">
     
 
     
@@ -35,31 +35,43 @@ func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 �
     
     <meta property="og:title" content="go string to byte" />
 <meta property="og:description" content="0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32
-func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
- -N 禁止优化 -S 输出汇编代码 -l 禁止内联
- go build -gcflags=&#34;-N -l -S&#34; go.go 得到以下代码
-&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc0 0x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0 0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX 0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX 0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX) 0x0012 00018 (/home/xxx/go.go:5)	JLS	283 0x0018 00024 (/home/xxx/go." />
+func main() { s1 := &#34;abc&#34; fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
+-N 禁止优化 -S 输出汇编代码 -l 禁止内联
+go build -gcflags=&#34;-N -l -S&#34; go.go 得到以下代码
+&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc00x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-00x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX)0x0012 00018 (/home/xxx/go.go:5)	JLS	2830x0018 00024 (/home/xxx/go.go:5)	SUBQ	$192, SP0x001f 00031 (/home/xxx/go." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fancive.github.io/posts/go_string_byte/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2020-05-31T21:30:28+08:00" />
 <meta property="article:modified_time" content="2020-05-31T21:30:28+08:00" /><meta property="og:site_name" content="fancivez" />
-
 <meta itemprop="name" content="go string to byte">
 <meta itemprop="description" content="0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32
-func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
- -N 禁止优化 -S 输出汇编代码 -l 禁止内联
- go build -gcflags=&#34;-N -l -S&#34; go.go 得到以下代码
-&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc0 0x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0 0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX 0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX 0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX) 0x0012 00018 (/home/xxx/go.go:5)	JLS	283 0x0018 00024 (/home/xxx/go."><meta itemprop="datePublished" content="2020-05-31T21:30:28+08:00" />
+func main() { s1 := &#34;abc&#34; fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
+-N 禁止优化 -S 输出汇编代码 -l 禁止内联
+go build -gcflags=&#34;-N -l -S&#34; go.go 得到以下代码
+&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc00x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-00x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX)0x0012 00018 (/home/xxx/go.go:5)	JLS	2830x0018 00024 (/home/xxx/go.go:5)	SUBQ	$192, SP0x001f 00031 (/home/xxx/go."><meta itemprop="datePublished" content="2020-05-31T21:30:28+08:00" />
 <meta itemprop="dateModified" content="2020-05-31T21:30:28+08:00" />
 <meta itemprop="wordCount" content="776">
 <meta itemprop="keywords" content="go runtime,翻译," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="go string to byte"/>
 <meta name="twitter:description" content="0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32
-func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
- -N 禁止优化 -S 输出汇编代码 -l 禁止内联
- go build -gcflags=&#34;-N -l -S&#34; go.go 得到以下代码
-&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc0 0x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0 0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX 0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX 0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX) 0x0012 00018 (/home/xxx/go.go:5)	JLS	283 0x0018 00024 (/home/xxx/go."/>
+func main() { s1 := &#34;abc&#34; fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
+-N 禁止优化 -S 输出汇编代码 -l 禁止内联
+go build -gcflags=&#34;-N -l -S&#34; go.go 得到以下代码
+&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc00x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-00x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX)0x0012 00018 (/home/xxx/go.go:5)	JLS	2830x0018 00024 (/home/xxx/go.go:5)	SUBQ	$192, SP0x001f 00031 (/home/xxx/go."/>
 
+      
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-7N49ZFJ61J', { 'anonymize_ip': false });
+}
+</script>
+
+    
 	
   </head>
 

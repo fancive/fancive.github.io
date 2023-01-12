@@ -8,15 +8,15 @@
     <meta name="viewport" content="width=device-width,minimum-scale=1">
     <meta name="description" content="registry 与 lazyinit 结合 filebeat/input.New
 f, err = GetFactory(input.config.Type) GetFactory
-func GetFactory(name string) (Factory, error) {  if _, exists := registry[name]; !exists {  return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name)  }  return registry[name], nil } 注册
-func init() {  err := input.Register(&#34;log&#34;, NewInput)  if err != nil {  panic(err)  } } observer publish
-func (b *bus) Publish(e Event) {  b.">
-    <meta name="generator" content="Hugo 0.96.0" />
+func GetFactory(name string) (Factory, error) { if _, exists := registry[name]; !exists { return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name) } return registry[name], nil } 注册
+func init() { err := input.Register(&#34;log&#34;, NewInput) if err != nil { panic(err) } } observer publish
+func (b *bus) Publish(e Event) { b.RLock() defer b.RUnlock() logp.Debug(&#34;bus&#34;, &#34;%s: %&#43;v&#34;, b.">
+    <meta name="generator" content="Hugo 0.109.0">
     
     
     
     
-      <meta name="robots" content="noindex, nofollow">
+      <meta name="robots" content="index, follow">
     
 
     
@@ -36,30 +36,42 @@ func (b *bus) Publish(e Event) {  b.">
     <meta property="og:title" content="filebeat中使用的设计模式" />
 <meta property="og:description" content="registry 与 lazyinit 结合 filebeat/input.New
 f, err = GetFactory(input.config.Type) GetFactory
-func GetFactory(name string) (Factory, error) {  if _, exists := registry[name]; !exists {  return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name)  }  return registry[name], nil } 注册
-func init() {  err := input.Register(&#34;log&#34;, NewInput)  if err != nil {  panic(err)  } } observer publish
-func (b *bus) Publish(e Event) {  b." />
+func GetFactory(name string) (Factory, error) { if _, exists := registry[name]; !exists { return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name) } return registry[name], nil } 注册
+func init() { err := input.Register(&#34;log&#34;, NewInput) if err != nil { panic(err) } } observer publish
+func (b *bus) Publish(e Event) { b.RLock() defer b.RUnlock() logp.Debug(&#34;bus&#34;, &#34;%s: %&#43;v&#34;, b." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fancive.github.io/posts/design_pattern_used_in_filebeat/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2020-09-16T22:15:59+08:00" />
 <meta property="article:modified_time" content="2020-09-16T22:15:59+08:00" /><meta property="og:site_name" content="fancivez" />
-
 <meta itemprop="name" content="filebeat中使用的设计模式">
 <meta itemprop="description" content="registry 与 lazyinit 结合 filebeat/input.New
 f, err = GetFactory(input.config.Type) GetFactory
-func GetFactory(name string) (Factory, error) {  if _, exists := registry[name]; !exists {  return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name)  }  return registry[name], nil } 注册
-func init() {  err := input.Register(&#34;log&#34;, NewInput)  if err != nil {  panic(err)  } } observer publish
-func (b *bus) Publish(e Event) {  b."><meta itemprop="datePublished" content="2020-09-16T22:15:59+08:00" />
+func GetFactory(name string) (Factory, error) { if _, exists := registry[name]; !exists { return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name) } return registry[name], nil } 注册
+func init() { err := input.Register(&#34;log&#34;, NewInput) if err != nil { panic(err) } } observer publish
+func (b *bus) Publish(e Event) { b.RLock() defer b.RUnlock() logp.Debug(&#34;bus&#34;, &#34;%s: %&#43;v&#34;, b."><meta itemprop="datePublished" content="2020-09-16T22:15:59+08:00" />
 <meta itemprop="dateModified" content="2020-09-16T22:15:59+08:00" />
 <meta itemprop="wordCount" content="222">
 <meta itemprop="keywords" content="filebeat," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="filebeat中使用的设计模式"/>
 <meta name="twitter:description" content="registry 与 lazyinit 结合 filebeat/input.New
 f, err = GetFactory(input.config.Type) GetFactory
-func GetFactory(name string) (Factory, error) {  if _, exists := registry[name]; !exists {  return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name)  }  return registry[name], nil } 注册
-func init() {  err := input.Register(&#34;log&#34;, NewInput)  if err != nil {  panic(err)  } } observer publish
-func (b *bus) Publish(e Event) {  b."/>
+func GetFactory(name string) (Factory, error) { if _, exists := registry[name]; !exists { return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name) } return registry[name], nil } 注册
+func init() { err := input.Register(&#34;log&#34;, NewInput) if err != nil { panic(err) } } observer publish
+func (b *bus) Publish(e Event) { b.RLock() defer b.RUnlock() logp.Debug(&#34;bus&#34;, &#34;%s: %&#43;v&#34;, b."/>
 
+      
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-7N49ZFJ61J', { 'anonymize_ip': false });
+}
+</script>
+
+    
 	
   </head>
 

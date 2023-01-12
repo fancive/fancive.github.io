@@ -7,12 +7,12 @@
     <title>filebeat | fancivez</title>
     <meta name="viewport" content="width=device-width,minimum-scale=1">
     <meta name="description" content="欢迎来到荷兰">
-    <meta name="generator" content="Hugo 0.96.0" />
+    <meta name="generator" content="Hugo 0.109.0">
     
     
     
     
-      <meta name="robots" content="noindex, nofollow">
+      <meta name="robots" content="index, follow">
     
 
     
@@ -38,12 +38,24 @@
 <meta property="og:description" content="欢迎来到荷兰" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://fancive.github.io/tags/filebeat/" /><meta property="og:site_name" content="fancivez" />
-
 <meta itemprop="name" content="filebeat">
 <meta itemprop="description" content="欢迎来到荷兰"><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="filebeat"/>
 <meta name="twitter:description" content="欢迎来到荷兰"/>
 
+      
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-7N49ZFJ61J', { 'anonymize_ip': false });
+}
+</script>
+
+    
 	
   </head>
 
@@ -147,9 +159,9 @@
     <div class="nested-links f5 lh-copy nested-copy-line-height">
       总体流程 filebeat 对每个path都会创建一个 harvester, harvester 负责逐行读取文件内容。它的上游是 input , input 负责管理harvester, 它的下游是 output, output 负责消费每一行消息。
 通过阅读harvester代码，我学习到了如何管理多个相互依赖的协程的生命周期，具体可以拆分为4个问题
- 为主协程添加超时控制协程 主协程结束如何关闭超时控制协程和其他协程(monitorFileSize) 关闭协程时如何控制不同job间的先后执行顺序 如何从外部关闭任务，并等待清理完成  超时控制协程 (h *Harvester)Run() 方法里，会创建超时控制协程，在此协程中会消费2个事件
- 超时事件 closeTimeout 主任务结束标志 h.done  一旦接收到其中一个事件，那么会调用 stop 并关闭 reader
-// Closes reader after timeout or when done channel is closed 	// This routine is also responsible to properly stop the reader go func(source string) {  closeTimeout := make(&lt;-chan time.Time)  // starts close_timeout timer  if h.
+为主协程添加超时控制协程 主协程结束如何关闭超时控制协程和其他协程(monitorFileSize) 关闭协程时如何控制不同job间的先后执行顺序 如何从外部关闭任务，并等待清理完成 超时控制协程 (h *Harvester)Run() 方法里，会创建超时控制协程，在此协程中会消费2个事件
+超时事件 closeTimeout 主任务结束标志 h.done 一旦接收到其中一个事件，那么会调用 stop 并关闭 reader
+// Closes reader after timeout or when done channel is closed // This routine is also responsible to properly stop the reader go func(source string) { closeTimeout := make(&lt;-chan time.Time) // starts close_timeout timer if h.config.CloseTimeout &gt; 0 { closeTimeout = time.
     </div>
   </div>
 </div>
@@ -168,9 +180,9 @@
     <div class="nested-links f5 lh-copy nested-copy-line-height">
       registry 与 lazyinit 结合 filebeat/input.New
 f, err = GetFactory(input.config.Type) GetFactory
-func GetFactory(name string) (Factory, error) {  if _, exists := registry[name]; !exists {  return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name)  }  return registry[name], nil } 注册
-func init() {  err := input.Register(&#34;log&#34;, NewInput)  if err != nil {  panic(err)  } } observer publish
-func (b *bus) Publish(e Event) {  b.
+func GetFactory(name string) (Factory, error) { if _, exists := registry[name]; !exists { return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name) } return registry[name], nil } 注册
+func init() { err := input.Register(&#34;log&#34;, NewInput) if err != nil { panic(err) } } observer publish
+func (b *bus) Publish(e Event) { b.RLock() defer b.RUnlock() logp.Debug(&#34;bus&#34;, &#34;%s: %+v&#34;, b.
     </div>
   </div>
 </div>

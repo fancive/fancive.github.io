@@ -67,6 +67,7 @@ googleAnalytics = "G-7N49ZFJ61J"
     logoTitle = "home" # shown on top-left, default: title
     dateFormatToUse = "2006-01-02"
     background_color_class = "bg-black"
+    env = 'production'
 
 [params.giscus]
     data_repo="fancive/blog_discussion"

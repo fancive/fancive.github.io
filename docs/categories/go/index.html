@@ -7,12 +7,12 @@
     <title>Go | fancivez</title>
     <meta name="viewport" content="width=device-width,minimum-scale=1">
     <meta name="description" content="欢迎来到荷兰">
-    <meta name="generator" content="Hugo 0.96.0" />
+    <meta name="generator" content="Hugo 0.109.0">
     
     
     
     
-      <meta name="robots" content="noindex, nofollow">
+      <meta name="robots" content="index, follow">
     
 
     
@@ -38,12 +38,24 @@
 <meta property="og:description" content="欢迎来到荷兰" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://fancive.github.io/categories/go/" /><meta property="og:site_name" content="fancivez" />
-
 <meta itemprop="name" content="Go">
 <meta itemprop="description" content="欢迎来到荷兰"><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Go"/>
 <meta name="twitter:description" content="欢迎来到荷兰"/>
 
+      
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-7N49ZFJ61J', { 'anonymize_ip': false });
+}
+</script>
+
+    
 	
   </head>
 
@@ -147,9 +159,9 @@
     <div class="nested-links f5 lh-copy nested-copy-line-height">
       总体流程 filebeat 对每个path都会创建一个 harvester, harvester 负责逐行读取文件内容。它的上游是 input , input 负责管理harvester, 它的下游是 output, output 负责消费每一行消息。
 通过阅读harvester代码，我学习到了如何管理多个相互依赖的协程的生命周期，具体可以拆分为4个问题
- 为主协程添加超时控制协程 主协程结束如何关闭超时控制协程和其他协程(monitorFileSize) 关闭协程时如何控制不同job间的先后执行顺序 如何从外部关闭任务，并等待清理完成  超时控制协程 (h *Harvester)Run() 方法里，会创建超时控制协程，在此协程中会消费2个事件
- 超时事件 closeTimeout 主任务结束标志 h.done  一旦接收到其中一个事件，那么会调用 stop 并关闭 reader
-// Closes reader after timeout or when done channel is closed 	// This routine is also responsible to properly stop the reader go func(source string) {  closeTimeout := make(&lt;-chan time.Time)  // starts close_timeout timer  if h.
+为主协程添加超时控制协程 主协程结束如何关闭超时控制协程和其他协程(monitorFileSize) 关闭协程时如何控制不同job间的先后执行顺序 如何从外部关闭任务，并等待清理完成 超时控制协程 (h *Harvester)Run() 方法里，会创建超时控制协程，在此协程中会消费2个事件
+超时事件 closeTimeout 主任务结束标志 h.done 一旦接收到其中一个事件，那么会调用 stop 并关闭 reader
+// Closes reader after timeout or when done channel is closed // This routine is also responsible to properly stop the reader go func(source string) { closeTimeout := make(&lt;-chan time.Time) // starts close_timeout timer if h.config.CloseTimeout &gt; 0 { closeTimeout = time.
     </div>
   </div>
 </div>
@@ -168,9 +180,9 @@
     <div class="nested-links f5 lh-copy nested-copy-line-height">
       registry 与 lazyinit 结合 filebeat/input.New
 f, err = GetFactory(input.config.Type) GetFactory
-func GetFactory(name string) (Factory, error) {  if _, exists := registry[name]; !exists {  return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name)  }  return registry[name], nil } 注册
-func init() {  err := input.Register(&#34;log&#34;, NewInput)  if err != nil {  panic(err)  } } observer publish
-func (b *bus) Publish(e Event) {  b.
+func GetFactory(name string) (Factory, error) { if _, exists := registry[name]; !exists { return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name) } return registry[name], nil } 注册
+func init() { err := input.Register(&#34;log&#34;, NewInput) if err != nil { panic(err) } } observer publish
+func (b *bus) Publish(e Event) { b.RLock() defer b.RUnlock() logp.Debug(&#34;bus&#34;, &#34;%s: %+v&#34;, b.
     </div>
   </div>
 </div>
@@ -188,10 +200,10 @@ func (b *bus) Publish(e Event) {  b.
     </h1>
     <div class="nested-links f5 lh-copy nested-copy-line-height">
       0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32
-func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
- -N 禁止优化 -S 输出汇编代码 -l 禁止内联
- go build -gcflags=&#34;-N -l -S&#34; go.go 得到以下代码
-&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc0 0x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0 0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX 0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX 0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX) 0x0012 00018 (/home/xxx/go.go:5)	JLS	283 0x0018 00024 (/home/xxx/go.
+func main() { s1 := &#34;abc&#34; fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
+-N 禁止优化 -S 输出汇编代码 -l 禁止内联
+go build -gcflags=&#34;-N -l -S&#34; go.go 得到以下代码
+&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc00x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-00x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX)0x0012 00018 (/home/xxx/go.go:5)	JLS	2830x0018 00024 (/home/xxx/go.go:5)	SUBQ	$192, SP0x001f 00031 (/home/xxx/go.
     </div>
   </div>
 </div>
@@ -208,18 +220,18 @@ func main() { 	s1 := &#34;abc&#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 �
       </a>
     </h1>
     <div class="nested-links f5 lh-copy nested-copy-line-height">
-      [译] Go Interface Values  原文 (https://www.airs.com/blog/archives/281)
- 原文翻译 虽然 Go 中interface 的指是灵活的，但它们也有令人困惑的方面。
+      [译] Go Interface Values 原文 (https://www.airs.com/blog/archives/281)
+原文翻译 虽然 Go 中interface 的指是灵活的，但它们也有令人困惑的方面。
 接口值例如—-一个interface类型的变量—-包含其他类型的值。 interface类型被称为静态类型，因为这是编译器在编译期看到的类型。 另一种类型只在运行时可见，称为动态类型(dynamic type)。 根据定义，动态类型可以是任何除了interface的其他类型。
 当通过赋值或函数调用复制一个 interface 值时，你是在复制动态类型里的值。 这通常是大多数类型通常的工作方式。 但是，使用 interface 的一个非常常见的情况是将动态类型作为指针使用。 在这种情况下，当你拷贝接口时，你拷贝的其实是指针，但是你不会拷贝指针指向的值。 在许多情况下，如果方法要更改值本身, 类型(type)的方法需要使用指针作为接收方(receiver)。 当 interface 必需的方法发生这种情况时，interface 实际上要求动态类型是指针类型。
 这意味着，技术上来说虽然 interface 总是作为一个值拷贝，但在实际使用中，它们的行为常常好像是通过引用拷贝的。 也就是说，尽管没有显式标记，接口对象通常充当指针的角色。 这可能会让你困惑，直到你明白到底发生了什么。
 在我上一篇文章中提到，对于 gccgo，一个 interface 总是包含一个指向值的指针。 现在我要纠正这个错误: 如果一个程序存储了包含了指针(或者unsafe.Pointer类型) 的 interface，那么存储在 interface 中的值就是指针本身。 也就是说，gccgo 不存储指向指针的指针(这需要分配堆空间来保存指针)。 这是一种自然的高效方法，因为实际上大多数接口对象都包含指针。
 这种高效的方法贯穿于方法的实现。 方法总是接受指针作为接收方(receiver)参数。 如果方法的接收方(receiver)类型实际上不是指针，那么指针将隐式解引用，并在方法代码的开头复制值。 这意味着当在接口上调用方法时，存储在接口中的值可以直接传递给方法，而不管动态类型是否是指针。 (和上一篇文章一样，gc 编译器做的事情有些不同。)
-补充  原文其实有点绕
-  如果 v 是一个 interface{}
- 什么是interface?
+补充 原文其实有点绕
+如果 v 是一个 interface{}
+什么是interface?
 Interface 同时是两种东西
- 一些方法的集合 它自身也是一种类型   interface{} type, the empty interface is the interface that has no methods.
+一些方法的集合 它自身也是一种类型 interface{} type, the empty interface is the interface that has no methods.
     </div>
   </div>
 </div>
