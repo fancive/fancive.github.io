@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>翻译 on fancivez</title>
+    <title>翻译 on home</title>
     <link>https://fancive.github.io/tags/%E7%BF%BB%E8%AF%91/</link>
-    <description>Recent content in 翻译 on fancivez</description>
+    <description>Recent content in 翻译 on home</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 31 May 2020 21:30:28 +0800</lastBuildDate><atom:link href="https://fancive.github.io/tags/%E7%BF%BB%E8%AF%91/index.xml" rel="self" type="application/rss+xml" />
@@ -14,10 +14,10 @@
       
       <guid>https://fancive.github.io/posts/go_string_byte/</guid>
       <description>0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32
-func main() { s1 := &amp;#34;abc&amp;#34; fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
--N 禁止优化 -S 输出汇编代码 -l 禁止内联
-go build -gcflags=&amp;#34;-N -l -S&amp;#34; go.go 得到以下代码
-&amp;#34;&amp;#34;.main STEXT size=293 args=0x0 locals=0xc00x0000 00000 (/home/xxx/go.go:5)	TEXT	&amp;#34;&amp;#34;.main(SB), ABIInternal, $192-00x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX)0x0012 00018 (/home/xxx/go.go:5)	JLS	2830x0018 00024 (/home/xxx/go.go:5)	SUBQ	$192, SP0x001f 00031 (/home/xxx/go.</description>
+func main() { 	s1 := &amp;#34;abc&amp;#34; 	fmt.Println(cap([]byte(s1))) } 0x02 探究 那么这是为什么呢，首先看汇编
+ -N 禁止优化 -S 输出汇编代码 -l 禁止内联
+ go build -gcflags=&amp;#34;-N -l -S&amp;#34; go.go 得到以下代码
+&amp;#34;&amp;#34;.main STEXT size=293 args=0x0 locals=0xc0 0x0000 00000 (/home/xxx/go.go:5)	TEXT	&amp;#34;&amp;#34;.main(SB), ABIInternal, $192-0 0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX 0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX 0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX) 0x0012 00018 (/home/xxx/go.go:5)	JLS	283 0x0018 00024 (/home/xxx/go.</description>
     </item>
     
   </channel>

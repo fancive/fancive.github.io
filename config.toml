@@ -3,13 +3,13 @@ languageCode = "en-us"
 DefaultContentLanguage = "en"
 disqusShortname = "fancive-github-com"
 title = ''
-theme = "ananke"
+theme = "paper"
 publishDir = "docs"
 preserveTaxonomyNames = true
 SectionPagesMenu = "main"
 Paginate = 9 # this is set low for demonstrating with dummy content. Set to a higher number
 googleAnalytics = "G-7N49ZFJ61J"
-
+show_reading_time = true
 
 [[params.ananke_socials]]
     name = "github"
@@ -24,7 +24,7 @@ googleAnalytics = "G-7N49ZFJ61J"
 [languages]
     [languages.en]
         weight = 1
-        title = "fancivez"
+        title = "home"
 
 [sitemap]
     changefreq = "monthly"
@@ -57,7 +57,7 @@ googleAnalytics = "G-7N49ZFJ61J"
     # color style
     color = 'linen'                   # linen, wheat, gray, light
     # header social icons
-    # github = 'fancive'         # github.com/YOUR_GITHUB_ID
+    github = 'fancive'         # github.com/YOUR_GITHUB_ID
     name = 'fancivez'
     bio = 'golang fan'
     avatar = 'fancivez@gmail.com'         # Gravatar email or image url
