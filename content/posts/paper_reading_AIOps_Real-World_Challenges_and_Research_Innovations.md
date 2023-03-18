@@ -1,7 +1,7 @@
 ---
 title: "[paper reading]AIOps: Real-World Challenges and Research Innovations"
 date: 2023-03-18T13:35:19+08:00
-draft: true
+draft: false
 
 categories:
 - software engineering
