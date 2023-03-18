@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>software engineering on home</title>
+    <link>https://fancive.github.io/categories/software-engineering/</link>
+    <description>Recent content in software engineering on home</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 18 Mar 2023 13:35:19 +0800</lastBuildDate><atom:link href="https://fancive.github.io/categories/software-engineering/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[paper reading]AIOps: Real-World Challenges and Research Innovations</title>
+      <link>https://fancive.github.io/posts/paper_reading_aiops_real-world_challenges_and_research_innovations/</link>
+      <pubDate>Sat, 18 Mar 2023 13:35:19 +0800</pubDate>
+      
+      <guid>https://fancive.github.io/posts/paper_reading_aiops_real-world_challenges_and_research_innovations/</guid>
+      <description>link: https://ieeexplore.ieee.org/abstract/document/8802836  first pass 5-10 mins
+ title, abstract, and introduction section and sub-section headings conclusions references  question Category: What type of paper is this? A measurement paper? An analysis of an existing system? A description of a research prototype?
+It is a descriptive paper that discusses the challenges and innovations related to the implementation of AIOps in real-world IT operations.
+Context: Which other papers is it related to?</description>
+    </item>
+    
+  </channel>
+</rss>
