@@ -6,7 +6,19 @@
     <description>Recent content in fancivez on home</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 18 Mar 2023 13:35:19 +0800</lastBuildDate><atom:link href="https://fancive.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 25 Mar 2023 13:43:03 +0800</lastBuildDate><atom:link href="https://fancive.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[Paper reading] A Survey On Log Research Of AIOps: Methods and Trends</title>
+      <link>https://fancive.github.io/posts/paper_reading_a_survey_on_log_research_of_aiops/</link>
+      <pubDate>Sat, 25 Mar 2023 13:43:03 +0800</pubDate>
+      
+      <guid>https://fancive.github.io/posts/paper_reading_a_survey_on_log_research_of_aiops/</guid>
+      <description>link: https://dl.acm.org/doi/abs/10.1007/s11036-021-01832-3  first pass 5-10 mins
+ title, abstract, and introduction section and sub-section headings conclusions references  question Category: What type of paper is this? A measurement paper? An analysis of an existing system? A description of a research prototype?
+It’s a survey paper on the methods and trend on log based AIOps.
+It does not seem to focus on a specific system or prototype, but rather explore the current state of research in the field.</description>
+    </item>
+    
     <item>
       <title>[paper reading]AIOps: Real-World Challenges and Research Innovations</title>
       <link>https://fancive.github.io/posts/paper_reading_aiops_real-world_challenges_and_research_innovations/</link>

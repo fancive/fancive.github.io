@@ -40,6 +40,7 @@ Some of the theoretical frameworks that are relevant to AIOps include supervised
 
 **Correctness: Do the assumptions appear to be valid?**
 
+
 **Contributions: What are the paper’s main contributions?**
 
 1. talking about the motivation and importance of AIOps; 
@@ -48,6 +49,7 @@ Some of the theoretical frameworks that are relevant to AIOps include supervised
 4. sharing some learnings from AIOps practice.
 
 **Clarity: Is the paper well written?**
+
 it appears to be well-organized, it introduces the the vision, challenge and innovation of AIOps.
 
 ## second pass
