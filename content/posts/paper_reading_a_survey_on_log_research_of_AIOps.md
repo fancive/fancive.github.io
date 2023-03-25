@@ -75,7 +75,7 @@ There are still many challenges to be addressed, such as the lack of labelled da
 
 <center><img src="./images/log_4_ops.png" width="50%" /></center>
 
-![log_4_ops](image/img/log_4_ops.png)
+![log_4_ops](/image/img/log_4_ops.png)
 
 **some evidence**
 
