@@ -9,16 +9,8 @@
     <meta name="description" content="在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个革命性的、由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。
 引言 随着系统规模和复杂性的增加，传统的基于规则的告警诊断方法往往力不从心。我们需要一种更智能、更灵活的方法来分析和诊断系统告警。这就是LLM驱动的诊断引擎发挥作用的地方。
 宏观系统架构：自动定位系统 在深入探讨LLM驱动的诊断引擎之前，让我们先了解它在整个自动定位系统中的位置。自动定位系统是一个复杂的生态系统，旨在自动检测、诊断和解决IT环境中的问题。以下是系统的宏观架构：
-graph TB A[监控系统] --&gt;|告警| B[告警聚合器] B --&gt;|结构化告警| C[LLM驱动的诊断引擎] D[日志系统] --&gt;|相关日志| C E[配置管理数据库] --&gt;|系统配置| C F[知识库] --&gt;|历史案例| C C --&gt;|诊断结果| G[自动修复系统] C --&gt;|诊断报告| H[运维仪表板] I[人工反馈] --&gt;|优化信息| C 在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：
-  数据汇聚点：它接收来自监控系统的结构化告警、日志系统的相关日志、配置管理数据库的系统配置信息，以及知识库中的历史案例。
-  智能分析中心：利用这些输入，诊断引擎进行深度分析，识别问题的根本原因。
-  决策支持：它为自动修复系统提供精确的诊断结果，指导后续的修复操作。
-  信息展示：通过运维仪表板，它为运维团队提供直观的诊断报告。
-  持续学习：通过处理人工反馈，诊断引擎不断优化其性能。
-  现在，让我们深入了解LLM驱动的诊断引擎的内部架构和工作原理。
-LLM驱动的诊断引擎架构 我们的LLM驱动的诊断引擎架构包括以下核心组件：
- 上下文收集器 提示生成器 LLM处理器 后处理器 诊断报告生成器 反馈处理器  让我们通过一个图表来直观地了解这些组件是如何协同工作的：
-graph TD A[告警输入] --&gt;|结构化数据| B[上下文收集器] B --&gt;|丰富的上下文| C[提示生成器] D[(知识库)] --&gt;|相关知识| C C --&gt;|定制提示| E[LLM处理器] E --&gt;|原始输出| F[后处理器] F --&gt;|结构化诊断| G[诊断报告生成器] H[反馈处理器] --&gt;|学习更新| D H --&gt;|优化| C 详细组件设计 1.">
+var config = { startOnLoad: true, theme: &#39;neutral&#39;, align: &#39;left&#39; }; mermaid.initialize(config);  graph TB A[监控系统] --|告警| B[告警聚合器] B --|结构化告警| C[LLM驱动的诊断引擎] D[日志系统] --|相关日志| C E[配置管理数据库] --|系统配置| C F[知识库] --|历史案例| C C --|诊断结果| G[自动修复系统] C --|诊断报告| H[运维仪表板] I[人工反馈] --|优化信息| C  以Elasticsearch作为数据源为例:
+var config = { startOnLoad: true, theme: &#39;neutral&#39;, align: &#39;left&#39; }; mermaid.initialize(config);  sequenceDiagram participant ES as Elasticsearch participant AR as 告警规则执行器 participant AM as 告警管理器 participant LLM as LLM诊断引擎 participant NT as 通知系统 loop 定期执行 AR-ES: 执行查询表达式 ES--AR: 返回查询结果 AR-AR: 应用时间窗口和阈值 alt 触发告警条件 AR-AM: 生成告警 AM-LLM: 请求诊断 LLM-LLM: 分析告警上下文 LLM--AM: 返回诊断结果 AM-NT: 发送通知 end end  在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：">
     <meta name="generator" content="Hugo 0.96.0" />
     
     
@@ -50,16 +42,8 @@ graph TD A[告警输入] --&gt;|结构化数据| B[上下文收集器] B --&gt;|
 <meta property="og:description" content="在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个革命性的、由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。
 引言 随着系统规模和复杂性的增加，传统的基于规则的告警诊断方法往往力不从心。我们需要一种更智能、更灵活的方法来分析和诊断系统告警。这就是LLM驱动的诊断引擎发挥作用的地方。
 宏观系统架构：自动定位系统 在深入探讨LLM驱动的诊断引擎之前，让我们先了解它在整个自动定位系统中的位置。自动定位系统是一个复杂的生态系统，旨在自动检测、诊断和解决IT环境中的问题。以下是系统的宏观架构：
-graph TB A[监控系统] --&gt;|告警| B[告警聚合器] B --&gt;|结构化告警| C[LLM驱动的诊断引擎] D[日志系统] --&gt;|相关日志| C E[配置管理数据库] --&gt;|系统配置| C F[知识库] --&gt;|历史案例| C C --&gt;|诊断结果| G[自动修复系统] C --&gt;|诊断报告| H[运维仪表板] I[人工反馈] --&gt;|优化信息| C 在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：
-  数据汇聚点：它接收来自监控系统的结构化告警、日志系统的相关日志、配置管理数据库的系统配置信息，以及知识库中的历史案例。
-  智能分析中心：利用这些输入，诊断引擎进行深度分析，识别问题的根本原因。
-  决策支持：它为自动修复系统提供精确的诊断结果，指导后续的修复操作。
-  信息展示：通过运维仪表板，它为运维团队提供直观的诊断报告。
-  持续学习：通过处理人工反馈，诊断引擎不断优化其性能。
-  现在，让我们深入了解LLM驱动的诊断引擎的内部架构和工作原理。
-LLM驱动的诊断引擎架构 我们的LLM驱动的诊断引擎架构包括以下核心组件：
- 上下文收集器 提示生成器 LLM处理器 后处理器 诊断报告生成器 反馈处理器  让我们通过一个图表来直观地了解这些组件是如何协同工作的：
-graph TD A[告警输入] --&gt;|结构化数据| B[上下文收集器] B --&gt;|丰富的上下文| C[提示生成器] D[(知识库)] --&gt;|相关知识| C C --&gt;|定制提示| E[LLM处理器] E --&gt;|原始输出| F[后处理器] F --&gt;|结构化诊断| G[诊断报告生成器] H[反馈处理器] --&gt;|学习更新| D H --&gt;|优化| C 详细组件设计 1." />
+var config = { startOnLoad: true, theme: &#39;neutral&#39;, align: &#39;left&#39; }; mermaid.initialize(config);  graph TB A[监控系统] --|告警| B[告警聚合器] B --|结构化告警| C[LLM驱动的诊断引擎] D[日志系统] --|相关日志| C E[配置管理数据库] --|系统配置| C F[知识库] --|历史案例| C C --|诊断结果| G[自动修复系统] C --|诊断报告| H[运维仪表板] I[人工反馈] --|优化信息| C  以Elasticsearch作为数据源为例:
+var config = { startOnLoad: true, theme: &#39;neutral&#39;, align: &#39;left&#39; }; mermaid.initialize(config);  sequenceDiagram participant ES as Elasticsearch participant AR as 告警规则执行器 participant AM as 告警管理器 participant LLM as LLM诊断引擎 participant NT as 通知系统 loop 定期执行 AR-ES: 执行查询表达式 ES--AR: 返回查询结果 AR-AR: 应用时间窗口和阈值 alt 触发告警条件 AR-AM: 生成告警 AM-LLM: 请求诊断 LLM-LLM: 分析告警上下文 LLM--AM: 返回诊断结果 AM-NT: 发送通知 end end  在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://fancive.github.io/posts/llm-driven-alert-diagnosis-engine-design/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2024-08-31T09:42:01+08:00" />
@@ -69,33 +53,17 @@ graph TD A[告警输入] --&gt;|结构化数据| B[上下文收集器] B --&gt;|
 <meta itemprop="description" content="在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个革命性的、由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。
 引言 随着系统规模和复杂性的增加，传统的基于规则的告警诊断方法往往力不从心。我们需要一种更智能、更灵活的方法来分析和诊断系统告警。这就是LLM驱动的诊断引擎发挥作用的地方。
 宏观系统架构：自动定位系统 在深入探讨LLM驱动的诊断引擎之前，让我们先了解它在整个自动定位系统中的位置。自动定位系统是一个复杂的生态系统，旨在自动检测、诊断和解决IT环境中的问题。以下是系统的宏观架构：
-graph TB A[监控系统] --&gt;|告警| B[告警聚合器] B --&gt;|结构化告警| C[LLM驱动的诊断引擎] D[日志系统] --&gt;|相关日志| C E[配置管理数据库] --&gt;|系统配置| C F[知识库] --&gt;|历史案例| C C --&gt;|诊断结果| G[自动修复系统] C --&gt;|诊断报告| H[运维仪表板] I[人工反馈] --&gt;|优化信息| C 在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：
-  数据汇聚点：它接收来自监控系统的结构化告警、日志系统的相关日志、配置管理数据库的系统配置信息，以及知识库中的历史案例。
-  智能分析中心：利用这些输入，诊断引擎进行深度分析，识别问题的根本原因。
-  决策支持：它为自动修复系统提供精确的诊断结果，指导后续的修复操作。
-  信息展示：通过运维仪表板，它为运维团队提供直观的诊断报告。
-  持续学习：通过处理人工反馈，诊断引擎不断优化其性能。
-  现在，让我们深入了解LLM驱动的诊断引擎的内部架构和工作原理。
-LLM驱动的诊断引擎架构 我们的LLM驱动的诊断引擎架构包括以下核心组件：
- 上下文收集器 提示生成器 LLM处理器 后处理器 诊断报告生成器 反馈处理器  让我们通过一个图表来直观地了解这些组件是如何协同工作的：
-graph TD A[告警输入] --&gt;|结构化数据| B[上下文收集器] B --&gt;|丰富的上下文| C[提示生成器] D[(知识库)] --&gt;|相关知识| C C --&gt;|定制提示| E[LLM处理器] E --&gt;|原始输出| F[后处理器] F --&gt;|结构化诊断| G[诊断报告生成器] H[反馈处理器] --&gt;|学习更新| D H --&gt;|优化| C 详细组件设计 1."><meta itemprop="datePublished" content="2024-08-31T09:42:01+08:00" />
+var config = { startOnLoad: true, theme: &#39;neutral&#39;, align: &#39;left&#39; }; mermaid.initialize(config);  graph TB A[监控系统] --|告警| B[告警聚合器] B --|结构化告警| C[LLM驱动的诊断引擎] D[日志系统] --|相关日志| C E[配置管理数据库] --|系统配置| C F[知识库] --|历史案例| C C --|诊断结果| G[自动修复系统] C --|诊断报告| H[运维仪表板] I[人工反馈] --|优化信息| C  以Elasticsearch作为数据源为例:
+var config = { startOnLoad: true, theme: &#39;neutral&#39;, align: &#39;left&#39; }; mermaid.initialize(config);  sequenceDiagram participant ES as Elasticsearch participant AR as 告警规则执行器 participant AM as 告警管理器 participant LLM as LLM诊断引擎 participant NT as 通知系统 loop 定期执行 AR-ES: 执行查询表达式 ES--AR: 返回查询结果 AR-AR: 应用时间窗口和阈值 alt 触发告警条件 AR-AM: 生成告警 AM-LLM: 请求诊断 LLM-LLM: 分析告警上下文 LLM--AM: 返回诊断结果 AM-NT: 发送通知 end end  在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色："><meta itemprop="datePublished" content="2024-08-31T09:42:01+08:00" />
 <meta itemprop="dateModified" content="2024-08-31T09:42:01+08:00" />
-<meta itemprop="wordCount" content="256">
+<meta itemprop="wordCount" content="336">
 <meta itemprop="keywords" content="LLM,告警系统,诊断引擎,软件架构,自动定位系统," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Llm Driven Alert Diagnosis Engine Design(设计新一代LLM驱动的告警诊断引擎)"/>
 <meta name="twitter:description" content="在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个革命性的、由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。
 引言 随着系统规模和复杂性的增加，传统的基于规则的告警诊断方法往往力不从心。我们需要一种更智能、更灵活的方法来分析和诊断系统告警。这就是LLM驱动的诊断引擎发挥作用的地方。
 宏观系统架构：自动定位系统 在深入探讨LLM驱动的诊断引擎之前，让我们先了解它在整个自动定位系统中的位置。自动定位系统是一个复杂的生态系统，旨在自动检测、诊断和解决IT环境中的问题。以下是系统的宏观架构：
-graph TB A[监控系统] --&gt;|告警| B[告警聚合器] B --&gt;|结构化告警| C[LLM驱动的诊断引擎] D[日志系统] --&gt;|相关日志| C E[配置管理数据库] --&gt;|系统配置| C F[知识库] --&gt;|历史案例| C C --&gt;|诊断结果| G[自动修复系统] C --&gt;|诊断报告| H[运维仪表板] I[人工反馈] --&gt;|优化信息| C 在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：
-  数据汇聚点：它接收来自监控系统的结构化告警、日志系统的相关日志、配置管理数据库的系统配置信息，以及知识库中的历史案例。
-  智能分析中心：利用这些输入，诊断引擎进行深度分析，识别问题的根本原因。
-  决策支持：它为自动修复系统提供精确的诊断结果，指导后续的修复操作。
-  信息展示：通过运维仪表板，它为运维团队提供直观的诊断报告。
-  持续学习：通过处理人工反馈，诊断引擎不断优化其性能。
-  现在，让我们深入了解LLM驱动的诊断引擎的内部架构和工作原理。
-LLM驱动的诊断引擎架构 我们的LLM驱动的诊断引擎架构包括以下核心组件：
- 上下文收集器 提示生成器 LLM处理器 后处理器 诊断报告生成器 反馈处理器  让我们通过一个图表来直观地了解这些组件是如何协同工作的：
-graph TD A[告警输入] --&gt;|结构化数据| B[上下文收集器] B --&gt;|丰富的上下文| C[提示生成器] D[(知识库)] --&gt;|相关知识| C C --&gt;|定制提示| E[LLM处理器] E --&gt;|原始输出| F[后处理器] F --&gt;|结构化诊断| G[诊断报告生成器] H[反馈处理器] --&gt;|学习更新| D H --&gt;|优化| C 详细组件设计 1."/>
+var config = { startOnLoad: true, theme: &#39;neutral&#39;, align: &#39;left&#39; }; mermaid.initialize(config);  graph TB A[监控系统] --|告警| B[告警聚合器] B --|结构化告警| C[LLM驱动的诊断引擎] D[日志系统] --|相关日志| C E[配置管理数据库] --|系统配置| C F[知识库] --|历史案例| C C --|诊断结果| G[自动修复系统] C --|诊断报告| H[运维仪表板] I[人工反馈] --|优化信息| C  以Elasticsearch作为数据源为例:
+var config = { startOnLoad: true, theme: &#39;neutral&#39;, align: &#39;left&#39; }; mermaid.initialize(config);  sequenceDiagram participant ES as Elasticsearch participant AR as 告警规则执行器 participant AM as 告警管理器 participant LLM as LLM诊断引擎 participant NT as 通知系统 loop 定期执行 AR-ES: 执行查询表达式 ES--AR: 返回查询结果 AR-AR: 应用时间窗口和阈值 alt 触发告警条件 AR-AM: 生成告警 AM-LLM: 请求诊断 LLM-LLM: 分析告警上下文 LLM--AM: 返回诊断结果 AM-NT: 发送通知 end end  在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色："/>
 
       
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
@@ -116,8 +84,8 @@ if (!doNotTrack) {
   <body class="ma0 avenir bg-near-white">
 
     
-   
-  
+
+
 
   
   <header class="cover bg-top" style="background-image: url('https://fancive.github.io/images/background.jpg');">
@@ -209,14 +177,14 @@ if (!doNotTrack) {
 
     <main class="pb7" role="main">
       
-  
-  <article class="flex-l flex-wrap justify-between mw8 center ph3">
-    <header class="mt4 w-100">
-      <aside class="instapaper_ignoref b helvetica tracked ttu">
-          
-        Posts
-      </aside>
+
+<article class="flex-l flex-wrap justify-between mw8 center ph3">
+  <header class="mt4 w-100">
+    <aside class="instapaper_ignoref b helvetica tracked ttu">
       
+      Posts
+    </aside>
+    
 
 
 
@@ -232,31 +200,77 @@ if (!doNotTrack) {
   </div>
 
 
-      <h1 class="f1 athelas mt3 mb1">Llm Driven Alert Diagnosis Engine Design(设计新一代LLM驱动的告警诊断引擎)</h1>
-      
-      
-      
-      <time class="f6 mv4 dib tracked" datetime="2024-08-31T09:42:01+08:00">August 31, 2024</time>
-      
+    <h1 class="f1 athelas mt3 mb1">Llm Driven Alert Diagnosis Engine Design(设计新一代LLM驱动的告警诊断引擎)</h1>
+    
+    
+    
+    <time class="f6 mv4 dib tracked" datetime="2024-08-31T09:42:01+08:00" >August 31, 2024</time>
+    
 
-      
-      
-    </header>
-    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><p>在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个革命性的、由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。</p>
+    
+    
+  </header>
+  <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><p>在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个革命性的、由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。</p>
 <h2 id="引言">引言</h2>
 <p>随着系统规模和复杂性的增加，传统的基于规则的告警诊断方法往往力不从心。我们需要一种更智能、更灵活的方法来分析和诊断系统告警。这就是LLM驱动的诊断引擎发挥作用的地方。</p>
 <h2 id="宏观系统架构自动定位系统">宏观系统架构：自动定位系统</h2>
 <p>在深入探讨LLM驱动的诊断引擎之前，让我们先了解它在整个自动定位系统中的位置。自动定位系统是一个复杂的生态系统，旨在自动检测、诊断和解决IT环境中的问题。以下是系统的宏观架构：</p>
-<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">graph TB
-    A[监控系统] --&gt;|告警| B[告警聚合器]
-    B --&gt;|结构化告警| C[LLM驱动的诊断引擎]
-    D[日志系统] --&gt;|相关日志| C
-    E[配置管理数据库] --&gt;|系统配置| C
-    F[知识库] --&gt;|历史案例| C
-    C --&gt;|诊断结果| G[自动修复系统]
-    C --&gt;|诊断报告| H[运维仪表板]
-    I[人工反馈] --&gt;|优化信息| C
-</code></pre><p>在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：</p>
+<script async type="application/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js">
+    var config = {
+        startOnLoad: true,
+        theme: 'neutral',
+        align: 'left'
+    };
+    mermaid.initialize(config);
+</script>
+
+<div class="mermaid">
+    
+graph TB
+    A[监控系统] -->|告警| B[告警聚合器]
+    B -->|结构化告警| C[LLM驱动的诊断引擎]
+    D[日志系统] -->|相关日志| C
+    E[配置管理数据库] -->|系统配置| C
+    F[知识库] -->|历史案例| C
+    C -->|诊断结果| G[自动修复系统]
+    C -->|诊断报告| H[运维仪表板]
+    I[人工反馈] -->|优化信息| C
+
+</div>
+<p>以Elasticsearch作为数据源为例:</p>
+<script async type="application/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js">
+    var config = {
+        startOnLoad: true,
+        theme: 'neutral',
+        align: 'left'
+    };
+    mermaid.initialize(config);
+</script>
+
+<div class="mermaid">
+    
+sequenceDiagram
+    participant ES as Elasticsearch
+    participant AR as 告警规则执行器
+    participant AM as 告警管理器
+    participant LLM as LLM诊断引擎
+    participant NT as 通知系统
+    
+    loop 定期执行
+        AR->>ES: 执行查询表达式
+        ES-->>AR: 返回查询结果
+        AR->>AR: 应用时间窗口和阈值
+        alt 触发告警条件
+            AR->>AM: 生成告警
+            AM->>LLM: 请求诊断
+            LLM->>LLM: 分析告警上下文
+            LLM-->>AM: 返回诊断结果
+            AM->>NT: 发送通知
+        end
+    end
+
+</div>
+<p>在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：</p>
 <ol>
 <li>
 <p><strong>数据汇聚点</strong>：它接收来自监控系统的结构化告警、日志系统的相关日志、配置管理数据库的系统配置信息，以及知识库中的历史案例。</p>
@@ -286,16 +300,29 @@ if (!doNotTrack) {
 <li>反馈处理器</li>
 </ol>
 <p>让我们通过一个图表来直观地了解这些组件是如何协同工作的：</p>
-<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">graph TD
-    A[告警输入] --&gt;|结构化数据| B[上下文收集器]
-    B --&gt;|丰富的上下文| C[提示生成器]
-    D[(知识库)] --&gt;|相关知识| C
-    C --&gt;|定制提示| E[LLM处理器]
-    E --&gt;|原始输出| F[后处理器]
-    F --&gt;|结构化诊断| G[诊断报告生成器]
-    H[反馈处理器] --&gt;|学习更新| D
-    H --&gt;|优化| C
-</code></pre><h2 id="详细组件设计">详细组件设计</h2>
+<script async type="application/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js">
+    var config = {
+        startOnLoad: true,
+        theme: 'neutral',
+        align: 'left'
+    };
+    mermaid.initialize(config);
+</script>
+
+<div class="mermaid">
+    
+graph TD
+    A[告警输入] -->|结构化数据| B[上下文收集器]
+    B -->|丰富的上下文| C[提示生成器]
+    D[(知识库)] -->|相关知识| C
+    C -->|定制提示| E[LLM处理器]
+    E -->|原始输出| F[后处理器]
+    F -->|结构化诊断| G[诊断报告生成器]
+    H[反馈处理器] -->|学习更新| D
+    H -->|优化| C
+
+</div>
+<h2 id="详细组件设计">详细组件设计</h2>
 <h3 id="1-上下文收集器">1. 上下文收集器</h3>
 <p>上下文收集器的主要任务是收集与告警相关的所有必要信息。这包括系统状态、相关日志、历史告警等。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">collect_context</span>(alert_data):
@@ -457,7 +484,7 @@ if (!doNotTrack) {
 </ul>
 <div class="mt6 instapaper_ignoref">
       
-        <div id="disqus_thread"></div>
+      <div id="disqus_thread"></div>
 <script type="application/javascript">
     window.disqus_config = function () {
     
@@ -479,17 +506,17 @@ if (!doNotTrack) {
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
       
       
-      </div>
     </div>
+  </div>
 
-    <aside class="w-30-l mt6-l">
+  <aside class="w-30-l mt6-l">
 
 
 
 
 </aside>
 
-  </article>
+</article>
 
     </main>
     <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">

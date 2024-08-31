@@ -16,7 +16,7 @@ categories: ["技术架构"]
 
 在深入探讨LLM驱动的诊断引擎之前，让我们先了解它在整个自动定位系统中的位置。自动定位系统是一个复杂的生态系统，旨在自动检测、诊断和解决IT环境中的问题。以下是系统的宏观架构：
 
-```mermaid
+{{< mermaid align="left" theme="neutral" >}}
 graph TB
     A[监控系统] -->|告警| B[告警聚合器]
     B -->|结构化告警| C[LLM驱动的诊断引擎]
@@ -26,7 +26,32 @@ graph TB
     C -->|诊断结果| G[自动修复系统]
     C -->|诊断报告| H[运维仪表板]
     I[人工反馈] -->|优化信息| C
-```
+{{< /mermaid >}}
+
+以Elasticsearch作为数据源为例:
+
+{{< mermaid align="left" theme="neutral" >}}
+sequenceDiagram
+    participant ES as Elasticsearch
+    participant AR as 告警规则执行器
+    participant AM as 告警管理器
+    participant LLM as LLM诊断引擎
+    participant NT as 通知系统
+    
+    loop 定期执行
+        AR->>ES: 执行查询表达式
+        ES-->>AR: 返回查询结果
+        AR->>AR: 应用时间窗口和阈值
+        alt 触发告警条件
+            AR->>AM: 生成告警
+            AM->>LLM: 请求诊断
+            LLM->>LLM: 分析告警上下文
+            LLM-->>AM: 返回诊断结果
+            AM->>NT: 发送通知
+        end
+    end
+{{< /mermaid >}}
+
 
 在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：
 
@@ -55,7 +80,7 @@ graph TB
 
 让我们通过一个图表来直观地了解这些组件是如何协同工作的：
 
-```mermaid
+{{< mermaid align="left" theme="neutral" >}}
 graph TD
     A[告警输入] -->|结构化数据| B[上下文收集器]
     B -->|丰富的上下文| C[提示生成器]
@@ -65,7 +90,9 @@ graph TD
     F -->|结构化诊断| G[诊断报告生成器]
     H[反馈处理器] -->|学习更新| D
     H -->|优化| C
-```
+{{< /mermaid >}}
+
+
 
 ## 详细组件设计
 

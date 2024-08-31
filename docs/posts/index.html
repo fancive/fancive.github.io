@@ -175,16 +175,8 @@ if (!doNotTrack) {
       在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个革命性的、由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。
 引言 随着系统规模和复杂性的增加，传统的基于规则的告警诊断方法往往力不从心。我们需要一种更智能、更灵活的方法来分析和诊断系统告警。这就是LLM驱动的诊断引擎发挥作用的地方。
 宏观系统架构：自动定位系统 在深入探讨LLM驱动的诊断引擎之前，让我们先了解它在整个自动定位系统中的位置。自动定位系统是一个复杂的生态系统，旨在自动检测、诊断和解决IT环境中的问题。以下是系统的宏观架构：
-graph TB A[监控系统] --&gt;|告警| B[告警聚合器] B --&gt;|结构化告警| C[LLM驱动的诊断引擎] D[日志系统] --&gt;|相关日志| C E[配置管理数据库] --&gt;|系统配置| C F[知识库] --&gt;|历史案例| C C --&gt;|诊断结果| G[自动修复系统] C --&gt;|诊断报告| H[运维仪表板] I[人工反馈] --&gt;|优化信息| C 在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：
-  数据汇聚点：它接收来自监控系统的结构化告警、日志系统的相关日志、配置管理数据库的系统配置信息，以及知识库中的历史案例。
-  智能分析中心：利用这些输入，诊断引擎进行深度分析，识别问题的根本原因。
-  决策支持：它为自动修复系统提供精确的诊断结果，指导后续的修复操作。
-  信息展示：通过运维仪表板，它为运维团队提供直观的诊断报告。
-  持续学习：通过处理人工反馈，诊断引擎不断优化其性能。
-  现在，让我们深入了解LLM驱动的诊断引擎的内部架构和工作原理。
-LLM驱动的诊断引擎架构 我们的LLM驱动的诊断引擎架构包括以下核心组件：
- 上下文收集器 提示生成器 LLM处理器 后处理器 诊断报告生成器 反馈处理器  让我们通过一个图表来直观地了解这些组件是如何协同工作的：
-graph TD A[告警输入] --&gt;|结构化数据| B[上下文收集器] B --&gt;|丰富的上下文| C[提示生成器] D[(知识库)] --&gt;|相关知识| C C --&gt;|定制提示| E[LLM处理器] E --&gt;|原始输出| F[后处理器] F --&gt;|结构化诊断| G[诊断报告生成器] H[反馈处理器] --&gt;|学习更新| D H --&gt;|优化| C 详细组件设计 1.
+var config = { startOnLoad: true, theme: 'neutral', align: 'left' }; mermaid.initialize(config);  graph TB A[监控系统] --|告警| B[告警聚合器] B --|结构化告警| C[LLM驱动的诊断引擎] D[日志系统] --|相关日志| C E[配置管理数据库] --|系统配置| C F[知识库] --|历史案例| C C --|诊断结果| G[自动修复系统] C --|诊断报告| H[运维仪表板] I[人工反馈] --|优化信息| C  以Elasticsearch作为数据源为例:
+var config = { startOnLoad: true, theme: 'neutral', align: 'left' }; mermaid.initialize(config);  sequenceDiagram participant ES as Elasticsearch participant AR as 告警规则执行器 participant AM as 告警管理器 participant LLM as LLM诊断引擎 participant NT as 通知系统 loop 定期执行 AR-ES: 执行查询表达式 ES--AR: 返回查询结果 AR-AR: 应用时间窗口和阈值 alt 触发告警条件 AR-AM: 生成告警 AM-LLM: 请求诊断 LLM-LLM: 分析告警上下文 LLM--AM: 返回诊断结果 AM-NT: 发送通知 end end  在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：
     </div>
     <a href="/posts/llm-driven-alert-diagnosis-engine-design/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
   </div>
