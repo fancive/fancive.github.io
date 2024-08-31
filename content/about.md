@@ -6,4 +6,6 @@ aliases = ["about-me",  "contact"]
 author = "fancivez"
 +++
 
-- golang developer
+- golang developer@baidu.com
+- fancivez@gmail.com
+- wechat:fancivez

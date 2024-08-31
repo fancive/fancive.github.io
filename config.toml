@@ -1,84 +1,81 @@
-baseURL = 'https://fancive.github.io/'
-languageCode = "en-us"
-DefaultContentLanguage = "en"
-disqusShortname = "fancive-github-com"
-title = ''
-theme = "paper"
-publishDir = "docs"
-preserveTaxonomyNames = true
-SectionPagesMenu = "main"
+DefaultContentLanguage = "en" 
 Paginate = 9 # this is set low for demonstrating with dummy content. Set to a higher number
-googleAnalytics = "G-7N49ZFJ61J"
-show_reading_time = true
-enableRobotsTXT = true       # generate robots.txt
+SectionPagesMenu = "main" 
+baseURL = 'https://fancive.github.io/' 
+disqusShortname = "fancive-github-com" 
+enableRobotsTXT = true # generate robots.txt
+googleAnalytics = "G-7N49ZFJ61J" 
+languageCode = "en-us" 
+preserveTaxonomyNames = true 
+publishDir = "docs" 
+show_reading_time = true 
+theme = "ananke" 
+title = '' 
 
 [[params.ananke_socials]]
-    name = "github"
-    url = "https://github.com/fancive"
-
+name = "github"
+url = "https://github.com/fancive"
 
 [taxonomies]
-    category = "categories"
-    tag = "tags"
-    series = "series"
+category = "categories"
+series = "series"
+tag = "tags"
 
 [languages]
-    [languages.en]
-        weight = 1
-        title = "home"
+[languages.en]
+title = "home"
+weight = 1
 
 [sitemap]
-    changefreq = "monthly"
-    priority = 0.5
-    filename = "sitemap.xml"
-
+changefreq = "monthly"
+filename = "sitemap.xml"
+priority = 0.5
 
 [menu]
-    [[menu.main]]
-        identifier = "categories"
-        name = "categories"
-        url = "/categories/"
-        weight = 10
-    [[menu.main]]
-        identifier = "about"
-        name = "About"
-        url = "/about/"
-        weight = 10
-    [[menu.main]]
-        identifier = "contact"
-        name = "Contact"
-        url = "/contact/"
-        weight = 10
-    [[menu.main]]
-        identifier = "contact"
-        name = "Tags"
-        url = "/tags/"
-        weight = 10
+[[menu.main]]
+identifier = "categories"
+name = "categories"
+url = "/categories/"
+weight = 10
+[[menu.main]]
+identifier = "about"
+name = "About"
+url = "/about/"
+weight = 10
+[[menu.main]]
+identifier = "contact"
+name = "Contact"
+url = "/contact/"
+weight = 10
+[[menu.main]]
+identifier = "contact"
+name = "Tags"
+url = "/tags/"
+weight = 10
 [params]
-    # color style
-    color = 'linen'                   # linen, wheat, gray, light
-    # header social icons
-    github = 'fancive'         # github.com/YOUR_GITHUB_ID
-    name = 'fancivez'
-    bio = 'golang fan'
-    avatar = 'fancivez@gmail.com'         # Gravatar email or image url
-    description = "欢迎来到荷兰"
-    siteLogoImage = "images/globe.svg"     # shown besides logoTitle
-    headerImage = "images/background.jpg"
-    logoTitle = "home" # shown on top-left, default: title
-    dateFormatToUse = "2006-01-02"
-    background_color_class = "bg-black"
-    env = 'production'
+# color style
+color = 'linen' # linen, wheat, gray, light
+# header social icons
+avatar = 'fancivez@gmail.com' # Gravatar email or image url
+background_color_class = "bg-black" 
+bio = 'golang fan' 
+dateFormatToUse = "2006-01-02" 
+description = "欢迎来到荷兰" 
+env = 'production' 
+github = 'fancive' # github.com/YOUR_GITHUB_ID
+headerImage = "images/background.jpg" 
+logoTitle = "home" # shown on top-left, default: title
+name = 'fancivez' 
+siteLogoImage = "images/globe.svg" # shown besides logoTitle
 
 [params.giscus]
-    data_repo="fancive/blog_discussion"
-    data_repo_id="R_kgDOIwDUDQ"
-    data_category="Announcements"
-    data_category_id="DIC_kwDOIwDUDc4CTgRN"
-    data_mapping="pathname"
-    data_reactions_enabled="1"
-    data_emit_metadata="0"
-    data_theme="preferred_color_scheme"
-    data_lang="zh-CN"
-    crossorigin="anonymous"
-
+crossorigin = "anonymous"
+data_category = "Announcements"
+data_category_id = "DIC_kwDOIwDUDc4CTgRN"
+data_emit_metadata = "0"
+data_lang = "zh-CN"
+data_mapping = "pathname"
+data_reactions_enabled = "1"
+data_repo = "fancive/blog_discussion"
+data_repo_id = "R_kgDOIwDUDQ"
+data_theme = "preferred_color_scheme"

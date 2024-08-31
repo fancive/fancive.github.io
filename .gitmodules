@@ -1,6 +1,3 @@
-[submodule "themes/anatole"]
-	path = themes/anatole
-	url = https://github.com/lxndrblz/anatole.git
 [submodule "themes/ananke"]
 	path = themes/ananke
 	url = https://github.com/budparr/gohugo-theme-ananke.git
@@ -19,3 +16,9 @@
 [submodule "themes/PaperMod"]
 	path = themes/PaperMod
 	url = https://github.com/adityatelange/hugo-PaperMod.git
+[submodule "themes/anatole"]
+	path = themes/anatole
+	url = https://github.com/lxndrblz/anatole.git
+[submodule "themes/docsy"]
+	path = themes/docsy
+	url = git@github.com:google/docsy.git

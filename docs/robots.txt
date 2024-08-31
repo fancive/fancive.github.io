@@ -1,1 +1,3 @@
 User-agent: *
+Allow: /
+Sitemap: https://fancive.github.io/sitemap.xml
