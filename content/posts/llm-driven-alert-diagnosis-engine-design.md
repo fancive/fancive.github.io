@@ -6,7 +6,7 @@ tags: ["LLM", "告警系统", "诊断引擎", "软件架构", "自动定位系�
 categories: ["技术架构"]
 ---
 
-在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个革命性的、由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。
+在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。
 
 ## 引言
 
@@ -16,7 +16,7 @@ categories: ["技术架构"]
 
 在深入探讨LLM驱动的诊断引擎之前，让我们先了解它在整个自动定位系统中的位置。自动定位系统是一个复杂的生态系统，旨在自动检测、诊断和解决IT环境中的问题。以下是系统的宏观架构：
 
-{{< mermaid align="left" theme="neutral" >}}
+```mermaid
 graph TB
     A[监控系统] -->|告警| B[告警聚合器]
     B -->|结构化告警| C[LLM驱动的诊断引擎]
@@ -26,11 +26,11 @@ graph TB
     C -->|诊断结果| G[自动修复系统]
     C -->|诊断报告| H[运维仪表板]
     I[人工反馈] -->|优化信息| C
-{{< /mermaid >}}
+```
 
 以Elasticsearch作为数据源为例:
 
-{{< mermaid align="left" theme="neutral" >}}
+```mermaid
 sequenceDiagram
     participant ES as Elasticsearch
     participant AR as 告警规则执行器
@@ -50,7 +50,7 @@ sequenceDiagram
             AM->>NT: 发送通知
         end
     end
-{{< /mermaid >}}
+```
 
 
 在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：
@@ -80,7 +80,7 @@ sequenceDiagram
 
 让我们通过一个图表来直观地了解这些组件是如何协同工作的：
 
-{{< mermaid align="left" theme="neutral" >}}
+```mermaid
 graph TD
     A[告警输入] -->|结构化数据| B[上下文收集器]
     B -->|丰富的上下文| C[提示生成器]
@@ -90,9 +90,7 @@ graph TD
     F -->|结构化诊断| G[诊断报告生成器]
     H[反馈处理器] -->|学习更新| D
     H -->|优化| C
-{{< /mermaid >}}
-
-
+```
 
 ## 详细组件设计
 
@@ -220,7 +218,7 @@ async def process_feedback(diagnosis_id, feedback):
 
 为了提高系统的性能和可扩展性，我们采用了以下策略：
 
-1. 使用异步编程（Python的asyncio）提高并发处理能力
+1. 使用异步编程提高并发处理能力
 2. 实现缓存机制，避免重复处理相似的告警
 3. 使用流处理架构（如Apache Kafka）来处理大规模告警
 4. 实现金丝雀发布和A/B测试，以安全地推出新的诊断策略

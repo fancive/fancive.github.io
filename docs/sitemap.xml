@@ -2,137 +2,137 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://fancive.github.io/categories/</loc>
+    <loc>http://localhost:1313/</loc>
+    <lastmod>2024-11-12T14:44:19+08:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>http://localhost:1313/posts/</loc>
+    <lastmod>2024-11-12T14:44:19+08:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>http://localhost:1313/categories/</loc>
     <lastmod>2024-08-31T09:42:01+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/</loc>
+    <loc>http://localhost:1313/tags/llm/</loc>
     <lastmod>2024-08-31T09:42:01+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/tags/llm/</loc>
+    <loc>http://localhost:1313/posts/llm-driven-alert-diagnosis-engine-design/</loc>
     <lastmod>2024-08-31T09:42:01+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/posts/llm-driven-alert-diagnosis-engine-design/</loc>
+    <loc>http://localhost:1313/tags/</loc>
     <lastmod>2024-08-31T09:42:01+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/posts/</loc>
+    <loc>http://localhost:1313/tags/%E5%91%8A%E8%AD%A6%E7%B3%BB%E7%BB%9F/</loc>
     <lastmod>2024-08-31T09:42:01+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/tags/</loc>
+    <loc>http://localhost:1313/categories/%E6%8A%80%E6%9C%AF%E6%9E%B6%E6%9E%84/</loc>
     <lastmod>2024-08-31T09:42:01+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/tags/%E5%91%8A%E8%AD%A6%E7%B3%BB%E7%BB%9F/</loc>
+    <loc>http://localhost:1313/tags/%E8%87%AA%E5%8A%A8%E5%AE%9A%E4%BD%8D%E7%B3%BB%E7%BB%9F/</loc>
     <lastmod>2024-08-31T09:42:01+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/categories/%E6%8A%80%E6%9C%AF%E6%9E%B6%E6%9E%84/</loc>
+    <loc>http://localhost:1313/tags/%E8%AF%8A%E6%96%AD%E5%BC%95%E6%93%8E/</loc>
     <lastmod>2024-08-31T09:42:01+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/tags/%E8%87%AA%E5%8A%A8%E5%AE%9A%E4%BD%8D%E7%B3%BB%E7%BB%9F/</loc>
+    <loc>http://localhost:1313/tags/%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</loc>
     <lastmod>2024-08-31T09:42:01+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/tags/%E8%AF%8A%E6%96%AD%E5%BC%95%E6%93%8E/</loc>
-    <lastmod>2024-08-31T09:42:01+08:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://fancive.github.io/tags/%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</loc>
-    <lastmod>2024-08-31T09:42:01+08:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://fancive.github.io/posts/paper_reading_a_survey_on_log_research_of_aiops/</loc>
+    <loc>http://localhost:1313/posts/paper_reading_a_survey_on_log_research_of_aiops/</loc>
     <lastmod>2023-03-25T13:43:03+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/tags/aiops/</loc>
+    <loc>http://localhost:1313/tags/aiops/</loc>
     <lastmod>2023-03-25T13:43:03+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/tags/paper-reading/</loc>
+    <loc>http://localhost:1313/tags/paper-reading/</loc>
     <lastmod>2023-03-25T13:43:03+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/categories/software-engineering/</loc>
+    <loc>http://localhost:1313/categories/software-engineering/</loc>
     <lastmod>2023-03-25T13:43:03+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/posts/paper_reading_aiops_real-world_challenges_and_research_innovations/</loc>
+    <loc>http://localhost:1313/posts/paper_reading_aiops_real-world_challenges_and_research_innovations/</loc>
     <lastmod>2023-03-18T13:35:19+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/tags/filebeat/</loc>
+    <loc>http://localhost:1313/tags/filebeat/</loc>
     <lastmod>2022-11-28T14:13:14+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/categories/go/</loc>
+    <loc>http://localhost:1313/categories/go/</loc>
     <lastmod>2022-11-28T14:13:14+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/posts/what_i_learned_from_filebeat_harvester/</loc>
+    <loc>http://localhost:1313/posts/what_i_learned_from_filebeat_harvester/</loc>
     <lastmod>2022-11-28T14:13:14+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/posts/design_pattern_used_in_filebeat/</loc>
+    <loc>http://localhost:1313/posts/design_pattern_used_in_filebeat/</loc>
     <lastmod>2020-09-16T22:15:59+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/tags/go-runtime/</loc>
+    <loc>http://localhost:1313/tags/go-runtime/</loc>
     <lastmod>2020-05-31T21:30:28+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/posts/go_string_byte/</loc>
+    <loc>http://localhost:1313/posts/go_string_byte/</loc>
     <lastmod>2020-05-31T21:30:28+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/tags/%E7%BF%BB%E8%AF%91/</loc>
+    <loc>http://localhost:1313/tags/%E7%BF%BB%E8%AF%91/</loc>
     <lastmod>2020-05-31T21:30:28+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/posts/go_interface/</loc>
+    <loc>http://localhost:1313/posts/go_interface/</loc>
     <lastmod>2020-05-06T22:20:18+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/about/</loc>
+    <loc>http://localhost:1313/about/</loc>
     <lastmod>2019-02-28T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/contact/</loc>
+    <loc>http://localhost:1313/contact/</loc>
     <lastmod>2019-02-28T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/series/</loc>
+    <loc>http://localhost:1313/series/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

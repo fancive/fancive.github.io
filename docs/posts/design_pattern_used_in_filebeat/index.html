@@ -1,22 +1,60 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
+<html lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     
     <title>filebeat中使用的设计模式 | home</title>
     <meta name="viewport" content="width=device-width,minimum-scale=1">
-    <meta name="description" content="registry 与 lazyinit 结合 filebeat/input.New
-f, err = GetFactory(input.config.Type) GetFactory
-func GetFactory(name string) (Factory, error) {  if _, exists := registry[name]; !exists {  return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name)  }  return registry[name], nil } 注册
-func init() {  err := input.Register(&#34;log&#34;, NewInput)  if err != nil {  panic(err)  } } observer publish
-func (b *bus) Publish(e Event) {  b.">
-    <meta name="generator" content="Hugo 0.96.0" />
+    <meta name="description" content="registry 与 lazyinit 结合
+filebeat/input.New
+f, err = GetFactory(input.config.Type)
+GetFactory
+func GetFactory(name string) (Factory, error) {
+    if _, exists := registry[name]; !exists {
+        return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name)
+    }
+    return registry[name], nil
+}
+注册
+func init() {
+    err := input.Register(&#34;log&#34;, NewInput)
+    if err != nil {
+        panic(err)
+    }
+}
+observer
+publish
+func (b *bus) Publish(e Event) {
+    b.RLock()
+    defer b.RUnlock()
+    logp.Debug(&#34;bus&#34;, &#34;%s: %&#43;v&#34;, b.name, e)
+    for _, listener := range b.listeners {
+        if listener.interested(e) {
+            listener.channel &lt;- e
+        }
+    }
+}
+Subscribe
+func (b *bus) Subscribe(filter ...string) Listener {
+    listener := &amp;listener{
+        filter:  filter,
+        bus:     b,
+        channel: make(chan Event, 100),
+    }
+
+    b.Lock()
+    defer b.Unlock()
+    b.listeners = append(b.listeners, listener)
+    return listener
+}
+strategy
+libbeat/outputs/kafka.makePartitioner()">
+    <meta name="generator" content="Hugo 0.138.0">
     
     
     
-    
-      <meta name="robots" content="index, follow">
+      <meta name="robots" content="noindex, nofollow">
     
     
 
@@ -35,60 +73,56 @@ func (b *bus) Publish(e Event) {  b.">
     
 
     
-      <link rel="canonical" href="https://fancive.github.io/posts/design_pattern_used_in_filebeat/">
+      <link rel="canonical" href="http://localhost:1313/posts/design_pattern_used_in_filebeat/">
     
 
-    <meta property="og:title" content="filebeat中使用的设计模式" />
-<meta property="og:description" content="registry 与 lazyinit 结合 filebeat/input.New
+    <meta property="og:url" content="http://localhost:1313/posts/design_pattern_used_in_filebeat/">
+  <meta property="og:site_name" content="home">
+  <meta property="og:title" content="filebeat中使用的设计模式">
+  <meta property="og:description" content="registry 与 lazyinit 结合 filebeat/input.New
 f, err = GetFactory(input.config.Type) GetFactory
-func GetFactory(name string) (Factory, error) {  if _, exists := registry[name]; !exists {  return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name)  }  return registry[name], nil } 注册
-func init() {  err := input.Register(&#34;log&#34;, NewInput)  if err != nil {  panic(err)  } } observer publish
-func (b *bus) Publish(e Event) {  b." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://fancive.github.io/posts/design_pattern_used_in_filebeat/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2020-09-16T22:15:59+08:00" />
-<meta property="article:modified_time" content="2020-09-16T22:15:59+08:00" /><meta property="og:site_name" content="home" />
+func GetFactory(name string) (Factory, error) { if _, exists := registry[name]; !exists { return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name) } return registry[name], nil } 注册
+func init() { err := input.Register(&#34;log&#34;, NewInput) if err != nil { panic(err) } } observer publish
+func (b *bus) Publish(e Event) { b.RLock() defer b.RUnlock() logp.Debug(&#34;bus&#34;, &#34;%s: %&#43;v&#34;, b.name, e) for _, listener := range b.listeners { if listener.interested(e) { listener.channel &lt;- e } } } Subscribe
+func (b *bus) Subscribe(filter ...string) Listener { listener := &amp;listener{ filter: filter, bus: b, channel: make(chan Event, 100), } b.Lock() defer b.Unlock() b.listeners = append(b.listeners, listener) return listener } strategy libbeat/outputs/kafka.makePartitioner()">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2020-09-16T22:15:59+08:00">
+    <meta property="article:modified_time" content="2020-09-16T22:15:59+08:00">
+    <meta property="article:tag" content="Filebeat">
 
-<meta itemprop="name" content="filebeat中使用的设计模式">
-<meta itemprop="description" content="registry 与 lazyinit 结合 filebeat/input.New
+  <meta itemprop="name" content="filebeat中使用的设计模式">
+  <meta itemprop="description" content="registry 与 lazyinit 结合 filebeat/input.New
 f, err = GetFactory(input.config.Type) GetFactory
-func GetFactory(name string) (Factory, error) {  if _, exists := registry[name]; !exists {  return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name)  }  return registry[name], nil } 注册
-func init() {  err := input.Register(&#34;log&#34;, NewInput)  if err != nil {  panic(err)  } } observer publish
-func (b *bus) Publish(e Event) {  b."><meta itemprop="datePublished" content="2020-09-16T22:15:59+08:00" />
-<meta itemprop="dateModified" content="2020-09-16T22:15:59+08:00" />
-<meta itemprop="wordCount" content="222">
-<meta itemprop="keywords" content="filebeat," /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="filebeat中使用的设计模式"/>
-<meta name="twitter:description" content="registry 与 lazyinit 结合 filebeat/input.New
+func GetFactory(name string) (Factory, error) { if _, exists := registry[name]; !exists { return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name) } return registry[name], nil } 注册
+func init() { err := input.Register(&#34;log&#34;, NewInput) if err != nil { panic(err) } } observer publish
+func (b *bus) Publish(e Event) { b.RLock() defer b.RUnlock() logp.Debug(&#34;bus&#34;, &#34;%s: %&#43;v&#34;, b.name, e) for _, listener := range b.listeners { if listener.interested(e) { listener.channel &lt;- e } } } Subscribe
+func (b *bus) Subscribe(filter ...string) Listener { listener := &amp;listener{ filter: filter, bus: b, channel: make(chan Event, 100), } b.Lock() defer b.Unlock() b.listeners = append(b.listeners, listener) return listener } strategy libbeat/outputs/kafka.makePartitioner()">
+  <meta itemprop="datePublished" content="2020-09-16T22:15:59+08:00">
+  <meta itemprop="dateModified" content="2020-09-16T22:15:59+08:00">
+  <meta itemprop="wordCount" content="222">
+  <meta itemprop="keywords" content="Filebeat">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="filebeat中使用的设计模式">
+  <meta name="twitter:description" content="registry 与 lazyinit 结合 filebeat/input.New
 f, err = GetFactory(input.config.Type) GetFactory
-func GetFactory(name string) (Factory, error) {  if _, exists := registry[name]; !exists {  return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name)  }  return registry[name], nil } 注册
-func init() {  err := input.Register(&#34;log&#34;, NewInput)  if err != nil {  panic(err)  } } observer publish
-func (b *bus) Publish(e Event) {  b."/>
+func GetFactory(name string) (Factory, error) { if _, exists := registry[name]; !exists { return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name) } return registry[name], nil } 注册
+func init() { err := input.Register(&#34;log&#34;, NewInput) if err != nil { panic(err) } } observer publish
+func (b *bus) Publish(e Event) { b.RLock() defer b.RUnlock() logp.Debug(&#34;bus&#34;, &#34;%s: %&#43;v&#34;, b.name, e) for _, listener := range b.listeners { if listener.interested(e) { listener.channel &lt;- e } } } Subscribe
+func (b *bus) Subscribe(filter ...string) Listener { listener := &amp;listener{ filter: filter, bus: b, channel: make(chan Event, 100), } b.Lock() defer b.Unlock() b.listeners = append(b.listeners, listener) return listener } strategy libbeat/outputs/kafka.makePartitioner()">
 
-      
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
-<script>
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.dataLayer = window.dataLayer || [];
-	function gtag(){dataLayer.push(arguments);}
-	gtag('js', new Date());
-	gtag('config', 'G-7N49ZFJ61J', { 'anonymize_ip': false });
-}
-</script>
-
-    
 	
-  </head>
-
-  <body class="ma0 avenir bg-near-white">
+  </head><body class="ma0 avenir bg-near-white development">
 
     
-
-
+   
+  
 
   
-  <header class="cover bg-top" style="background-image: url('https://fancive.github.io/images/illustrations/patterns.jpg');">
+  
+  
+  <header class="cover bg-center" style="background-image: url('http://localhost:1313/images/illustrations/patterns.jpg');">
     <div class="bg-black-60">
       <nav class="pv3 ph3 ph4-ns" role="navigation">
   <div class="flex-l justify-between items-center center">
@@ -129,36 +163,7 @@ if (!doNotTrack) {
           
         </ul>
       
-      
-<div class="ananke-socials">
-  
-    
-    <a href="fancive" target="_blank" rel="noopener" class="github ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="GitHub link" aria-label="follow on GitHub——Opens in a new window">
-      
-        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
-</svg>
-</span>
-      
-<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
-</svg>
-</span></a>
-  
-    
-    <a href="https://github.com/fancive" target="_blank" rel="noopener" class="github ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="GitHub link" aria-label="follow on GitHub——Opens in a new window">
-      
-        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
-</svg>
-</span>
-      
-<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
-</svg>
-</span></a>
-  
-</div>
+      <div class="ananke-socials"></div>
 
     </div>
   </div>
@@ -177,40 +182,24 @@ if (!doNotTrack) {
 
     <main class="pb7" role="main">
       
-
-<article class="flex-l flex-wrap justify-between mw8 center ph3">
-  <header class="mt4 w-100">
-    <aside class="instapaper_ignoref b helvetica tracked ttu">
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked ttu">
+          
+        Posts
+      </aside><div id="sharing" class="mt3 ananke-socials"></div>
+<h1 class="f1 athelas mt3 mb1">filebeat中使用的设计模式</h1>
       
-      Posts
-    </aside>
-    
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2020-09-16T22:15:59+08:00">September 16, 2020</time>
+      
 
-
-
-
-
-
-
-
-
-
-  <div id="sharing" class="mt3 ananke-socials">
-    
-  </div>
-
-
-    <h1 class="f1 athelas mt3 mb1">filebeat中使用的设计模式</h1>
-    
-    
-    
-    <time class="f6 mv4 dib tracked" datetime="2020-09-16T22:15:59+08:00" >September 16, 2020</time>
-    
-
-    
-    
-  </header>
-  <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><h2 id="registry-与-lazyinit-结合">registry 与 lazyinit 结合</h2>
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><h2 id="registry-与-lazyinit-结合">registry 与 lazyinit 结合</h2>
 <p>filebeat/input.New</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">f</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">GetFactory</span>(<span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">Type</span>)
 </span></span></code></pre></div><p>GetFactory</p>
@@ -301,14 +290,14 @@ if (!doNotTrack) {
 </span></span></code></pre></div><ul class="pa0">
   
    <li class="list di">
-     <a href="/tags/filebeat/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">filebeat</a>
+     <a href="/tags/filebeat/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Filebeat</a>
    </li>
   
 </ul>
 <div class="mt6 instapaper_ignoref">
       
-      <div id="disqus_thread"></div>
-<script type="application/javascript">
+        <div id="disqus_thread"></div>
+<script>
     window.disqus_config = function () {
     
     
@@ -329,54 +318,25 @@ if (!doNotTrack) {
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
       
       
+      </div>
     </div>
-  </div>
 
-  <aside class="w-30-l mt6-l">
+    <aside class="w-30-l mt6-l">
 
 
 
 
 </aside>
 
-</article>
+  </article>
 
     </main>
     <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
   <div class="flex justify-between">
-  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://fancive.github.io/" >
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
     &copy;  home 2024 
   </a>
-    <div>
-<div class="ananke-socials">
-  
-    
-    <a href="fancive" target="_blank" rel="noopener" class="github ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="GitHub link" aria-label="follow on GitHub——Opens in a new window">
-      
-        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
-</svg>
-</span>
-      
-<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
-</svg>
-</span></a>
-  
-    
-    <a href="https://github.com/fancive" target="_blank" rel="noopener" class="github ananke-social-link link-transition stackoverflow link dib z-999 pt3 pt0-l mr1" title="GitHub link" aria-label="follow on GitHub——Opens in a new window">
-      
-        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
-</svg>
-</span>
-      
-<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
-</svg>
-</span></a>
-  
-</div>
+    <div><div class="ananke-socials"></div>
 </div>
   </div>
 </footer>

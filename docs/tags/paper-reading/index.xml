@@ -1,35 +1,26 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>paper reading on home</title>
-    <link>https://fancive.github.io/tags/paper-reading/</link>
-    <description>Recent content in paper reading on home</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Sat, 25 Mar 2023 13:43:03 +0800</lastBuildDate><atom:link href="https://fancive.github.io/tags/paper-reading/index.xml" rel="self" type="application/rss+xml" />
+    <title>Paper Reading on home</title>
+    <link>http://localhost:1313/tags/paper-reading/</link>
+    <description>Recent content in Paper Reading on home</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <lastBuildDate>Sat, 25 Mar 2023 13:43:03 +0800</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/paper-reading/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>[Paper reading] A Survey On Log Research Of AIOps: Methods and Trends</title>
-      <link>https://fancive.github.io/posts/paper_reading_a_survey_on_log_research_of_aiops/</link>
+      <link>http://localhost:1313/posts/paper_reading_a_survey_on_log_research_of_aiops/</link>
       <pubDate>Sat, 25 Mar 2023 13:43:03 +0800</pubDate>
-      
-      <guid>https://fancive.github.io/posts/paper_reading_a_survey_on_log_research_of_aiops/</guid>
-      <description>link: https://dl.acm.org/doi/abs/10.1007/s11036-021-01832-3  first pass 5-10 mins
- title, abstract, and introduction section and sub-section headings conclusions references  question Category: What type of paper is this? A measurement paper? An analysis of an existing system? A description of a research prototype?
-It’s a survey paper on the methods and trend on log based AIOps.
-It does not seem to focus on a specific system or prototype, but rather explore the current state of research in the field.</description>
+      <guid>http://localhost:1313/posts/paper_reading_a_survey_on_log_research_of_aiops/</guid>
+      <description>&lt;ul&gt;&#xA;&lt;li&gt;link: &lt;a href=&#34;https://dl.acm.org/doi/abs/10.1007/s11036-021-01832-3&#34;&gt;https://dl.acm.org/doi/abs/10.1007/s11036-021-01832-3&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h1 id=&#34;first-pass&#34;&gt;first pass&lt;/h1&gt;&#xA;&lt;p&gt;5-10 mins&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;title, abstract, and introduction&lt;/li&gt;&#xA;&lt;li&gt;section and sub-section headings&lt;/li&gt;&#xA;&lt;li&gt;conclusions&lt;/li&gt;&#xA;&lt;li&gt;references&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;h2 id=&#34;question&#34;&gt;question&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;Category: What type of paper is this? A measurement paper? An analysis of an existing system? A description of a research prototype?&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;It’s a survey paper on the methods and trend on log based AIOps.&lt;/p&gt;&#xA;&lt;p&gt;It does not seem to focus on a specific system or prototype, but rather explore the current state of research in the field.&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>[paper reading]AIOps: Real-World Challenges and Research Innovations</title>
-      <link>https://fancive.github.io/posts/paper_reading_aiops_real-world_challenges_and_research_innovations/</link>
+      <link>http://localhost:1313/posts/paper_reading_aiops_real-world_challenges_and_research_innovations/</link>
       <pubDate>Sat, 18 Mar 2023 13:35:19 +0800</pubDate>
-      
-      <guid>https://fancive.github.io/posts/paper_reading_aiops_real-world_challenges_and_research_innovations/</guid>
-      <description>link: https://ieeexplore.ieee.org/abstract/document/8802836  first pass 5-10 mins
- title, abstract, and introduction section and sub-section headings conclusions references  question Category: What type of paper is this? A measurement paper? An analysis of an existing system? A description of a research prototype?
-It is a descriptive paper that discusses the challenges and innovations related to the implementation of AIOps in real-world IT operations.
-Context: Which other papers is it related to?</description>
+      <guid>http://localhost:1313/posts/paper_reading_aiops_real-world_challenges_and_research_innovations/</guid>
+      <description>&lt;ul&gt;&#xA;&lt;li&gt;link: &lt;a href=&#34;https://ieeexplore.ieee.org/abstract/document/8802836&#34;&gt;https://ieeexplore.ieee.org/abstract/document/8802836&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;first-pass&#34;&gt;first pass&lt;/h2&gt;&#xA;&lt;p&gt;5-10 mins&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;title, abstract, and introduction&lt;/li&gt;&#xA;&lt;li&gt;section and sub-section headings&lt;/li&gt;&#xA;&lt;li&gt;conclusions&lt;/li&gt;&#xA;&lt;li&gt;references&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;h3 id=&#34;question&#34;&gt;question&lt;/h3&gt;&#xA;&lt;p&gt;&lt;strong&gt;Category: What type of paper is this? A measurement paper? An analysis of an existing system? A description of a research prototype?&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;It is a descriptive paper that discusses the challenges and innovations related to the implementation of AIOps in real-world IT operations.&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;Context: Which other papers is it related to? Which theoretical bases were used to analyze the problem?&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>
