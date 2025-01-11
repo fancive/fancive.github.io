@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>LLM on home</title>
-    <link>http://localhost:1313/tags/llm/</link>
+    <link>https://fancive.github.io/tags/llm/</link>
     <description>Recent content in LLM on home</description>
     <generator>Hugo</generator>
     <language>en</language>
     <lastBuildDate>Sat, 31 Aug 2024 09:42:01 +0800</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/llm/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://fancive.github.io/tags/llm/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Llm Driven Alert Diagnosis Engine Design(设计新一代LLM驱动的告警诊断引擎)</title>
-      <link>http://localhost:1313/posts/llm-driven-alert-diagnosis-engine-design/</link>
+      <link>https://fancive.github.io/posts/llm-driven-alert-diagnosis-engine-design/</link>
       <pubDate>Sat, 31 Aug 2024 09:42:01 +0800</pubDate>
-      <guid>http://localhost:1313/posts/llm-driven-alert-diagnosis-engine-design/</guid>
+      <guid>https://fancive.github.io/posts/llm-driven-alert-diagnosis-engine-design/</guid>
       <description>&lt;p&gt;在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。&lt;/p&gt;&#xA;&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;&#xA;&lt;p&gt;随着系统规模和复杂性的增加，传统的基于规则的告警诊断方法往往力不从心。我们需要一种更智能、更灵活的方法来分析和诊断系统告警。这就是LLM驱动的诊断引擎发挥作用的地方。&lt;/p&gt;&#xA;&lt;h2 id=&#34;宏观系统架构自动定位系统&#34;&gt;宏观系统架构：自动定位系统&lt;/h2&gt;&#xA;&lt;p&gt;在深入探讨LLM驱动的诊断引擎之前，让我们先了解它在整个自动定位系统中的位置。自动定位系统是一个复杂的生态系统，旨在自动检测、诊断和解决IT环境中的问题。以下是系统的宏观架构：&lt;/p&gt;&#xA;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-mermaid&#34; data-lang=&#34;mermaid&#34;&gt;graph TB&#xA;    A[监控系统] --&amp;gt;|告警| B[告警聚合器]&#xA;    B --&amp;gt;|结构化告警| C[LLM驱动的诊断引擎]&#xA;    D[日志系统] --&amp;gt;|相关日志| C&#xA;    E[配置管理数据库] --&amp;gt;|系统配置| C&#xA;    F[知识库] --&amp;gt;|历史案例| C&#xA;    C --&amp;gt;|诊断结果| G[自动修复系统]&#xA;    C --&amp;gt;|诊断报告| H[运维仪表板]&#xA;    I[人工反馈] --&amp;gt;|优化信息| C&#xA;&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;以Elasticsearch作为数据源为例:&lt;/p&gt;&#xA;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-mermaid&#34; data-lang=&#34;mermaid&#34;&gt;sequenceDiagram&#xA;    participant ES as Elasticsearch&#xA;    participant AR as 告警规则执行器&#xA;    participant AM as 告警管理器&#xA;    participant LLM as LLM诊断引擎&#xA;    participant NT as 通知系统&#xA;    &#xA;    loop 定期执行&#xA;        AR-&amp;gt;&amp;gt;ES: 执行查询表达式&#xA;        ES--&amp;gt;&amp;gt;AR: 返回查询结果&#xA;        AR-&amp;gt;&amp;gt;AR: 应用时间窗口和阈值&#xA;        alt 触发告警条件&#xA;            AR-&amp;gt;&amp;gt;AM: 生成告警&#xA;            AM-&amp;gt;&amp;gt;LLM: 请求诊断&#xA;            LLM-&amp;gt;&amp;gt;LLM: 分析告警上下文&#xA;            LLM--&amp;gt;&amp;gt;AM: 返回诊断结果&#xA;            AM-&amp;gt;&amp;gt;NT: 发送通知&#xA;        end&#xA;    end&#xA;&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：&lt;/p&gt;</description>
     </item>
   </channel>

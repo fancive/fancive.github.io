@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     
@@ -54,12 +54,12 @@ libbeat/outputs/kafka.makePartitioner()">
     
     
     
-      <meta name="robots" content="noindex, nofollow">
+      <meta name="robots" content="index, follow">
     
     
 
     
-<link rel="stylesheet" href="/ananke/css/main.min.css" >
+<link rel="stylesheet" href="/ananke/css/main.min.d05fb5f317fcf33b3a52936399bdf6f47dc776516e1692e412ec7d76f4a5faa2.css" >
 
 
 
@@ -73,10 +73,10 @@ libbeat/outputs/kafka.makePartitioner()">
     
 
     
-      <link rel="canonical" href="http://localhost:1313/posts/design_pattern_used_in_filebeat/">
+      <link rel="canonical" href="https://fancive.github.io/posts/design_pattern_used_in_filebeat/">
     
 
-    <meta property="og:url" content="http://localhost:1313/posts/design_pattern_used_in_filebeat/">
+    <meta property="og:url" content="https://fancive.github.io/posts/design_pattern_used_in_filebeat/">
   <meta property="og:site_name" content="home">
   <meta property="og:title" content="filebeat中使用的设计模式">
   <meta property="og:description" content="registry 与 lazyinit 结合 filebeat/input.New
@@ -112,8 +112,24 @@ func init() { err := input.Register(&#34;log&#34;, NewInput) if err != nil { pan
 func (b *bus) Publish(e Event) { b.RLock() defer b.RUnlock() logp.Debug(&#34;bus&#34;, &#34;%s: %&#43;v&#34;, b.name, e) for _, listener := range b.listeners { if listener.interested(e) { listener.channel &lt;- e } } } Subscribe
 func (b *bus) Subscribe(filter ...string) Listener { listener := &amp;listener{ filter: filter, bus: b, channel: make(chan Event, 100), } b.Lock() defer b.Unlock() b.listeners = append(b.listeners, listener) return listener } strategy libbeat/outputs/kafka.makePartitioner()">
 
+      
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-7N49ZFJ61J');
+        }
+      </script>
+    
 	
-  </head><body class="ma0 avenir bg-near-white development">
+  </head><body class="ma0 avenir bg-near-white production">
 
     
    
@@ -122,7 +138,7 @@ func (b *bus) Subscribe(filter ...string) Listener { listener := &amp;listener{ 
   
   
   
-  <header class="cover bg-center" style="background-image: url('http://localhost:1313/images/illustrations/patterns.jpg');">
+  <header class="cover bg-center" style="background-image: url('https://fancive.github.io/images/illustrations/patterns.jpg');">
     <div class="bg-black-60">
       <nav class="pv3 ph3 ph4-ns" role="navigation">
   <div class="flex-l justify-between items-center center">
@@ -333,7 +349,7 @@ func (b *bus) Subscribe(filter ...string) Listener { listener := &amp;listener{ 
     </main>
     <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
   <div class="flex justify-between">
-  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://fancive.github.io/" >
     &copy;  home 2025 
   </a>
     <div><div class="ananke-socials"></div>

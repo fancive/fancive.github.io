@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     
@@ -45,12 +45,12 @@ sequenceDiagram
     
     
     
-      <meta name="robots" content="noindex, nofollow">
+      <meta name="robots" content="index, follow">
     
     
 
     
-<link rel="stylesheet" href="/ananke/css/main.min.css" >
+<link rel="stylesheet" href="/ananke/css/main.min.d05fb5f317fcf33b3a52936399bdf6f47dc776516e1692e412ec7d76f4a5faa2.css" >
 
 
 
@@ -64,10 +64,10 @@ sequenceDiagram
     
 
     
-      <link rel="canonical" href="http://localhost:1313/posts/llm-driven-alert-diagnosis-engine-design/">
+      <link rel="canonical" href="https://fancive.github.io/posts/llm-driven-alert-diagnosis-engine-design/">
     
 
-    <meta property="og:url" content="http://localhost:1313/posts/llm-driven-alert-diagnosis-engine-design/">
+    <meta property="og:url" content="https://fancive.github.io/posts/llm-driven-alert-diagnosis-engine-design/">
   <meta property="og:site_name" content="home">
   <meta property="og:title" content="Llm Driven Alert Diagnosis Engine Design(设计新一代LLM驱动的告警诊断引擎)">
   <meta property="og:description" content="在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。
@@ -104,8 +104,24 @@ sequenceDiagram participant ES as Elasticsearch participant AR as 告警规则�
 graph TB A[监控系统] --&gt;|告警| B[告警聚合器] B --&gt;|结构化告警| C[LLM驱动的诊断引擎] D[日志系统] --&gt;|相关日志| C E[配置管理数据库] --&gt;|系统配置| C F[知识库] --&gt;|历史案例| C C --&gt;|诊断结果| G[自动修复系统] C --&gt;|诊断报告| H[运维仪表板] I[人工反馈] --&gt;|优化信息| C 以Elasticsearch作为数据源为例:
 sequenceDiagram participant ES as Elasticsearch participant AR as 告警规则执行器 participant AM as 告警管理器 participant LLM as LLM诊断引擎 participant NT as 通知系统 loop 定期执行 AR-&gt;&gt;ES: 执行查询表达式 ES--&gt;&gt;AR: 返回查询结果 AR-&gt;&gt;AR: 应用时间窗口和阈值 alt 触发告警条件 AR-&gt;&gt;AM: 生成告警 AM-&gt;&gt;LLM: 请求诊断 LLM-&gt;&gt;LLM: 分析告警上下文 LLM--&gt;&gt;AM: 返回诊断结果 AM-&gt;&gt;NT: 发送通知 end end 在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：">
 
+      
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-7N49ZFJ61J');
+        }
+      </script>
+    
 	
-  </head><body class="ma0 avenir bg-near-white development">
+  </head><body class="ma0 avenir bg-near-white production">
 
     
    
@@ -114,7 +130,7 @@ sequenceDiagram participant ES as Elasticsearch participant AR as 告警规则�
   
   
   
-  <header class="cover bg-center" style="background-image: url('http://localhost:1313/images/background.jpg');">
+  <header class="cover bg-center" style="background-image: url('https://fancive.github.io/images/background.jpg');">
     <div class="bg-black-60">
       <nav class="pv3 ph3 ph4-ns" role="navigation">
   <div class="flex-l justify-between items-center center">
@@ -463,7 +479,7 @@ sequenceDiagram participant ES as Elasticsearch participant AR as 告警规则�
     </main>
     <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
   <div class="flex justify-between">
-  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://fancive.github.io/" >
     &copy;  home 2025 
   </a>
     <div><div class="ananke-socials"></div>

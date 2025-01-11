@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     
@@ -103,12 +103,12 @@ go build -gcflags=&#34;-N -l -S&#34; go.go
     
     
     
-      <meta name="robots" content="noindex, nofollow">
+      <meta name="robots" content="index, follow">
     
     
 
     
-<link rel="stylesheet" href="/ananke/css/main.min.css" >
+<link rel="stylesheet" href="/ananke/css/main.min.d05fb5f317fcf33b3a52936399bdf6f47dc776516e1692e412ec7d76f4a5faa2.css" >
 
 
 
@@ -122,10 +122,10 @@ go build -gcflags=&#34;-N -l -S&#34; go.go
     
 
     
-      <link rel="canonical" href="http://localhost:1313/posts/go_string_byte/">
+      <link rel="canonical" href="https://fancive.github.io/posts/go_string_byte/">
     
 
-    <meta property="og:url" content="http://localhost:1313/posts/go_string_byte/">
+    <meta property="og:url" content="https://fancive.github.io/posts/go_string_byte/">
   <meta property="og:site_name" content="home">
   <meta property="og:title" content="go string to byte">
   <meta property="og:description" content="0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32
@@ -159,8 +159,24 @@ func main() { s1 := &#34;abc&#34; fmt.Println(cap([]byte(s1))) } 0x02 探究 那
 go build -gcflags=&#34;-N -l -S&#34; go.go 得到以下代码
 &#34;&#34;.main STEXT size=293 args=0x0 locals=0xc0 0x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0 0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX 0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX 0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX) 0x0012 00018 (/home/xxx/go.go:5)	JLS	283 0x0018 00024 (/home/xxx/go.go:5)	SUBQ	$192, SP 0x001f 00031 (/home/xxx/go.go:5)	MOVQ	BP, 184(SP) 0x0027 00039 (/home/xxx/go.go:5)	LEAQ	184(SP), BP 0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$0, gclocals·7d2d5fca80364273fb07d5820a76fef4(SB) 0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$1, gclocals·4dc9e0f0c3406fbbbbd2ec99068e8282(SB) 0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$2, gclocals·8dcadbff7c52509cfe2d26e4d7d24689(SB) 0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$3, &#34;&#34;.main.stkobj(SB) 0x002f 00047 (/home/xxx/go.go:6)	PCDATA	$0, $1 0x002f 00047 (/home/xxx/go.go:6)	PCDATA	$1, $0 0x002f 00047 (/home/xxx/go.go:6)	LEAQ	go.string.&#34;abc&#34;(SB), AX 0x0036 00054 (/home/xxx/go.go:6)	MOVQ	AX, &#34;&#34;.s1&#43;104(SP) 0x003b 00059 (/home/xxx/go.go:6)	MOVQ	$3, &#34;&#34;.s1&#43;112(SP) 0x0044 00068 (/home/xxx/go.go:7)	PCDATA	$0, $2 0x0044 00068 (/home/xxx/go.go:7)	LEAQ	&#34;&#34;..autotmp_4&#43;56(SP), CX 0x0049 00073 (/home/xxx/go.go:7)	PCDATA	$0, $1 0x0049 00073 (/home/xxx/go.go:7)	MOVQ	CX, (SP) 0x004d 00077 (/home/xxx/go.go:7)	PCDATA	$0, $0 0x004d 00077 (/home/xxx/go.go:7)	MOVQ	AX, 8(SP) 0x0052 00082 (/home/xxx/go.go:7)	MOVQ	$3, 16(SP) 0x005b 00091 (/home/xxx/go.go:7)	CALL	runtime.stringtoslicebyte(SB) 0x0060 00096 (/home/xxx/go.go:7)	MOVQ	40(SP), AX 0x0065 00101 (/home/xxx/go.go:7)	MOVQ	32(SP), CX 0x006a 00106 (/home/xxx/go.go:7)	PCDATA	$0, $3 0x006a 00106 (/home/xxx/go.go:7)	MOVQ	24(SP), DX 0x006f 00111 (/home/xxx/go.go:7)	PCDATA	$0, $0 0x006f 00111 (/home/xxx/go.go:7)	MOVQ	DX, &#34;&#34;..autotmp_2&#43;160(SP) 0x0077 00119 (/home/xxx/go.go:7)	MOVQ	CX, &#34;&#34;..autotmp_2&#43;168(SP) 0x007f 00127 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_2&#43;176(SP) 0x0087 00135 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_3&#43;48(SP) 0x008c 00140 (/home/xxx/go.go:7)	MOVQ	AX, (SP) 0x0090 00144 (/home/xxx/go.go:7)	CALL	runtime.convT64(SB) 0x0095 00149 (/home/xxx/go.go:7)	PCDATA	$0, $1 0x0095 00149 (/home/xxx/go.go:7)	MOVQ	8(SP), AX 0x009a 00154 (/home/xxx/go.go:7)	PCDATA	$0, $0 0x009a 00154 (/home/xxx/go.go:7)	PCDATA	$1, $1 0x009a 00154 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_5&#43;96(SP) 0x009f 00159 (/home/xxx/go.go:7)	PCDATA	$1, $2 0x009f 00159 (/home/xxx/go.go:7)	XORPS	X0, X0 0x00a2 00162 (/home/xxx/go.go:7)	MOVUPS	X0, &#34;&#34;..autotmp_1&#43;120(SP) 0x00a7 00167 (/home/xxx/go.go:7)	PCDATA	$0, $1 0x00a7 00167 (/home/xxx/go.go:7)	PCDATA	$1, $1 0x00a7 00167 (/home/xxx/go.go:7)	LEAQ	&#34;&#34;..autotmp_1&#43;120(SP), AX 0x00ac 00172 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_7&#43;88(SP) 0x00b1 00177 (/home/xxx/go.go:7)	TESTB	AL, (AX) 0x00b3 00179 (/home/xxx/go.go:7)	PCDATA	$0, $2 0x00b3 00179 (/home/xxx/go.go:7)	PCDATA	$1, $0 0x00b3 00179 (/home/xxx/go.go:7)	MOVQ	&#34;&#34;..autotmp_5&#43;96(SP), CX 0x00b8 00184 (/home/xxx/go.go:7)	PCDATA	$0, $4 0x00b8 00184 (/home/xxx/go.go:7)	LEAQ	type.int(SB), DX 0x00bf 00191 (/home/xxx/go.go:7)	PCDATA	$0, $2 0x00bf 00191 (/home/xxx/go.go:7)	MOVQ	DX, &#34;&#34;..autotmp_1&#43;120(SP) 0x00c4 00196 (/home/xxx/go.go:7)	PCDATA	$0, $1 0x00c4 00196 (/home/xxx/go.go:7)	MOVQ	CX, &#34;&#34;..autotmp_1&#43;128(SP) 0x00cc 00204 (/home/xxx/go.go:7)	TESTB	AL, (AX) 0x00ce 00206 (/home/xxx/go.go:7)	JMP	208 0x00d0 00208 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_6&#43;136(SP) 0x00d8 00216 (/home/xxx/go.go:7)	MOVQ	$1, &#34;&#34;..autotmp_6&#43;144(SP) 0x00e4 00228 (/home/xxx/go.go:7)	MOVQ	$1, &#34;&#34;..autotmp_6&#43;152(SP) 0x00f0 00240 (/home/xxx/go.go:7)	PCDATA	$0, $0 0x00f0 00240 (/home/xxx/go.go:7)	MOVQ	AX, (SP) 0x00f4 00244 (/home/xxx/go.go:7)	MOVQ	$1, 8(SP) 0x00fd 00253 (/home/xxx/go.go:7)	MOVQ	$1, 16(SP) 0x0106 00262 (/home/xxx/go.go:7)	CALL	fmt.Println(SB) 0x010b 00267 (/home/xxx/go.go:9)	MOVQ	184(SP), BP 0x0113 00275 (/home/xxx/go.go:9)	ADDQ	$192, SP 0x011a 00282 (/home/xxx/go.go:9)	RET 0x011b 00283 (/home/xxx/go.go:9)	NOP 0x011b 00283 (/home/xxx/go.go:5)	PCDATA	$1, $-1 0x011b 00283 (/home/xxx/go.go:5)	PCDATA	$0, $-1 0x011b 00283 (/home/xxx/go.go:5)	CALL	runtime.morestack_noctxt(SB) 0x0120 00288 (/home/xxx/go.go:5)	JMP	0 声明部分">
 
+      
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-7N49ZFJ61J');
+        }
+      </script>
+    
 	
-  </head><body class="ma0 avenir bg-near-white development">
+  </head><body class="ma0 avenir bg-near-white production">
 
     
    
@@ -455,7 +471,7 @@ jumps to 283 if SP &lt;= g.stackguard0
     </main>
     <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
   <div class="flex justify-between">
-  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://fancive.github.io/" >
     &copy;  home 2025 
   </a>
     <div><div class="ananke-socials"></div>
