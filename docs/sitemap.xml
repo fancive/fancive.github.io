@@ -3,12 +3,17 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://localhost:1313/</loc>
-    <lastmod>2025-01-07T13:41:38+08:00</lastmod>
+    <lastmod>2025-01-11T16:26:38+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>http://localhost:1313/posts/</loc>
-    <lastmod>2025-01-07T13:41:38+08:00</lastmod>
+    <lastmod>2025-01-11T16:26:38+08:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>http://localhost:1313/posts/wheel-of-life-2024/</loc>
+    <lastmod>2025-01-11T16:26:38+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
