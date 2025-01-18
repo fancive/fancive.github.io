@@ -1,80 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+  x-data
+  :class="$store.darkMode.class()"
+  :data-theme="$store.darkMode.theme()">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Llm Driven Alert Diagnosis Engine Design(设计新一代LLM驱动的告警诊断引擎) | home</title>
-    <meta name="viewport" content="width=device-width,minimum-scale=1">
-    <meta name="description" content="在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。
-引言
-随着系统规模和复杂性的增加，传统的基于规则的告警诊断方法往往力不从心。我们需要一种更智能、更灵活的方法来分析和诊断系统告警。这就是LLM驱动的诊断引擎发挥作用的地方。
-宏观系统架构：自动定位系统
-在深入探讨LLM驱动的诊断引擎之前，让我们先了解它在整个自动定位系统中的位置。自动定位系统是一个复杂的生态系统，旨在自动检测、诊断和解决IT环境中的问题。以下是系统的宏观架构：
-graph TB
-    A[监控系统] --&gt;|告警| B[告警聚合器]
-    B --&gt;|结构化告警| C[LLM驱动的诊断引擎]
-    D[日志系统] --&gt;|相关日志| C
-    E[配置管理数据库] --&gt;|系统配置| C
-    F[知识库] --&gt;|历史案例| C
-    C --&gt;|诊断结果| G[自动修复系统]
-    C --&gt;|诊断报告| H[运维仪表板]
-    I[人工反馈] --&gt;|优化信息| C
-以Elasticsearch作为数据源为例:
-sequenceDiagram
-    participant ES as Elasticsearch
-    participant AR as 告警规则执行器
-    participant AM as 告警管理器
-    participant LLM as LLM诊断引擎
-    participant NT as 通知系统
-    
-    loop 定期执行
-        AR-&gt;&gt;ES: 执行查询表达式
-        ES--&gt;&gt;AR: 返回查询结果
-        AR-&gt;&gt;AR: 应用时间窗口和阈值
-        alt 触发告警条件
-            AR-&gt;&gt;AM: 生成告警
-            AM-&gt;&gt;LLM: 请求诊断
-            LLM-&gt;&gt;LLM: 分析告警上下文
-            LLM--&gt;&gt;AM: 返回诊断结果
-            AM-&gt;&gt;NT: 发送通知
-        end
-    end
-在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：">
-    <meta name="generator" content="Hugo 0.138.0">
-    
-    
-    
-      <meta name="robots" content="index, follow">
-    
-    
-
-    
-<link rel="stylesheet" href="/ananke/css/main.min.d05fb5f317fcf33b3a52936399bdf6f47dc776516e1692e412ec7d76f4a5faa2.css" >
-
-
 
     
 
-    
-      
+<link rel="canonical" href="https://fancive.github.io/posts/llm-driven-alert-diagnosis-engine-design/" />
 
-    
 
-    
 
-    
-      <link rel="canonical" href="https://fancive.github.io/posts/llm-driven-alert-diagnosis-engine-design/">
-    
+<meta name="author" content="fancive" />
+<meta name="description" content="在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。
+" />
 
-    <meta property="og:url" content="https://fancive.github.io/posts/llm-driven-alert-diagnosis-engine-design/">
+
+<meta name="keywords" content="LLM,告警系统,诊断引擎,软件架构,自动定位系统">
+
+
+
+<meta name="generator" content="Hugo 0.138.0">
+
+
+<meta property="og:url" content="https://fancive.github.io/posts/llm-driven-alert-diagnosis-engine-design/">
   <meta property="og:site_name" content="home">
   <meta property="og:title" content="Llm Driven Alert Diagnosis Engine Design(设计新一代LLM驱动的告警诊断引擎)">
-  <meta property="og:description" content="在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。
-引言 随着系统规模和复杂性的增加，传统的基于规则的告警诊断方法往往力不从心。我们需要一种更智能、更灵活的方法来分析和诊断系统告警。这就是LLM驱动的诊断引擎发挥作用的地方。
-宏观系统架构：自动定位系统 在深入探讨LLM驱动的诊断引擎之前，让我们先了解它在整个自动定位系统中的位置。自动定位系统是一个复杂的生态系统，旨在自动检测、诊断和解决IT环境中的问题。以下是系统的宏观架构：
-graph TB A[监控系统] --&gt;|告警| B[告警聚合器] B --&gt;|结构化告警| C[LLM驱动的诊断引擎] D[日志系统] --&gt;|相关日志| C E[配置管理数据库] --&gt;|系统配置| C F[知识库] --&gt;|历史案例| C C --&gt;|诊断结果| G[自动修复系统] C --&gt;|诊断报告| H[运维仪表板] I[人工反馈] --&gt;|优化信息| C 以Elasticsearch作为数据源为例:
-sequenceDiagram participant ES as Elasticsearch participant AR as 告警规则执行器 participant AM as 告警管理器 participant LLM as LLM诊断引擎 participant NT as 通知系统 loop 定期执行 AR-&gt;&gt;ES: 执行查询表达式 ES--&gt;&gt;AR: 返回查询结果 AR-&gt;&gt;AR: 应用时间窗口和阈值 alt 触发告警条件 AR-&gt;&gt;AM: 生成告警 AM-&gt;&gt;LLM: 请求诊断 LLM-&gt;&gt;LLM: 分析告警上下文 LLM--&gt;&gt;AM: 返回诊断结果 AM-&gt;&gt;NT: 发送通知 end end 在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：">
+  <meta property="og:description" content="在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。">
   <meta property="og:locale" content="en">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
@@ -86,143 +41,296 @@ sequenceDiagram participant ES as Elasticsearch participant AR as 告警规则�
     <meta property="article:tag" content="软件架构">
     <meta property="article:tag" content="自动定位系统">
 
+
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Llm Driven Alert Diagnosis Engine Design(设计新一代LLM驱动的告警诊断引擎)">
+  <meta name="twitter:description" content="在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。">
+
+
+
+
+  
+
+<link rel="stylesheet" href="/css/output.min.css" />
+
+
+
+
+    
+
+
+<style>
+  pre {
+    padding: 1em;
+    overflow: auto;
+  }
+</style>
+
+
+
+
+
+
+
+
+
+    
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  </head>
+
+  <body x-data="{
+    flip: false,
+  }">
+    
+    <div id="dream-global-bg"></div>
+
+    
+<nav class="mt-4 lg:mt-8 py-4">
+
+  
+  <div class="container flex justify-between px-4">
+  
+    <section class="flex items-center gap-4">
+      <div class="avatar cursor-pointer hover:online" @click="flip = !flip" title="Flip it!">
+        <div class="h-10 rounded-full">
+          <img src="/images/profile.jpg" alt="" />
+        </div>
+      </div>
+
+      
+      <div>
+        
+        
+        <div class="text-base-content/60 text-sm">欢迎来到荷兰</div>
+        
+      </div>
+      
+    </section>
+
+    <div class="dropdown dropdown-end sm:hidden">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-square" aria-label="Select an option">
+        <ion-icon name="menu" class="text-2xl"></ion-icon>
+      </div>
+      <ul tabindex="0" class="dropdown-content menu w-36 bg-base-100 rounded-box z-[1] shadow-md">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+  <a class="inline-flex items-center p-2 cursor-pointer" href="/posts" title="Archives">
+    <ion-icon name="archive"></ion-icon>
+    Archives
+  </a>
+</li>
+
+
+
+
+<li>
+  <a class="inline-flex items-center p-2 cursor-pointer" href="/categories" title="All Categories">
+    <ion-icon name="grid"></ion-icon>
+    All Categories
+  </a>
+</li>
+
+
+
+
+<li>
+  <a class="inline-flex items-center p-2 cursor-pointer" href="/tags" title="All Tags">
+    <ion-icon name="pricetags"></ion-icon>
+    All Tags
+  </a>
+</li>
+
+
+
+
+
+
+      </ul>
+    </div>
+    <section class="hidden sm:flex sm:items-center sm:gap-2 md:gap-4">
+      
+      
+      
+      
+
+      
+      
+
+      
+
+      
+      
+
+
+
+
+
+      
+      
+
+
+
+
+
+      
+      
+<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/posts" title="Archives">
+  <ion-icon class="group-hover:text-primary-content" name="archive"></ion-icon>
+</a>
+
+
+      
+      
+<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/categories" title="All Categories">
+  <ion-icon class="group-hover:text-primary-content" name="grid"></ion-icon>
+</a>
+
+
+      
+      
+<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/tags" title="All Tags">
+  <ion-icon class="group-hover:text-primary-content" name="pricetags"></ion-icon>
+</a>
+
+
+      
+
+      
+
+      
+    </section>
+  </div>
+</nav>
+
+
+    <div class="flip-container" :class="{ 'flip-it': flip }">
+      <div class="flipper">
+        <div class="front">
+          <div class="container">
+            
+<div class="lg:grid lg:grid-cols-4 gap-4 mt-4 px-4">
+  <div class="hidden lg:block"></div>
+
+  <div class="lg:col-span-2">
+    <article class="mx-auto prose prose-quoteless dark:prose-invert" id="dream-single-post-main" itemscope itemtype="http://schema.org/Article">
+      
   <meta itemprop="name" content="Llm Driven Alert Diagnosis Engine Design(设计新一代LLM驱动的告警诊断引擎)">
-  <meta itemprop="description" content="在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。
-引言 随着系统规模和复杂性的增加，传统的基于规则的告警诊断方法往往力不从心。我们需要一种更智能、更灵活的方法来分析和诊断系统告警。这就是LLM驱动的诊断引擎发挥作用的地方。
-宏观系统架构：自动定位系统 在深入探讨LLM驱动的诊断引擎之前，让我们先了解它在整个自动定位系统中的位置。自动定位系统是一个复杂的生态系统，旨在自动检测、诊断和解决IT环境中的问题。以下是系统的宏观架构：
-graph TB A[监控系统] --&gt;|告警| B[告警聚合器] B --&gt;|结构化告警| C[LLM驱动的诊断引擎] D[日志系统] --&gt;|相关日志| C E[配置管理数据库] --&gt;|系统配置| C F[知识库] --&gt;|历史案例| C C --&gt;|诊断结果| G[自动修复系统] C --&gt;|诊断报告| H[运维仪表板] I[人工反馈] --&gt;|优化信息| C 以Elasticsearch作为数据源为例:
-sequenceDiagram participant ES as Elasticsearch participant AR as 告警规则执行器 participant AM as 告警管理器 participant LLM as LLM诊断引擎 participant NT as 通知系统 loop 定期执行 AR-&gt;&gt;ES: 执行查询表达式 ES--&gt;&gt;AR: 返回查询结果 AR-&gt;&gt;AR: 应用时间窗口和阈值 alt 触发告警条件 AR-&gt;&gt;AM: 生成告警 AM-&gt;&gt;LLM: 请求诊断 LLM-&gt;&gt;LLM: 分析告警上下文 LLM--&gt;&gt;AM: 返回诊断结果 AM-&gt;&gt;NT: 发送通知 end end 在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：">
+  <meta itemprop="description" content="在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。">
   <meta itemprop="datePublished" content="2024-08-31T09:42:01+08:00">
   <meta itemprop="dateModified" content="2024-08-31T09:42:01+08:00">
   <meta itemprop="wordCount" content="306">
   <meta itemprop="keywords" content="LLM,告警系统,诊断引擎,软件架构,自动定位系统">
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Llm Driven Alert Diagnosis Engine Design(设计新一代LLM驱动的告警诊断引擎)">
-  <meta name="twitter:description" content="在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。
-引言 随着系统规模和复杂性的增加，传统的基于规则的告警诊断方法往往力不从心。我们需要一种更智能、更灵活的方法来分析和诊断系统告警。这就是LLM驱动的诊断引擎发挥作用的地方。
-宏观系统架构：自动定位系统 在深入探讨LLM驱动的诊断引擎之前，让我们先了解它在整个自动定位系统中的位置。自动定位系统是一个复杂的生态系统，旨在自动检测、诊断和解决IT环境中的问题。以下是系统的宏观架构：
-graph TB A[监控系统] --&gt;|告警| B[告警聚合器] B --&gt;|结构化告警| C[LLM驱动的诊断引擎] D[日志系统] --&gt;|相关日志| C E[配置管理数据库] --&gt;|系统配置| C F[知识库] --&gt;|历史案例| C C --&gt;|诊断结果| G[自动修复系统] C --&gt;|诊断报告| H[运维仪表板] I[人工反馈] --&gt;|优化信息| C 以Elasticsearch作为数据源为例:
-sequenceDiagram participant ES as Elasticsearch participant AR as 告警规则执行器 participant AM as 告警管理器 participant LLM as LLM诊断引擎 participant NT as 通知系统 loop 定期执行 AR-&gt;&gt;ES: 执行查询表达式 ES--&gt;&gt;AR: 返回查询结果 AR-&gt;&gt;AR: 应用时间窗口和阈值 alt 触发告警条件 AR-&gt;&gt;AM: 生成告警 AM-&gt;&gt;LLM: 请求诊断 LLM-&gt;&gt;LLM: 分析告警上下文 LLM--&gt;&gt;AM: 返回诊断结果 AM-&gt;&gt;NT: 发送通知 end end 在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：">
 
-      
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
-      <script>
-        var doNotTrack = false;
-        if ( false ) {
-          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
-          var doNotTrack = (dnt == "1" || dnt == "yes");
-        }
-        if (!doNotTrack) {
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-7N49ZFJ61J');
-        }
-      </script>
-    
-	
-  </head><body class="ma0 avenir bg-near-white production">
+      <header>
+        <h1 itemprop="headline">Llm Driven Alert Diagnosis Engine Design(设计新一代LLM驱动的告警诊断引擎)</h1>
+        <p class="text-sm">
+          
+            Saturday, Aug 31, 2024
+          
 
-    
-   
+          | <span>2 minute read</span>
+
+          
+          | <span>Updated at
+            
+              Saturday, Aug 31, 2024
+            </span>
+          
+        </p>
+        <div class="flex justify-between">
+          <div class="flex items-center">
+  
+  <span>@</span>
   
 
+  <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+  
+    <span itemprop="name">fancive</span>
+  
+  </span>
+</div>
+
+
+          <div class="flex items-center gap-2">
+  
+  
+
   
   
   
-  <header class="cover bg-center" style="background-image: url('https://fancive.github.io/images/background.jpg');">
-    <div class="bg-black-60">
-      <nav class="pv3 ph3 ph4-ns" role="navigation">
-  <div class="flex-l justify-between items-center center">
-    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
-      
-        home
-      
+  
+  
+    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
+      href="https://x.com/intent/post?text=Llm%20Driven%20Alert%20Diagnosis%20Engine%20Design%28%e8%ae%be%e8%ae%a1%e6%96%b0%e4%b8%80%e4%bb%a3LLM%e9%a9%b1%e5%8a%a8%e7%9a%84%e5%91%8a%e8%ad%a6%e8%af%8a%e6%96%ad%e5%bc%95%e6%93%8e%29&amp;url=https://fancive.github.io/posts/llm-driven-alert-diagnosis-engine-design/" target="_blank" rel="noopener noreferrer"
+      title="Share on X">
+      <ion-icon class="group-hover:text-primary-content" name="logo-x"></ion-icon>
     </a>
-    <div class="flex-l items-center">
-      
-
-      
-        <ul class="pl0 mr3">
-          
-          <li class="list f5 f4-ns fw4 dib pr3">
-            <a class="hover-white no-underline white-90" href="/about/" title="About page">
-              About
-            </a>
-          </li>
-          
-          <li class="list f5 f4-ns fw4 dib pr3">
-            <a class="hover-white no-underline white-90" href="/categories/" title="categories page">
-              categories
-            </a>
-          </li>
-          
-          <li class="list f5 f4-ns fw4 dib pr3">
-            <a class="hover-white no-underline white-90" href="/tags/" title="Tags page">
-              Tags
-            </a>
-          </li>
-          
-          <li class="list f5 f4-ns fw4 dib pr3">
-            <a class="hover-white no-underline white-90" href="/posts/" title="Posts page">
-              Posts
-            </a>
-          </li>
-          
-        </ul>
-      
-      <div class="ananke-socials"></div>
-
-    </div>
-  </div>
-</nav>
-
-      <div class="tc-l pv6 ph3 ph4-ns">
-        
-          <div class="f2 f1-l fw2 white-90 mb0 lh-title">Llm Driven Alert Diagnosis Engine Design(设计新一代LLM驱动的告警诊断引擎)</div>
-          
-        
-      </div>
-    </div>
-  </header>
-
-
-
-    <main class="pb7" role="main">
-      
   
-  <article class="flex-l flex-wrap justify-between mw8 center ph3">
-    <header class="mt4 w-100">
-      <aside class="instapaper_ignoref b helvetica tracked ttu">
-          
-        Posts
-      </aside><div id="sharing" class="mt3 ananke-socials"></div>
-<h1 class="f1 athelas mt3 mb1">Llm Driven Alert Diagnosis Engine Design(设计新一代LLM驱动的告警诊断引擎)</h1>
-      
-      
-      
-      <time class="f6 mv4 dib tracked" datetime="2024-08-31T09:42:01+08:00">August 31, 2024</time>
-      
+    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
+      href="https://facebook.com/sharer/sharer.php?u=https://fancive.github.io/posts/llm-driven-alert-diagnosis-engine-design/" target="_blank" rel="noopener noreferrer"
+      title="Share on Facebook">
+      <ion-icon class="group-hover:text-primary-content" name="logo-facebook"></ion-icon>
+    </a>
+  
+    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
+      href="https://wa.me/?text=Llm%20Driven%20Alert%20Diagnosis%20Engine%20Design%28%e8%ae%be%e8%ae%a1%e6%96%b0%e4%b8%80%e4%bb%a3LLM%e9%a9%b1%e5%8a%a8%e7%9a%84%e5%91%8a%e8%ad%a6%e8%af%8a%e6%96%ad%e5%bc%95%e6%93%8e%29%20https://fancive.github.io/posts/llm-driven-alert-diagnosis-engine-design/" target="_blank" rel="noopener noreferrer"
+      title="Share on WhatsApp">
+      <ion-icon class="group-hover:text-primary-content" name="logo-whatsapp"></ion-icon>
+    </a>
+  
 
-      
-      
-    </header>
-    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><p>在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。</p>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+      <section id="dream-single-post-content" itemprop="articleBody">
+        
+
+        <p>在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。</p>
 <h2 id="引言">引言</h2>
 <p>随着系统规模和复杂性的增加，传统的基于规则的告警诊断方法往往力不从心。我们需要一种更智能、更灵活的方法来分析和诊断系统告警。这就是LLM驱动的诊断引擎发挥作用的地方。</p>
 <h2 id="宏观系统架构自动定位系统">宏观系统架构：自动定位系统</h2>
 <p>在深入探讨LLM驱动的诊断引擎之前，让我们先了解它在整个自动定位系统中的位置。自动定位系统是一个复杂的生态系统，旨在自动检测、诊断和解决IT环境中的问题。以下是系统的宏观架构：</p>
-<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">graph TB
-    A[监控系统] --&gt;|告警| B[告警聚合器]
-    B --&gt;|结构化告警| C[LLM驱动的诊断引擎]
-    D[日志系统] --&gt;|相关日志| C
-    E[配置管理数据库] --&gt;|系统配置| C
-    F[知识库] --&gt;|历史案例| C
-    C --&gt;|诊断结果| G[自动修复系统]
-    C --&gt;|诊断报告| H[运维仪表板]
-    I[人工反馈] --&gt;|优化信息| C
-</code></pre><p>以Elasticsearch作为数据源为例:</p>
-<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">sequenceDiagram
+<pre class="mermaid">graph TB
+    A[监控系统] -->|告警| B[告警聚合器]
+    B -->|结构化告警| C[LLM驱动的诊断引擎]
+    D[日志系统] -->|相关日志| C
+    E[配置管理数据库] -->|系统配置| C
+    F[知识库] -->|历史案例| C
+    C -->|诊断结果| G[自动修复系统]
+    C -->|诊断报告| H[运维仪表板]
+    I[人工反馈] -->|优化信息| C</pre>
+
+<p>以Elasticsearch作为数据源为例:</p>
+<pre class="mermaid">sequenceDiagram
     participant ES as Elasticsearch
     participant AR as 告警规则执行器
     participant AM as 告警管理器
@@ -230,18 +338,19 @@ sequenceDiagram participant ES as Elasticsearch participant AR as 告警规则�
     participant NT as 通知系统
     
     loop 定期执行
-        AR-&gt;&gt;ES: 执行查询表达式
-        ES--&gt;&gt;AR: 返回查询结果
-        AR-&gt;&gt;AR: 应用时间窗口和阈值
+        AR->>ES: 执行查询表达式
+        ES-->>AR: 返回查询结果
+        AR->>AR: 应用时间窗口和阈值
         alt 触发告警条件
-            AR-&gt;&gt;AM: 生成告警
-            AM-&gt;&gt;LLM: 请求诊断
-            LLM-&gt;&gt;LLM: 分析告警上下文
-            LLM--&gt;&gt;AM: 返回诊断结果
-            AM-&gt;&gt;NT: 发送通知
+            AR->>AM: 生成告警
+            AM->>LLM: 请求诊断
+            LLM->>LLM: 分析告警上下文
+            LLM-->>AM: 返回诊断结果
+            AM->>NT: 发送通知
         end
-    end
-</code></pre><p>在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：</p>
+    end</pre>
+
+<p>在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：</p>
 <ol>
 <li>
 <p><strong>数据汇聚点</strong>：它接收来自监控系统的结构化告警、日志系统的相关日志、配置管理数据库的系统配置信息，以及知识库中的历史案例。</p>
@@ -271,16 +380,17 @@ sequenceDiagram participant ES as Elasticsearch participant AR as 告警规则�
 <li>反馈处理器</li>
 </ol>
 <p>让我们通过一个图表来直观地了解这些组件是如何协同工作的：</p>
-<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">graph TD
-    A[告警输入] --&gt;|结构化数据| B[上下文收集器]
-    B --&gt;|丰富的上下文| C[提示生成器]
-    D[(知识库)] --&gt;|相关知识| C
-    C --&gt;|定制提示| E[LLM处理器]
-    E --&gt;|原始输出| F[后处理器]
-    F --&gt;|结构化诊断| G[诊断报告生成器]
-    H[反馈处理器] --&gt;|学习更新| D
-    H --&gt;|优化| C
-</code></pre><h2 id="详细组件设计">详细组件设计</h2>
+<pre class="mermaid">graph TD
+    A[告警输入] -->|结构化数据| B[上下文收集器]
+    B -->|丰富的上下文| C[提示生成器]
+    D[(知识库)] -->|相关知识| C
+    C -->|定制提示| E[LLM处理器]
+    E -->|原始输出| F[后处理器]
+    F -->|结构化诊断| G[诊断报告生成器]
+    H[反馈处理器] -->|学习更新| D
+    H -->|优化| C</pre>
+
+<h2 id="详细组件设计">详细组件设计</h2>
 <h3 id="1-上下文收集器">1. 上下文收集器</h3>
 <p>上下文收集器的主要任务是收集与告警相关的所有必要信息。这包括系统状态、相关日志、历史告警等。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">collect_context</span>(alert_data):
@@ -417,39 +527,26 @@ sequenceDiagram participant ES as Elasticsearch participant AR as 告警规则�
 </ol>
 <h2 id="结论">结论</h2>
 <p>LLM驱动的诊断引擎作为自动定位系统的核心组件，不仅提供了强大的问题分析能力，还通过与其他组件的紧密集成，实现了端到端的自动化问题检测、诊断和修复流程。这种智能化的方法大大提高了IT运维的效率，减少了人工干预的需求，同时通过持续学习不断提升系统的诊断准确性。</p>
-<ul class="pa0">
-  
-   <li class="list di">
-     <a href="/tags/llm/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">LLM</a>
-   </li>
-  
-   <li class="list di">
-     <a href="/tags/%E5%91%8A%E8%AD%A6%E7%B3%BB%E7%BB%9F/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">告警系统</a>
-   </li>
-  
-   <li class="list di">
-     <a href="/tags/%E8%AF%8A%E6%96%AD%E5%BC%95%E6%93%8E/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">诊断引擎</a>
-   </li>
-  
-   <li class="list di">
-     <a href="/tags/%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">软件架构</a>
-   </li>
-  
-   <li class="list di">
-     <a href="/tags/%E8%87%AA%E5%8A%A8%E5%AE%9A%E4%BD%8D%E7%B3%BB%E7%BB%9F/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">自动定位系统</a>
-   </li>
-  
-</ul>
-<div class="mt6 instapaper_ignoref">
+      </section>
+
       
-        <div id="disqus_thread"></div>
+
+      
+      <div class="divider"></div>
+
+      <section class="space-y-4">
+        
+<article>
+  <div id="disqus_thread"></div>
 <script>
     window.disqus_config = function () {
-    
-    
-    
+        this.page.identifier = '\/posts\/llm-driven-alert-diagnosis-engine-design\/';
+        this.page.title = 'Llm Driven Alert Diagnosis Engine Design(设计新一代LLM驱动的告警诊断引擎)';
+        this.page.url = 'https:\/\/fancive.github.io\/posts\/llm-driven-alert-diagnosis-engine-design\/';
+
+        
     };
-    (function() {
+    function initDisqus() {
         if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
             document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
             return;
@@ -458,34 +555,216 @@ sequenceDiagram participant ES as Elasticsearch participant AR as 告警规则�
         s.src = '//' + "fancive-github-com" + '.disqus.com/embed.js';
         s.setAttribute('data-timestamp', +new Date());
         (d.head || d.body).appendChild(s);
-    })();
+    };
+    setTimeout(() => {
+        initDisqus();
+    }, 3000);
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</article>
+
+
+
+
+
+
+
+
+      </section>
       
-      
+    </article>
+  </div>
+
+  <div class="hidden lg:flex lg:flex-col lg:items-end">
+    
+
+    
+  </div>
+</div>
+
+
+            
+<footer class="flex justify-between items-center gap-2 px-4 py-12">
+
+  <div>
+  
+  <p>© 2025 home</p>
+  
+
+  
+  <p class="text-sm">
+    🌱
+    <span class="text-base-content/60">
+      Powered by <a class="hover:underline" href="https://gohugo.io/" target="_blank">Hugo</a> with theme
+      <a class="hover:underline" href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</span
+    >
+  </p>
+  
+</div>
+
+  <div
+  x-data="{ icons: [
+    { name: 'moon', status: 'y' },
+    { name: 'sunny', status: 'n' },
+    { name: 'desktop', status: 'auto' }
+  ] }"
+  class="flex items-center gap-2 h-[32px] px-2 bg-base-100 border border-base-content/30 rounded-full"
+>
+  <template x-for="icon in icons">
+    <div
+      role="button"
+      tabindex="0"
+      :aria-label="'Select ' + icon.name + ' mode'"
+      class="group inline-flex justify-center items-center p-1 rounded-full cursor-pointer hover:bg-primary"
+      :class="$store.darkMode.icon() === icon.name && 'bg-primary'"
+      @click="$store.darkMode.toggle(icon.status)"
+    >
+      <ion-icon
+        :name="`${icon.name}-outline`"
+        class="group-hover:text-primary-content"
+        :class="$store.darkMode.icon() === icon.name && 'text-primary-content'"
+      >
+      </ion-icon>
+    </div>
+  </template>
+</div>
+
+</footer>
+
+          </div>
+        </div>
+        <div class="back">
+          <div class="container">
+            
+            <div class="dream-grid dream-grid-about">
+  
+  
+  
+  
+
+  
+
+  
+</div>
+
+            
+
+            
+<footer class="flex justify-between items-center gap-2 px-4 py-12">
+
+  <div>
+  
+  <p>© 2025 home</p>
+  
+
+  
+  <p class="text-sm">
+    🌱
+    <span class="text-base-content/60">
+      Powered by <a class="hover:underline" href="https://gohugo.io/" target="_blank">Hugo</a> with theme
+      <a class="hover:underline" href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</span
+    >
+  </p>
+  
+</div>
+
+  <div
+  x-data="{ icons: [
+    { name: 'moon', status: 'y' },
+    { name: 'sunny', status: 'n' },
+    { name: 'desktop', status: 'auto' }
+  ] }"
+  class="flex items-center gap-2 h-[32px] px-2 bg-base-100 border border-base-content/30 rounded-full"
+>
+  <template x-for="icon in icons">
+    <div
+      role="button"
+      tabindex="0"
+      :aria-label="'Select ' + icon.name + ' mode'"
+      class="group inline-flex justify-center items-center p-1 rounded-full cursor-pointer hover:bg-primary"
+      :class="$store.darkMode.icon() === icon.name && 'bg-primary'"
+      @click="$store.darkMode.toggle(icon.status)"
+    >
+      <ion-icon
+        :name="`${icon.name}-outline`"
+        class="group-hover:text-primary-content"
+        :class="$store.darkMode.icon() === icon.name && 'text-primary-content'"
+      >
+      </ion-icon>
+    </div>
+  </template>
+</div>
+
+</footer>
+
+          </div>
+        </div>
       </div>
     </div>
 
-    <aside class="w-30-l mt6-l">
+    <script>
+  window.lightTheme =  null 
+  window.darkTheme =  null 
+</script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script>
+
+  
+  
+    
+  
+  <script src="/js/grid.min.js"></script>
 
 
 
 
-</aside>
+  
 
-  </article>
+<script src="/js/main.min.js"></script>
 
-    </main>
-    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
-  <div class="flex justify-between">
-  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://fancive.github.io/" >
-    &copy;  home 2025 
-  </a>
-    <div><div class="ananke-socials"></div>
-</div>
-  </div>
-</footer>
+    
 
+
+
+
+
+
+
+
+
+    
+      <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true });
+      </script>
+    
+
+    
+
+    
+
+    
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-7N49ZFJ61J');
+        }
+      </script>
+    
+
+    <script type="module" src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.js"></script>
   </body>
 </html>

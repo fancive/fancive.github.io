@@ -1,59 +1,506 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+  x-data
+  :class="$store.darkMode.class()"
+  :data-theme="$store.darkMode.theme()">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    
-    <title>home</title>
-    <meta name="viewport" content="width=device-width,minimum-scale=1">
-    <meta name="description" content="欢迎来到荷兰">
-    <meta name="generator" content="Hugo 0.138.0">
-    
-    
-    
-      <meta name="robots" content="index, follow">
-    
-    
-
-    
-<link rel="stylesheet" href="/ananke/css/main.min.d05fb5f317fcf33b3a52936399bdf6f47dc776516e1692e412ec7d76f4a5faa2.css" >
-
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>翻译 | home</title>
 
     
 
-    
-      
+<link rel="canonical" href="https://fancive.github.io/tags/%E7%BF%BB%E8%AF%91/" />
 
-    
 
-    
-    
-      <link href="/tags/%E7%BF%BB%E8%AF%91/index.xml" rel="alternate" type="application/rss+xml" title="home" />
-      <link href="/tags/%E7%BF%BB%E8%AF%91/index.xml" rel="feed" type="application/rss+xml" title="home" />
-      
-    
 
-    
-      <link rel="canonical" href="https://fancive.github.io/tags/%E7%BF%BB%E8%AF%91/">
-    
+<meta name="author" content="fancive" />
+<meta name="description" content="欢迎来到荷兰" />
 
-    <meta property="og:url" content="https://fancive.github.io/tags/%E7%BF%BB%E8%AF%91/">
+
+
+<meta name="generator" content="Hugo 0.138.0">
+
+
+<meta property="og:url" content="https://fancive.github.io/tags/%E7%BF%BB%E8%AF%91/">
   <meta property="og:site_name" content="home">
   <meta property="og:title" content="翻译">
   <meta property="og:description" content="欢迎来到荷兰">
   <meta property="og:locale" content="en">
   <meta property="og:type" content="website">
 
-  <meta itemprop="name" content="翻译">
-  <meta itemprop="description" content="欢迎来到荷兰">
-  <meta itemprop="datePublished" content="2020-05-31T21:30:28+08:00">
-  <meta itemprop="dateModified" content="2020-05-31T21:30:28+08:00">
+
+
+
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="翻译">
   <meta name="twitter:description" content="欢迎来到荷兰">
 
+
+
+
+  
+
+<link rel="stylesheet" href="/css/output.min.css" />
+
+
+
+
+     
+
+    
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  </head>
+
+  <body x-data="{
+    flip: false,
+  }">
+    
+    <div id="dream-global-bg"></div>
+
+    
+<nav class="mt-4 lg:mt-8 py-4">
+
+  
+  <div class="container flex justify-between px-4">
+  
+    <section class="flex items-center gap-4">
+      <div class="avatar cursor-pointer hover:online" @click="flip = !flip" title="Flip it!">
+        <div class="h-10 rounded-full">
+          <img src="/images/profile.jpg" alt="" />
+        </div>
+      </div>
+
       
+      <div>
+        
+        
+        <div class="text-base-content/60 text-sm">欢迎来到荷兰</div>
+        
+      </div>
+      
+    </section>
+
+    <div class="dropdown dropdown-end sm:hidden">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-square" aria-label="Select an option">
+        <ion-icon name="menu" class="text-2xl"></ion-icon>
+      </div>
+      <ul tabindex="0" class="dropdown-content menu w-36 bg-base-100 rounded-box z-[1] shadow-md">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+  <a class="inline-flex items-center p-2 cursor-pointer" href="/posts" title="Archives">
+    <ion-icon name="archive"></ion-icon>
+    Archives
+  </a>
+</li>
+
+
+
+
+<li>
+  <a class="inline-flex items-center p-2 cursor-pointer" href="/categories" title="All Categories">
+    <ion-icon name="grid"></ion-icon>
+    All Categories
+  </a>
+</li>
+
+
+
+
+<li>
+  <a class="inline-flex items-center p-2 cursor-pointer" href="/tags" title="All Tags">
+    <ion-icon name="pricetags"></ion-icon>
+    All Tags
+  </a>
+</li>
+
+
+
+
+
+
+      </ul>
+    </div>
+    <section class="hidden sm:flex sm:items-center sm:gap-2 md:gap-4">
+      
+      
+      
+      
+
+      
+      
+
+      
+
+      
+      
+
+
+
+
+
+      
+      
+
+
+
+
+
+      
+      
+<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/posts" title="Archives">
+  <ion-icon class="group-hover:text-primary-content" name="archive"></ion-icon>
+</a>
+
+
+      
+      
+<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/categories" title="All Categories">
+  <ion-icon class="group-hover:text-primary-content" name="grid"></ion-icon>
+</a>
+
+
+      
+      
+<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/tags" title="All Tags">
+  <ion-icon class="group-hover:text-primary-content" name="pricetags"></ion-icon>
+</a>
+
+
+      
+
+      
+
+      
+    </section>
+  </div>
+</nav>
+
+
+    <div class="flip-container" :class="{ 'flip-it': flip }">
+      <div class="flipper">
+        <div class="front">
+          <div class="container">
+            
+
+
+<div class="flex flex-col md:flex-row mt-4">
+
+  <div class="md:basis-[200px] lg:basis-[300px] p-4 prose dark:prose-invert">
+    <h1 class="text-2xl">翻译</h1>
+    <p class="text-sm">1 article</p>
+    <div class="flex flex-wrap gap-4 mt-6">
+      
+
+      
+      
+      <a href="/tags/aiops/" class="badge h-6 no-underline hover:badge-primary">
+        AIOps
+      </a>
+      
+      
+      
+      <a href="/tags/filebeat/" class="badge h-6 no-underline hover:badge-primary">
+        Filebeat
+      </a>
+      
+      
+      
+      <a href="/tags/go-runtime/" class="badge h-6 no-underline hover:badge-primary">
+        Go Runtime
+      </a>
+      
+      
+      
+      <a href="/tags/llm/" class="badge h-6 no-underline hover:badge-primary">
+        LLM
+      </a>
+      
+      
+      
+      <a href="/tags/paper-reading/" class="badge h-6 no-underline hover:badge-primary">
+        Paper Reading
+      </a>
+      
+      
+      
+      <a href="/tags/%E5%91%8A%E8%AD%A6%E7%B3%BB%E7%BB%9F/" class="badge h-6 no-underline hover:badge-primary">
+        告警系统
+      </a>
+      
+      
+      
+      <span class="badge h-6 badge-primary">
+        翻译
+      </span>
+      
+      
+      
+      <a href="/tags/%E8%87%AA%E5%8A%A8%E5%AE%9A%E4%BD%8D%E7%B3%BB%E7%BB%9F/" class="badge h-6 no-underline hover:badge-primary">
+        自动定位系统
+      </a>
+      
+      
+      
+      <a href="/tags/%E8%AF%8A%E6%96%AD%E5%BC%95%E6%93%8E/" class="badge h-6 no-underline hover:badge-primary">
+        诊断引擎
+      </a>
+      
+      
+      
+      <a href="/tags/%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/" class="badge h-6 no-underline hover:badge-primary">
+        软件架构
+      </a>
+      
+      
+    </div>
+  </div>
+  
+  <div class="divider divider-vertical md:divider-horizontal px-4 md:px-0"></div>
+  
+  <div class="flex-1">
+    
+
+    
+    <div class="dream-grid">
+    
+      <div class="w-full md:w-1/2 lg:w-1/3 p-4 dream-column">
+        <a class="card card-compact bg-base-100 hover:bg-base-content/10 shadow-xl cursor-pointer dark:border dark:border-base-content/30" href="/posts/go_string_byte/">
+  
+  <figure>
+    
+    
+    <picture>
+      <source srcset="/images/default4_hu11774824972063855820.webp" type="image/webp" />
+      <img src="/images/default4.jpg" alt="/images/default4.jpg" />
+    </picture>
+    
+  </figure>
+  
+
+  <div class="card-body">
+    <h2 class="card-title">go string to byte</h2>
+
+    <p class="date text-base-content/60">
+    
+      Sunday, May 31, 2020
+    
+    </p>
+
+    <h2 id="0x01-背景">0x01 背景</h2>
+<p>最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32</p>
+
+    <div class="card-actions justify-between items-center mt-4">
+      <div class="flex items-center">
+  
+  <span>@</span>
+  
+
+  <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+  
+    <span itemprop="name">fancive</span>
+  
+  </span>
+</div>
+
+
+      <div class="flex items-center">
+        <ion-icon name="time" class="mr-1"></ion-icon>
+        <span>4 minute read</span>
+      </div>
+    </div>
+  </div>
+</a>
+
+      </div>
+    
+    </div>
+    
+
+    
+  </div>
+</div>
+
+
+
+            
+<footer class="flex justify-between items-center gap-2 px-4 py-12">
+
+  <div>
+  
+  <p>© 2025 home</p>
+  
+
+  
+  <p class="text-sm">
+    🌱
+    <span class="text-base-content/60">
+      Powered by <a class="hover:underline" href="https://gohugo.io/" target="_blank">Hugo</a> with theme
+      <a class="hover:underline" href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</span
+    >
+  </p>
+  
+</div>
+
+  <div
+  x-data="{ icons: [
+    { name: 'moon', status: 'y' },
+    { name: 'sunny', status: 'n' },
+    { name: 'desktop', status: 'auto' }
+  ] }"
+  class="flex items-center gap-2 h-[32px] px-2 bg-base-100 border border-base-content/30 rounded-full"
+>
+  <template x-for="icon in icons">
+    <div
+      role="button"
+      tabindex="0"
+      :aria-label="'Select ' + icon.name + ' mode'"
+      class="group inline-flex justify-center items-center p-1 rounded-full cursor-pointer hover:bg-primary"
+      :class="$store.darkMode.icon() === icon.name && 'bg-primary'"
+      @click="$store.darkMode.toggle(icon.status)"
+    >
+      <ion-icon
+        :name="`${icon.name}-outline`"
+        class="group-hover:text-primary-content"
+        :class="$store.darkMode.icon() === icon.name && 'text-primary-content'"
+      >
+      </ion-icon>
+    </div>
+  </template>
+</div>
+
+</footer>
+
+          </div>
+        </div>
+        <div class="back">
+          <div class="container">
+            
+            <div class="dream-grid dream-grid-about">
+  
+  
+  
+  
+
+  
+
+  
+</div>
+
+            
+
+            
+<footer class="flex justify-between items-center gap-2 px-4 py-12">
+
+  <div>
+  
+  <p>© 2025 home</p>
+  
+
+  
+  <p class="text-sm">
+    🌱
+    <span class="text-base-content/60">
+      Powered by <a class="hover:underline" href="https://gohugo.io/" target="_blank">Hugo</a> with theme
+      <a class="hover:underline" href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</span
+    >
+  </p>
+  
+</div>
+
+  <div
+  x-data="{ icons: [
+    { name: 'moon', status: 'y' },
+    { name: 'sunny', status: 'n' },
+    { name: 'desktop', status: 'auto' }
+  ] }"
+  class="flex items-center gap-2 h-[32px] px-2 bg-base-100 border border-base-content/30 rounded-full"
+>
+  <template x-for="icon in icons">
+    <div
+      role="button"
+      tabindex="0"
+      :aria-label="'Select ' + icon.name + ' mode'"
+      class="group inline-flex justify-center items-center p-1 rounded-full cursor-pointer hover:bg-primary"
+      :class="$store.darkMode.icon() === icon.name && 'bg-primary'"
+      @click="$store.darkMode.toggle(icon.status)"
+    >
+      <ion-icon
+        :name="`${icon.name}-outline`"
+        class="group-hover:text-primary-content"
+        :class="$store.darkMode.icon() === icon.name && 'text-primary-content'"
+      >
+      </ion-icon>
+    </div>
+  </template>
+</div>
+
+</footer>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+  window.lightTheme =  null 
+  window.darkTheme =  null 
+</script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script>
+
+  
+  
+    
+  
+  <script src="/js/grid.min.js"></script>
+
+
+
+
+  
+
+<script src="/js/main.min.js"></script>
+
+    
+
+
+
+
+
+    
+
+    
+
+    
+
+    
+    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
       <script>
         var doNotTrack = false;
@@ -69,204 +516,8 @@
         }
       </script>
     
-	
-  </head><body class="ma0 avenir bg-near-white production">
 
-    
-
-  
-  
-  <header class="cover bg-top" style="background-image: url('https://fancive.github.io/images/background.jpg');">
-    
-    <div class="bg-black-60">
-      <nav class="pv3 ph3 ph4-ns" role="navigation">
-  <div class="flex-l justify-between items-center center">
-    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
-      
-        home
-      
-    </a>
-    <div class="flex-l items-center">
-      
-
-      
-        <ul class="pl0 mr3">
-          
-          <li class="list f5 f4-ns fw4 dib pr3">
-            <a class="hover-white no-underline white-90" href="/about/" title="About page">
-              About
-            </a>
-          </li>
-          
-          <li class="list f5 f4-ns fw4 dib pr3">
-            <a class="hover-white no-underline white-90" href="/categories/" title="categories page">
-              categories
-            </a>
-          </li>
-          
-          <li class="list f5 f4-ns fw4 dib pr3">
-            <a class="hover-white no-underline white-90" href="/tags/" title="Tags page">
-              Tags
-            </a>
-          </li>
-          
-          <li class="list f5 f4-ns fw4 dib pr3">
-            <a class="hover-white no-underline white-90" href="/posts/" title="Posts page">
-              Posts
-            </a>
-          </li>
-          
-        </ul>
-      
-      <div class="ananke-socials"></div>
-
-    </div>
-  </div>
-</nav>
-
-      <div class="tc-l pv4 pv6-l ph3 ph4-ns">
-        <h1 class="f2 f-subheadline-l fw2 white-90 mb0 lh-title">
-          翻译
-        </h1>
-        
-      </div>
-    </div>
-  </header>
-
-
-    <main class="pb7" role="main">
-      
-  <article class="cf pa3 pa4-m pa4-l">
-    <div class="measure-wide-l center f4 lh-copy nested-copy-line-height nested-links mid-gray">
-      <p>Below you will find pages that utilize the taxonomy term “翻译”</p>
-    </div>
-  </article>
-  <div class="mw8 center">
-    <section class="flex-ns flex-wrap justify-around mt5">
-      
-        <div class="relative w-100  mb4 bg-white">
-          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
-  <div class="bg-white mb3 pa4 gray overflow-hidden">
-    <span class="f6 db">Posts</span>
-    <h1 class="f3 near-black">
-      <a href="/posts/go_string_byte/" class="link black dim">
-        go string to byte
-      </a>
-    </h1>
-    <div class="nested-links f5 lh-copy nested-copy-line-height">
-      <h2 id="0x01-背景">0x01 背景</h2>
-<p>最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">s1</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;abc&#34;</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(cap([]byte(<span style="color:#a6e22e">s1</span>)))
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="0x02-探究">0x02 探究</h2>
-<p>那么这是为什么呢，首先看汇编</p>
-<blockquote>
-<p>-N 禁止优化
--S 输出汇编代码
--l 禁止内联</p>
-</blockquote>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">build</span> <span style="color:#f92672">-</span><span style="color:#a6e22e">gcflags</span>=<span style="color:#e6db74">&#34;-N -l -S&#34;</span> <span style="color:#66d9ef">go</span>.<span style="color:#66d9ef">go</span>
-</span></span></code></pre></div><p>得到以下代码</p>
-<pre tabindex="0"><code>&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc0
-	0x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0
-	0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX
-	0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX
-	0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX)
-	0x0012 00018 (/home/xxx/go.go:5)	JLS	283
-	0x0018 00024 (/home/xxx/go.go:5)	SUBQ	$192, SP
-	0x001f 00031 (/home/xxx/go.go:5)	MOVQ	BP, 184(SP)
-	0x0027 00039 (/home/xxx/go.go:5)	LEAQ	184(SP), BP
-	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$0, gclocals·7d2d5fca80364273fb07d5820a76fef4(SB)
-	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$1, gclocals·4dc9e0f0c3406fbbbbd2ec99068e8282(SB)
-	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$2, gclocals·8dcadbff7c52509cfe2d26e4d7d24689(SB)
-	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$3, &#34;&#34;.main.stkobj(SB)
-	0x002f 00047 (/home/xxx/go.go:6)	PCDATA	$0, $1
-	0x002f 00047 (/home/xxx/go.go:6)	PCDATA	$1, $0
-	0x002f 00047 (/home/xxx/go.go:6)	LEAQ	go.string.&#34;abc&#34;(SB), AX
-	0x0036 00054 (/home/xxx/go.go:6)	MOVQ	AX, &#34;&#34;.s1+104(SP)
-	0x003b 00059 (/home/xxx/go.go:6)	MOVQ	$3, &#34;&#34;.s1+112(SP)
-	0x0044 00068 (/home/xxx/go.go:7)	PCDATA	$0, $2
-	0x0044 00068 (/home/xxx/go.go:7)	LEAQ	&#34;&#34;..autotmp_4+56(SP), CX
-	0x0049 00073 (/home/xxx/go.go:7)	PCDATA	$0, $1
-	0x0049 00073 (/home/xxx/go.go:7)	MOVQ	CX, (SP)
-	0x004d 00077 (/home/xxx/go.go:7)	PCDATA	$0, $0
-	0x004d 00077 (/home/xxx/go.go:7)	MOVQ	AX, 8(SP)
-	0x0052 00082 (/home/xxx/go.go:7)	MOVQ	$3, 16(SP)
-	0x005b 00091 (/home/xxx/go.go:7)	CALL	runtime.stringtoslicebyte(SB)
-	0x0060 00096 (/home/xxx/go.go:7)	MOVQ	40(SP), AX
-	0x0065 00101 (/home/xxx/go.go:7)	MOVQ	32(SP), CX
-	0x006a 00106 (/home/xxx/go.go:7)	PCDATA	$0, $3
-	0x006a 00106 (/home/xxx/go.go:7)	MOVQ	24(SP), DX
-	0x006f 00111 (/home/xxx/go.go:7)	PCDATA	$0, $0
-	0x006f 00111 (/home/xxx/go.go:7)	MOVQ	DX, &#34;&#34;..autotmp_2+160(SP)
-	0x0077 00119 (/home/xxx/go.go:7)	MOVQ	CX, &#34;&#34;..autotmp_2+168(SP)
-	0x007f 00127 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_2+176(SP)
-	0x0087 00135 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_3+48(SP)
-	0x008c 00140 (/home/xxx/go.go:7)	MOVQ	AX, (SP)
-	0x0090 00144 (/home/xxx/go.go:7)	CALL	runtime.convT64(SB)
-	0x0095 00149 (/home/xxx/go.go:7)	PCDATA	$0, $1
-	0x0095 00149 (/home/xxx/go.go:7)	MOVQ	8(SP), AX
-	0x009a 00154 (/home/xxx/go.go:7)	PCDATA	$0, $0
-	0x009a 00154 (/home/xxx/go.go:7)	PCDATA	$1, $1
-	0x009a 00154 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_5+96(SP)
-	0x009f 00159 (/home/xxx/go.go:7)	PCDATA	$1, $2
-	0x009f 00159 (/home/xxx/go.go:7)	XORPS	X0, X0
-	0x00a2 00162 (/home/xxx/go.go:7)	MOVUPS	X0, &#34;&#34;..autotmp_1+120(SP)
-	0x00a7 00167 (/home/xxx/go.go:7)	PCDATA	$0, $1
-	0x00a7 00167 (/home/xxx/go.go:7)	PCDATA	$1, $1
-	0x00a7 00167 (/home/xxx/go.go:7)	LEAQ	&#34;&#34;..autotmp_1+120(SP), AX
-	0x00ac 00172 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_7+88(SP)
-	0x00b1 00177 (/home/xxx/go.go:7)	TESTB	AL, (AX)
-	0x00b3 00179 (/home/xxx/go.go:7)	PCDATA	$0, $2
-	0x00b3 00179 (/home/xxx/go.go:7)	PCDATA	$1, $0
-	0x00b3 00179 (/home/xxx/go.go:7)	MOVQ	&#34;&#34;..autotmp_5+96(SP), CX
-	0x00b8 00184 (/home/xxx/go.go:7)	PCDATA	$0, $4
-	0x00b8 00184 (/home/xxx/go.go:7)	LEAQ	type.int(SB), DX
-	0x00bf 00191 (/home/xxx/go.go:7)	PCDATA	$0, $2
-	0x00bf 00191 (/home/xxx/go.go:7)	MOVQ	DX, &#34;&#34;..autotmp_1+120(SP)
-	0x00c4 00196 (/home/xxx/go.go:7)	PCDATA	$0, $1
-	0x00c4 00196 (/home/xxx/go.go:7)	MOVQ	CX, &#34;&#34;..autotmp_1+128(SP)
-	0x00cc 00204 (/home/xxx/go.go:7)	TESTB	AL, (AX)
-	0x00ce 00206 (/home/xxx/go.go:7)	JMP	208
-	0x00d0 00208 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_6+136(SP)
-	0x00d8 00216 (/home/xxx/go.go:7)	MOVQ	$1, &#34;&#34;..autotmp_6+144(SP)
-	0x00e4 00228 (/home/xxx/go.go:7)	MOVQ	$1, &#34;&#34;..autotmp_6+152(SP)
-	0x00f0 00240 (/home/xxx/go.go:7)	PCDATA	$0, $0
-	0x00f0 00240 (/home/xxx/go.go:7)	MOVQ	AX, (SP)
-	0x00f4 00244 (/home/xxx/go.go:7)	MOVQ	$1, 8(SP)
-	0x00fd 00253 (/home/xxx/go.go:7)	MOVQ	$1, 16(SP)
-	0x0106 00262 (/home/xxx/go.go:7)	CALL	fmt.Println(SB)
-	0x010b 00267 (/home/xxx/go.go:9)	MOVQ	184(SP), BP
-	0x0113 00275 (/home/xxx/go.go:9)	ADDQ	$192, SP
-	0x011a 00282 (/home/xxx/go.go:9)	RET
-	0x011b 00283 (/home/xxx/go.go:9)	NOP
-	0x011b 00283 (/home/xxx/go.go:5)	PCDATA	$1, $-1
-	0x011b 00283 (/home/xxx/go.go:5)	PCDATA	$0, $-1
-	0x011b 00283 (/home/xxx/go.go:5)	CALL	runtime.morestack_noctxt(SB)
-	0x0120 00288 (/home/xxx/go.go:5)	JMP	0
-</code></pre><p>声明部分</p>
-    </div>
-    <a href="/posts/go_string_byte/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
-  </div>
-</div>
-
-        </div>
-      
-    </section>
-  </div>
-
-    </main>
-    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
-  <div class="flex justify-between">
-  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://fancive.github.io/" >
-    &copy;  home 2025 
-  </a>
-    <div><div class="ananke-socials"></div>
-</div>
-  </div>
-</footer>
-
+    <script type="module" src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.js"></script>
   </body>
 </html>

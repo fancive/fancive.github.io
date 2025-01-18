@@ -1,90 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+  x-data
+  :class="$store.darkMode.class()"
+  :data-theme="$store.darkMode.theme()">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>filebeat中使用的设计模式 | home</title>
-    <meta name="viewport" content="width=device-width,minimum-scale=1">
-    <meta name="description" content="registry 与 lazyinit 结合
-filebeat/input.New
-f, err = GetFactory(input.config.Type)
-GetFactory
-func GetFactory(name string) (Factory, error) {
-    if _, exists := registry[name]; !exists {
-        return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name)
-    }
-    return registry[name], nil
-}
-注册
-func init() {
-    err := input.Register(&#34;log&#34;, NewInput)
-    if err != nil {
-        panic(err)
-    }
-}
-observer
-publish
-func (b *bus) Publish(e Event) {
-    b.RLock()
-    defer b.RUnlock()
-    logp.Debug(&#34;bus&#34;, &#34;%s: %&#43;v&#34;, b.name, e)
-    for _, listener := range b.listeners {
-        if listener.interested(e) {
-            listener.channel &lt;- e
-        }
-    }
-}
-Subscribe
-func (b *bus) Subscribe(filter ...string) Listener {
-    listener := &amp;listener{
-        filter:  filter,
-        bus:     b,
-        channel: make(chan Event, 100),
-    }
-
-    b.Lock()
-    defer b.Unlock()
-    b.listeners = append(b.listeners, listener)
-    return listener
-}
-strategy
-libbeat/outputs/kafka.makePartitioner()">
-    <meta name="generator" content="Hugo 0.138.0">
-    
-    
-    
-      <meta name="robots" content="index, follow">
-    
-    
-
-    
-<link rel="stylesheet" href="/ananke/css/main.min.d05fb5f317fcf33b3a52936399bdf6f47dc776516e1692e412ec7d76f4a5faa2.css" >
-
-
 
     
 
-    
-      
+<link rel="canonical" href="https://fancive.github.io/posts/design_pattern_used_in_filebeat/" />
 
-    
 
-    
 
-    
-      <link rel="canonical" href="https://fancive.github.io/posts/design_pattern_used_in_filebeat/">
-    
+<meta name="author" content="fancive" />
+<meta name="description" content="registry 与 lazyinit 结合" />
 
-    <meta property="og:url" content="https://fancive.github.io/posts/design_pattern_used_in_filebeat/">
+
+<meta name="keywords" content="Filebeat">
+
+
+
+<meta name="generator" content="Hugo 0.138.0">
+
+
+<meta property="og:url" content="https://fancive.github.io/posts/design_pattern_used_in_filebeat/">
   <meta property="og:site_name" content="home">
   <meta property="og:title" content="filebeat中使用的设计模式">
-  <meta property="og:description" content="registry 与 lazyinit 结合 filebeat/input.New
-f, err = GetFactory(input.config.Type) GetFactory
-func GetFactory(name string) (Factory, error) { if _, exists := registry[name]; !exists { return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name) } return registry[name], nil } 注册
-func init() { err := input.Register(&#34;log&#34;, NewInput) if err != nil { panic(err) } } observer publish
-func (b *bus) Publish(e Event) { b.RLock() defer b.RUnlock() logp.Debug(&#34;bus&#34;, &#34;%s: %&#43;v&#34;, b.name, e) for _, listener := range b.listeners { if listener.interested(e) { listener.channel &lt;- e } } } Subscribe
-func (b *bus) Subscribe(filter ...string) Listener { listener := &amp;listener{ filter: filter, bus: b, channel: make(chan Event, 100), } b.Lock() defer b.Unlock() b.listeners = append(b.listeners, listener) return listener } strategy libbeat/outputs/kafka.makePartitioner()">
+  <meta property="og:description" content="registry 与 lazyinit 结合">
   <meta property="og:locale" content="en">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
@@ -92,130 +36,280 @@ func (b *bus) Subscribe(filter ...string) Listener { listener := &amp;listener{ 
     <meta property="article:modified_time" content="2020-09-16T22:15:59+08:00">
     <meta property="article:tag" content="Filebeat">
 
+
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="filebeat中使用的设计模式">
+  <meta name="twitter:description" content="registry 与 lazyinit 结合">
+
+
+
+
+  
+
+<link rel="stylesheet" href="/css/output.min.css" />
+
+
+
+
+    
+
+
+<style>
+  pre {
+    padding: 1em;
+    overflow: auto;
+  }
+</style>
+
+
+
+
+
+
+
+
+
+    
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  </head>
+
+  <body x-data="{
+    flip: false,
+  }">
+    
+    <div id="dream-global-bg"></div>
+
+    
+<nav class="mt-4 lg:mt-8 py-4">
+
+  
+  <div class="container flex justify-between px-4">
+  
+    <section class="flex items-center gap-4">
+      <div class="avatar cursor-pointer hover:online" @click="flip = !flip" title="Flip it!">
+        <div class="h-10 rounded-full">
+          <img src="/images/profile.jpg" alt="" />
+        </div>
+      </div>
+
+      
+      <div>
+        
+        
+        <div class="text-base-content/60 text-sm">欢迎来到荷兰</div>
+        
+      </div>
+      
+    </section>
+
+    <div class="dropdown dropdown-end sm:hidden">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-square" aria-label="Select an option">
+        <ion-icon name="menu" class="text-2xl"></ion-icon>
+      </div>
+      <ul tabindex="0" class="dropdown-content menu w-36 bg-base-100 rounded-box z-[1] shadow-md">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+  <a class="inline-flex items-center p-2 cursor-pointer" href="/posts" title="Archives">
+    <ion-icon name="archive"></ion-icon>
+    Archives
+  </a>
+</li>
+
+
+
+
+<li>
+  <a class="inline-flex items-center p-2 cursor-pointer" href="/categories" title="All Categories">
+    <ion-icon name="grid"></ion-icon>
+    All Categories
+  </a>
+</li>
+
+
+
+
+<li>
+  <a class="inline-flex items-center p-2 cursor-pointer" href="/tags" title="All Tags">
+    <ion-icon name="pricetags"></ion-icon>
+    All Tags
+  </a>
+</li>
+
+
+
+
+
+
+      </ul>
+    </div>
+    <section class="hidden sm:flex sm:items-center sm:gap-2 md:gap-4">
+      
+      
+      
+      
+
+      
+      
+
+      
+
+      
+      
+
+
+
+
+
+      
+      
+
+
+
+
+
+      
+      
+<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/posts" title="Archives">
+  <ion-icon class="group-hover:text-primary-content" name="archive"></ion-icon>
+</a>
+
+
+      
+      
+<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/categories" title="All Categories">
+  <ion-icon class="group-hover:text-primary-content" name="grid"></ion-icon>
+</a>
+
+
+      
+      
+<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/tags" title="All Tags">
+  <ion-icon class="group-hover:text-primary-content" name="pricetags"></ion-icon>
+</a>
+
+
+      
+
+      
+
+      
+    </section>
+  </div>
+</nav>
+
+
+    <div class="flip-container" :class="{ 'flip-it': flip }">
+      <div class="flipper">
+        <div class="front">
+          <div class="container">
+            
+<div class="lg:grid lg:grid-cols-4 gap-4 mt-4 px-4">
+  <div class="hidden lg:block"></div>
+
+  <div class="lg:col-span-2">
+    <article class="mx-auto prose prose-quoteless dark:prose-invert" id="dream-single-post-main" itemscope itemtype="http://schema.org/Article">
+      
   <meta itemprop="name" content="filebeat中使用的设计模式">
-  <meta itemprop="description" content="registry 与 lazyinit 结合 filebeat/input.New
-f, err = GetFactory(input.config.Type) GetFactory
-func GetFactory(name string) (Factory, error) { if _, exists := registry[name]; !exists { return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name) } return registry[name], nil } 注册
-func init() { err := input.Register(&#34;log&#34;, NewInput) if err != nil { panic(err) } } observer publish
-func (b *bus) Publish(e Event) { b.RLock() defer b.RUnlock() logp.Debug(&#34;bus&#34;, &#34;%s: %&#43;v&#34;, b.name, e) for _, listener := range b.listeners { if listener.interested(e) { listener.channel &lt;- e } } } Subscribe
-func (b *bus) Subscribe(filter ...string) Listener { listener := &amp;listener{ filter: filter, bus: b, channel: make(chan Event, 100), } b.Lock() defer b.Unlock() b.listeners = append(b.listeners, listener) return listener } strategy libbeat/outputs/kafka.makePartitioner()">
+  <meta itemprop="description" content="registry 与 lazyinit 结合">
   <meta itemprop="datePublished" content="2020-09-16T22:15:59+08:00">
   <meta itemprop="dateModified" content="2020-09-16T22:15:59+08:00">
   <meta itemprop="wordCount" content="222">
   <meta itemprop="keywords" content="Filebeat">
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="filebeat中使用的设计模式">
-  <meta name="twitter:description" content="registry 与 lazyinit 结合 filebeat/input.New
-f, err = GetFactory(input.config.Type) GetFactory
-func GetFactory(name string) (Factory, error) { if _, exists := registry[name]; !exists { return nil, fmt.Errorf(&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;, name) } return registry[name], nil } 注册
-func init() { err := input.Register(&#34;log&#34;, NewInput) if err != nil { panic(err) } } observer publish
-func (b *bus) Publish(e Event) { b.RLock() defer b.RUnlock() logp.Debug(&#34;bus&#34;, &#34;%s: %&#43;v&#34;, b.name, e) for _, listener := range b.listeners { if listener.interested(e) { listener.channel &lt;- e } } } Subscribe
-func (b *bus) Subscribe(filter ...string) Listener { listener := &amp;listener{ filter: filter, bus: b, channel: make(chan Event, 100), } b.Lock() defer b.Unlock() b.listeners = append(b.listeners, listener) return listener } strategy libbeat/outputs/kafka.makePartitioner()">
 
-      
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
-      <script>
-        var doNotTrack = false;
-        if ( false ) {
-          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
-          var doNotTrack = (dnt == "1" || dnt == "yes");
-        }
-        if (!doNotTrack) {
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-7N49ZFJ61J');
-        }
-      </script>
-    
-	
-  </head><body class="ma0 avenir bg-near-white production">
+      <header>
+        <h1 itemprop="headline">filebeat中使用的设计模式</h1>
+        <p class="text-sm">
+          
+            Wednesday, Sep 16, 2020
+          
 
-    
-   
+          | <span>2 minute read</span>
+
+          
+          | <span>Updated at
+            
+              Wednesday, Sep 16, 2020
+            </span>
+          
+        </p>
+        <div class="flex justify-between">
+          <div class="flex items-center">
+  
+  <span>@</span>
   
 
+  <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+  
+    <span itemprop="name">fancive</span>
+  
+  </span>
+</div>
+
+
+          <div class="flex items-center gap-2">
+  
+  
+
   
   
   
-  <header class="cover bg-center" style="background-image: url('https://fancive.github.io/images/illustrations/patterns.jpg');">
-    <div class="bg-black-60">
-      <nav class="pv3 ph3 ph4-ns" role="navigation">
-  <div class="flex-l justify-between items-center center">
-    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
-      
-        home
-      
+  
+  
+    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
+      href="https://x.com/intent/post?text=filebeat%e4%b8%ad%e4%bd%bf%e7%94%a8%e7%9a%84%e8%ae%be%e8%ae%a1%e6%a8%a1%e5%bc%8f&amp;url=https://fancive.github.io/posts/design_pattern_used_in_filebeat/" target="_blank" rel="noopener noreferrer"
+      title="Share on X">
+      <ion-icon class="group-hover:text-primary-content" name="logo-x"></ion-icon>
     </a>
-    <div class="flex-l items-center">
-      
-
-      
-        <ul class="pl0 mr3">
-          
-          <li class="list f5 f4-ns fw4 dib pr3">
-            <a class="hover-white no-underline white-90" href="/about/" title="About page">
-              About
-            </a>
-          </li>
-          
-          <li class="list f5 f4-ns fw4 dib pr3">
-            <a class="hover-white no-underline white-90" href="/categories/" title="categories page">
-              categories
-            </a>
-          </li>
-          
-          <li class="list f5 f4-ns fw4 dib pr3">
-            <a class="hover-white no-underline white-90" href="/tags/" title="Tags page">
-              Tags
-            </a>
-          </li>
-          
-          <li class="list f5 f4-ns fw4 dib pr3">
-            <a class="hover-white no-underline white-90" href="/posts/" title="Posts page">
-              Posts
-            </a>
-          </li>
-          
-        </ul>
-      
-      <div class="ananke-socials"></div>
-
-    </div>
-  </div>
-</nav>
-
-      <div class="tc-l pv6 ph3 ph4-ns">
-        
-          <div class="f2 f1-l fw2 white-90 mb0 lh-title">filebeat中使用的设计模式</div>
-          
-        
-      </div>
-    </div>
-  </header>
-
-
-
-    <main class="pb7" role="main">
-      
   
-  <article class="flex-l flex-wrap justify-between mw8 center ph3">
-    <header class="mt4 w-100">
-      <aside class="instapaper_ignoref b helvetica tracked ttu">
-          
-        Posts
-      </aside><div id="sharing" class="mt3 ananke-socials"></div>
-<h1 class="f1 athelas mt3 mb1">filebeat中使用的设计模式</h1>
-      
-      
-      
-      <time class="f6 mv4 dib tracked" datetime="2020-09-16T22:15:59+08:00">September 16, 2020</time>
-      
+    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
+      href="https://facebook.com/sharer/sharer.php?u=https://fancive.github.io/posts/design_pattern_used_in_filebeat/" target="_blank" rel="noopener noreferrer"
+      title="Share on Facebook">
+      <ion-icon class="group-hover:text-primary-content" name="logo-facebook"></ion-icon>
+    </a>
+  
+    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
+      href="https://wa.me/?text=filebeat%e4%b8%ad%e4%bd%bf%e7%94%a8%e7%9a%84%e8%ae%be%e8%ae%a1%e6%a8%a1%e5%bc%8f%20https://fancive.github.io/posts/design_pattern_used_in_filebeat/" target="_blank" rel="noopener noreferrer"
+      title="Share on WhatsApp">
+      <ion-icon class="group-hover:text-primary-content" name="logo-whatsapp"></ion-icon>
+    </a>
+  
 
-      
-      
-    </header>
-    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><h2 id="registry-与-lazyinit-结合">registry 与 lazyinit 结合</h2>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+      <section id="dream-single-post-content" itemprop="articleBody">
+        
+
+        <h2 id="registry-与-lazyinit-结合">registry 与 lazyinit 结合</h2>
 <p>filebeat/input.New</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">f</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">GetFactory</span>(<span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">Type</span>)
 </span></span></code></pre></div><p>GetFactory</p>
@@ -303,23 +397,27 @@ func (b *bus) Subscribe(filter ...string) Listener { listener := &amp;listener{ 
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">ackChanPool</span>.<span style="color:#a6e22e">Put</span>(<span style="color:#a6e22e">c</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><ul class="pa0">
-  
-   <li class="list di">
-     <a href="/tags/filebeat/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Filebeat</a>
-   </li>
-  
-</ul>
-<div class="mt6 instapaper_ignoref">
+</span></span></code></pre></div>
+      </section>
+
       
-        <div id="disqus_thread"></div>
+
+      
+      <div class="divider"></div>
+
+      <section class="space-y-4">
+        
+<article>
+  <div id="disqus_thread"></div>
 <script>
     window.disqus_config = function () {
-    
-    
-    
+        this.page.identifier = '\/posts\/design_pattern_used_in_filebeat\/';
+        this.page.title = 'filebeat中使用的设计模式';
+        this.page.url = 'https:\/\/fancive.github.io\/posts\/design_pattern_used_in_filebeat\/';
+
+        
     };
-    (function() {
+    function initDisqus() {
         if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
             document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
             return;
@@ -328,34 +426,211 @@ func (b *bus) Subscribe(filter ...string) Listener { listener := &amp;listener{ 
         s.src = '//' + "fancive-github-com" + '.disqus.com/embed.js';
         s.setAttribute('data-timestamp', +new Date());
         (d.head || d.body).appendChild(s);
-    })();
+    };
+    setTimeout(() => {
+        initDisqus();
+    }, 3000);
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</article>
+
+
+
+
+
+
+
+
+      </section>
       
-      
+    </article>
+  </div>
+
+  <div class="hidden lg:flex lg:flex-col lg:items-end">
+    
+
+    
+  </div>
+</div>
+
+
+            
+<footer class="flex justify-between items-center gap-2 px-4 py-12">
+
+  <div>
+  
+  <p>© 2025 home</p>
+  
+
+  
+  <p class="text-sm">
+    🌱
+    <span class="text-base-content/60">
+      Powered by <a class="hover:underline" href="https://gohugo.io/" target="_blank">Hugo</a> with theme
+      <a class="hover:underline" href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</span
+    >
+  </p>
+  
+</div>
+
+  <div
+  x-data="{ icons: [
+    { name: 'moon', status: 'y' },
+    { name: 'sunny', status: 'n' },
+    { name: 'desktop', status: 'auto' }
+  ] }"
+  class="flex items-center gap-2 h-[32px] px-2 bg-base-100 border border-base-content/30 rounded-full"
+>
+  <template x-for="icon in icons">
+    <div
+      role="button"
+      tabindex="0"
+      :aria-label="'Select ' + icon.name + ' mode'"
+      class="group inline-flex justify-center items-center p-1 rounded-full cursor-pointer hover:bg-primary"
+      :class="$store.darkMode.icon() === icon.name && 'bg-primary'"
+      @click="$store.darkMode.toggle(icon.status)"
+    >
+      <ion-icon
+        :name="`${icon.name}-outline`"
+        class="group-hover:text-primary-content"
+        :class="$store.darkMode.icon() === icon.name && 'text-primary-content'"
+      >
+      </ion-icon>
+    </div>
+  </template>
+</div>
+
+</footer>
+
+          </div>
+        </div>
+        <div class="back">
+          <div class="container">
+            
+            <div class="dream-grid dream-grid-about">
+  
+  
+  
+  
+
+  
+
+  
+</div>
+
+            
+
+            
+<footer class="flex justify-between items-center gap-2 px-4 py-12">
+
+  <div>
+  
+  <p>© 2025 home</p>
+  
+
+  
+  <p class="text-sm">
+    🌱
+    <span class="text-base-content/60">
+      Powered by <a class="hover:underline" href="https://gohugo.io/" target="_blank">Hugo</a> with theme
+      <a class="hover:underline" href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</span
+    >
+  </p>
+  
+</div>
+
+  <div
+  x-data="{ icons: [
+    { name: 'moon', status: 'y' },
+    { name: 'sunny', status: 'n' },
+    { name: 'desktop', status: 'auto' }
+  ] }"
+  class="flex items-center gap-2 h-[32px] px-2 bg-base-100 border border-base-content/30 rounded-full"
+>
+  <template x-for="icon in icons">
+    <div
+      role="button"
+      tabindex="0"
+      :aria-label="'Select ' + icon.name + ' mode'"
+      class="group inline-flex justify-center items-center p-1 rounded-full cursor-pointer hover:bg-primary"
+      :class="$store.darkMode.icon() === icon.name && 'bg-primary'"
+      @click="$store.darkMode.toggle(icon.status)"
+    >
+      <ion-icon
+        :name="`${icon.name}-outline`"
+        class="group-hover:text-primary-content"
+        :class="$store.darkMode.icon() === icon.name && 'text-primary-content'"
+      >
+      </ion-icon>
+    </div>
+  </template>
+</div>
+
+</footer>
+
+          </div>
+        </div>
       </div>
     </div>
 
-    <aside class="w-30-l mt6-l">
+    <script>
+  window.lightTheme =  null 
+  window.darkTheme =  null 
+</script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script>
+
+  
+  
+    
+  
+  <script src="/js/grid.min.js"></script>
 
 
 
 
-</aside>
+  
 
-  </article>
+<script src="/js/main.min.js"></script>
 
-    </main>
-    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
-  <div class="flex justify-between">
-  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://fancive.github.io/" >
-    &copy;  home 2025 
-  </a>
-    <div><div class="ananke-socials"></div>
-</div>
-  </div>
-</footer>
+    
 
+
+
+
+
+
+
+
+
+    
+
+    
+
+    
+
+    
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-7N49ZFJ61J');
+        }
+      </script>
+    
+
+    <script type="module" src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.js"></script>
   </body>
 </html>

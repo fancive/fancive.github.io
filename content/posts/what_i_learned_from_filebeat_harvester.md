@@ -14,7 +14,7 @@ tags:
 ### 总体流程
 
 filebeat 对每个path都会创建一个 `harvester`,  `harvester` 负责逐行读取文件内容。它的上游是 `input` , `input` 负责管理`harvester`, 它的下游是 `output`, `output` 负责消费每一行消息。
-
+<!--more-->
 通过阅读harvester代码，我学习到了如何管理多个相互依赖的协程的生命周期，具体可以拆分为4个问题
 
 1. 为主协程添加超时控制协程

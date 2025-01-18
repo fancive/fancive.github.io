@@ -11,6 +11,9 @@ tags:
 ---
 
 ## registry 与 lazyinit 结合
+
+<!--more-->
+
 filebeat/input.New
 
 ```go

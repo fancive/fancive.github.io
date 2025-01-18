@@ -13,6 +13,9 @@ tags:
 
 ## 0x01 背景
 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32
+
+<!--more-->
+
 ```go
 func main() {
 	s1 := "abc"

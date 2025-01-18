@@ -10,7 +10,7 @@ draft: false
 ![wheel_of_life_2024](/images/img/wheel_of_life_2024.jpg)
 
 基于对全年12个月的完整回顾分析，我现在重新为生命之轮的八个维度进行评分：
-
+<!--more-->
 ---
 
 ### 事业发展：8分 (↑1)

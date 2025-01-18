@@ -132,17 +132,16 @@
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/about/</loc>
-    <lastmod>2019-02-28T00:00:00+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://fancive.github.io/contact/</loc>
     <lastmod>2019-02-28T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://fancive.github.io/series/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://fancive.github.io/about/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

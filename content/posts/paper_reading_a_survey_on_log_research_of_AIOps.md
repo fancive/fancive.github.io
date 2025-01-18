@@ -21,7 +21,7 @@ tags:
 2. section and sub-section headings
 3. conclusions
 4. references
-
+<!--more-->
 ## question
 
 **Category: What type of paper is this? A measurement paper? An analysis of an existing system? A description of a research prototype?**

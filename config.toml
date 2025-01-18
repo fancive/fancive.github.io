@@ -5,18 +5,15 @@ baseURL = 'https://fancive.github.io/'
 disqusShortname = "fancive-github-com" 
 enableRobotsTXT = true # generate robots.txt
 googleAnalytics = "G-7N49ZFJ61J" 
-languageCode = "en-us" 
+languageCode = "zh-cn" 
 preserveTaxonomyNames = true 
 publishDir = "docs" 
 show_reading_time = true 
-theme = 'ananke' 
-title = '' 
+theme = 'dream' 
+title = '我的博客' 
+
 [pagination]
 pagerSize = 10
-
-# [[params.ananke_socials]]
-# name = "github"
-# url = "https://github.com/fancive"
 
 [taxonomies]
 category = "categories"
@@ -50,26 +47,53 @@ name = "Contact"
 url = "/contact/"
 weight = 10
 [[menu.main]]
-identifier = "contact"
+identifier = "tags"
 name = "Tags"
 url = "/tags/"
 weight = 10
-[params]
-# color style
-color = 'linen' # linen, wheat, gray, light
-# header social icons
-avatar = 'fancivez@gmail.com' # Gravatar email or image url
-background_color_class = "bg-black" 
-bio = 'golang fan' 
-dateFormatToUse = "2006-01-02" 
-description = "欢迎来到荷兰" 
-env = 'production' 
-github = 'fancive' # github.com/YOUR_GITHUB_ID
-headerImage = "images/background.jpg" 
-logoTitle = "home" # shown on top-left, default: title
-name = 'fancivez' 
-siteLogoImage = "images/globe.svg" # shown besides logoTitle
 
+[params]
+# Dream theme 基本配置
+background = "#f7f7f7"
+backgroundImage = ""
+color = 'linen'
+linkColor = "seagreen"
+
+# 个人信息配置
+author = "fancive"
+avatar = "/images/profile.jpg"
+bio = 'golang fan'
+motto = "欢迎来到荷兰"
+name = 'fancivez'
+
+# 社交链接
+email = "fancivez@email.com"
+github = "fancive"
+
+# 文章配置
+dateFormatToUse = "2006-01-02"
+description = "欢迎来到荷兰"
+showSummaryCoverInPost = true
+summaryLength = 100
+truncate = true
+
+# 暗色模式
+dark404 = true
+darkNav = true
+
+# 其他功能开关
+background_color_class = "bg-black"
+env = 'production'
+headerBottomText = ""
+headerImage = "images/background.jpg"
+logoTitle = "home"
+siteLogoImage = "images/globe.svg"
+
+# i18n
+contentType = "posts"
+defaultTheme = "light"
+
+# Giscus 评论系统配置
 [params.giscus]
 crossorigin = "anonymous"
 data_category = "Announcements"

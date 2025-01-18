@@ -1,59 +1,498 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+  x-data
+  :class="$store.darkMode.class()"
+  :data-theme="$store.darkMode.theme()">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    
-    <title>home</title>
-    <meta name="viewport" content="width=device-width,minimum-scale=1">
-    <meta name="description" content="欢迎来到荷兰">
-    <meta name="generator" content="Hugo 0.138.0">
-    
-    
-    
-      <meta name="robots" content="index, follow">
-    
-    
-
-    
-<link rel="stylesheet" href="/ananke/css/main.min.d05fb5f317fcf33b3a52936399bdf6f47dc776516e1692e412ec7d76f4a5faa2.css" >
-
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posts | home</title>
 
     
 
-    
-      
+<link rel="canonical" href="https://fancive.github.io/posts/" />
 
-    
 
-    
-    
-      <link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="home" />
-      <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="home" />
-      
-    
 
-    
-      <link rel="canonical" href="https://fancive.github.io/posts/">
-    
+<meta name="author" content="fancive" />
+<meta name="description" content="" />
 
-    <meta property="og:url" content="https://fancive.github.io/posts/">
+
+<meta name="keywords" content="">
+
+
+
+<meta name="generator" content="Hugo 0.138.0">
+
+
+<meta property="og:url" content="https://fancive.github.io/posts/">
   <meta property="og:site_name" content="home">
   <meta property="og:title" content="Posts">
   <meta property="og:description" content="欢迎来到荷兰">
   <meta property="og:locale" content="en">
   <meta property="og:type" content="website">
 
-  <meta itemprop="name" content="Posts">
-  <meta itemprop="description" content="欢迎来到荷兰">
-  <meta itemprop="datePublished" content="2025-01-11T16:26:38+08:00">
-  <meta itemprop="dateModified" content="2025-01-11T16:26:38+08:00">
+
+
+
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Posts">
   <meta name="twitter:description" content="欢迎来到荷兰">
 
+
+
+
+  
+
+<link rel="stylesheet" href="/css/output.min.css" />
+
+
+
+
+     
+
+    
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  </head>
+
+  <body x-data="{
+    flip: false,
+  }">
+    
+    <div id="dream-global-bg"></div>
+
+    
+<nav class="mt-4 lg:mt-8 py-4">
+
+  
+  <div class="container flex justify-between px-4">
+  
+    <section class="flex items-center gap-4">
+      <div class="avatar cursor-pointer hover:online" @click="flip = !flip" title="Flip it!">
+        <div class="h-10 rounded-full">
+          <img src="/images/profile.jpg" alt="" />
+        </div>
+      </div>
+
       
+      <div>
+        
+        
+        <div class="text-base-content/60 text-sm">欢迎来到荷兰</div>
+        
+      </div>
+      
+    </section>
+
+    <div class="dropdown dropdown-end sm:hidden">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-square" aria-label="Select an option">
+        <ion-icon name="menu" class="text-2xl"></ion-icon>
+      </div>
+      <ul tabindex="0" class="dropdown-content menu w-36 bg-base-100 rounded-box z-[1] shadow-md">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+  <a class="inline-flex items-center p-2 cursor-pointer" href="/posts" title="Archives">
+    <ion-icon name="archive"></ion-icon>
+    Archives
+  </a>
+</li>
+
+
+
+
+<li>
+  <a class="inline-flex items-center p-2 cursor-pointer" href="/categories" title="All Categories">
+    <ion-icon name="grid"></ion-icon>
+    All Categories
+  </a>
+</li>
+
+
+
+
+<li>
+  <a class="inline-flex items-center p-2 cursor-pointer" href="/tags" title="All Tags">
+    <ion-icon name="pricetags"></ion-icon>
+    All Tags
+  </a>
+</li>
+
+
+
+
+
+
+      </ul>
+    </div>
+    <section class="hidden sm:flex sm:items-center sm:gap-2 md:gap-4">
+      
+      
+      
+      
+
+      
+      
+
+      
+
+      
+      
+
+
+
+
+
+      
+      
+
+
+
+
+
+      
+      
+<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/posts" title="Archives">
+  <ion-icon class="group-hover:text-primary-content" name="archive"></ion-icon>
+</a>
+
+
+      
+      
+<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/categories" title="All Categories">
+  <ion-icon class="group-hover:text-primary-content" name="grid"></ion-icon>
+</a>
+
+
+      
+      
+<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/tags" title="All Tags">
+  <ion-icon class="group-hover:text-primary-content" name="pricetags"></ion-icon>
+</a>
+
+
+      
+
+      
+
+      
+    </section>
+  </div>
+</nav>
+
+
+    <div class="flip-container" :class="{ 'flip-it': flip }">
+      <div class="flipper">
+        <div class="front">
+          <div class="container">
+            
+
+<div class="mt-8 lg:mt-12 px-4">
+  <div class="mx-auto prose dark:prose-invert">
+    <h1 class="text-3xl">
+      Archives
+    </h1>
+    
+  </div>
+
+  <div class="max-w-[65ch] mx-auto mt-8 lg:mt-12">
+    <ul class="timeline timeline-vertical">
+      
+      
+      <li class="[--timeline-col-start:64px]">
+        <hr class="dark:bg-base-content" />
+        <div class="timeline-start !justify-self-start">
+          <div class="text-lg font-semibold">2025</div>
+        </div>
+        <div class="timeline-middle flex items-center mx-8 my-2">
+          <ion-icon name="time"></ion-icon>
+        </div>
+        <div class="timeline-end timeline-box dark:border-base-content/60 prose dark:prose-invert my-8">
+          <ul>
+            
+            <li>
+              <a href="/posts/wheel-of-life-2024/">Wheel of Life 2024</a>
+            </li>
+            
+            <li>
+              <a href="/posts/reflecting-on-achievements-and-regrets/">放下遗憾，拥抱自我</a>
+            </li>
+            
+          </ul>
+        </div>
+        <hr class="dark:bg-base-content" />
+      </li>
+      
+      <li class="[--timeline-col-start:64px]">
+        <hr class="dark:bg-base-content" />
+        <div class="timeline-start !justify-self-start">
+          <div class="text-lg font-semibold">2024</div>
+        </div>
+        <div class="timeline-middle flex items-center mx-8 my-2">
+          <ion-icon name="time"></ion-icon>
+        </div>
+        <div class="timeline-end timeline-box dark:border-base-content/60 prose dark:prose-invert my-8">
+          <ul>
+            
+            <li>
+              <a href="/posts/llm-driven-alert-diagnosis-engine-design/">Llm Driven Alert Diagnosis Engine Design(设计新一代LLM驱动的告警诊断引擎)</a>
+            </li>
+            
+          </ul>
+        </div>
+        <hr class="dark:bg-base-content" />
+      </li>
+      
+      <li class="[--timeline-col-start:64px]">
+        <hr class="dark:bg-base-content" />
+        <div class="timeline-start !justify-self-start">
+          <div class="text-lg font-semibold">2023</div>
+        </div>
+        <div class="timeline-middle flex items-center mx-8 my-2">
+          <ion-icon name="time"></ion-icon>
+        </div>
+        <div class="timeline-end timeline-box dark:border-base-content/60 prose dark:prose-invert my-8">
+          <ul>
+            
+            <li>
+              <a href="/posts/paper_reading_a_survey_on_log_research_of_aiops/">[Paper reading] A Survey On Log Research Of AIOps: Methods and Trends</a>
+            </li>
+            
+            <li>
+              <a href="/posts/paper_reading_aiops_real-world_challenges_and_research_innovations/">[paper reading]AIOps: Real-World Challenges and Research Innovations</a>
+            </li>
+            
+          </ul>
+        </div>
+        <hr class="dark:bg-base-content" />
+      </li>
+      
+      <li class="[--timeline-col-start:64px]">
+        <hr class="dark:bg-base-content" />
+        <div class="timeline-start !justify-self-start">
+          <div class="text-lg font-semibold">2022</div>
+        </div>
+        <div class="timeline-middle flex items-center mx-8 my-2">
+          <ion-icon name="time"></ion-icon>
+        </div>
+        <div class="timeline-end timeline-box dark:border-base-content/60 prose dark:prose-invert my-8">
+          <ul>
+            
+            <li>
+              <a href="/posts/what_i_learned_from_filebeat_harvester/">我从filebeat-harvester中学到什么</a>
+            </li>
+            
+          </ul>
+        </div>
+        <hr class="dark:bg-base-content" />
+      </li>
+      
+      <li class="[--timeline-col-start:64px]">
+        <hr class="dark:bg-base-content" />
+        <div class="timeline-start !justify-self-start">
+          <div class="text-lg font-semibold">2020</div>
+        </div>
+        <div class="timeline-middle flex items-center mx-8 my-2">
+          <ion-icon name="time"></ion-icon>
+        </div>
+        <div class="timeline-end timeline-box dark:border-base-content/60 prose dark:prose-invert my-8">
+          <ul>
+            
+            <li>
+              <a href="/posts/design_pattern_used_in_filebeat/">filebeat中使用的设计模式</a>
+            </li>
+            
+            <li>
+              <a href="/posts/go_string_byte/">go string to byte</a>
+            </li>
+            
+            <li>
+              <a href="/posts/go_interface/">[翻译]go interface</a>
+            </li>
+            
+          </ul>
+        </div>
+        <hr class="dark:bg-base-content" />
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+            
+<footer class="flex justify-between items-center gap-2 px-4 py-12">
+
+  <div>
+  
+  <p>© 2025 home</p>
+  
+
+  
+  <p class="text-sm">
+    🌱
+    <span class="text-base-content/60">
+      Powered by <a class="hover:underline" href="https://gohugo.io/" target="_blank">Hugo</a> with theme
+      <a class="hover:underline" href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</span
+    >
+  </p>
+  
+</div>
+
+  <div
+  x-data="{ icons: [
+    { name: 'moon', status: 'y' },
+    { name: 'sunny', status: 'n' },
+    { name: 'desktop', status: 'auto' }
+  ] }"
+  class="flex items-center gap-2 h-[32px] px-2 bg-base-100 border border-base-content/30 rounded-full"
+>
+  <template x-for="icon in icons">
+    <div
+      role="button"
+      tabindex="0"
+      :aria-label="'Select ' + icon.name + ' mode'"
+      class="group inline-flex justify-center items-center p-1 rounded-full cursor-pointer hover:bg-primary"
+      :class="$store.darkMode.icon() === icon.name && 'bg-primary'"
+      @click="$store.darkMode.toggle(icon.status)"
+    >
+      <ion-icon
+        :name="`${icon.name}-outline`"
+        class="group-hover:text-primary-content"
+        :class="$store.darkMode.icon() === icon.name && 'text-primary-content'"
+      >
+      </ion-icon>
+    </div>
+  </template>
+</div>
+
+</footer>
+
+          </div>
+        </div>
+        <div class="back">
+          <div class="container">
+            
+            <div class="dream-grid dream-grid-about">
+  
+  
+  
+  
+
+  
+
+  
+</div>
+
+            
+
+            
+<footer class="flex justify-between items-center gap-2 px-4 py-12">
+
+  <div>
+  
+  <p>© 2025 home</p>
+  
+
+  
+  <p class="text-sm">
+    🌱
+    <span class="text-base-content/60">
+      Powered by <a class="hover:underline" href="https://gohugo.io/" target="_blank">Hugo</a> with theme
+      <a class="hover:underline" href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</span
+    >
+  </p>
+  
+</div>
+
+  <div
+  x-data="{ icons: [
+    { name: 'moon', status: 'y' },
+    { name: 'sunny', status: 'n' },
+    { name: 'desktop', status: 'auto' }
+  ] }"
+  class="flex items-center gap-2 h-[32px] px-2 bg-base-100 border border-base-content/30 rounded-full"
+>
+  <template x-for="icon in icons">
+    <div
+      role="button"
+      tabindex="0"
+      :aria-label="'Select ' + icon.name + ' mode'"
+      class="group inline-flex justify-center items-center p-1 rounded-full cursor-pointer hover:bg-primary"
+      :class="$store.darkMode.icon() === icon.name && 'bg-primary'"
+      @click="$store.darkMode.toggle(icon.status)"
+    >
+      <ion-icon
+        :name="`${icon.name}-outline`"
+        class="group-hover:text-primary-content"
+        :class="$store.darkMode.icon() === icon.name && 'text-primary-content'"
+      >
+      </ion-icon>
+    </div>
+  </template>
+</div>
+
+</footer>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+  window.lightTheme =  null 
+  window.darkTheme =  null 
+</script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script>
+
+  
+  
+    
+  
+  <script src="/js/grid.min.js"></script>
+
+
+
+
+  
+
+<script src="/js/main.min.js"></script>
+
+     
+
+    
+
+    
+
+    
+
+    
+    
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
       <script>
         var doNotTrack = false;
@@ -69,620 +508,8 @@
         }
       </script>
     
-	
-  </head><body class="ma0 avenir bg-near-white production">
 
-    
-
-  
-  
-  <header class="cover bg-top" style="background-image: url('https://fancive.github.io/images/background.jpg');">
-    
-    <div class="bg-black-60">
-      <nav class="pv3 ph3 ph4-ns" role="navigation">
-  <div class="flex-l justify-between items-center center">
-    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
-      
-        home
-      
-    </a>
-    <div class="flex-l items-center">
-      
-
-      
-        <ul class="pl0 mr3">
-          
-          <li class="list f5 f4-ns fw4 dib pr3">
-            <a class="hover-white no-underline white-90" href="/about/" title="About page">
-              About
-            </a>
-          </li>
-          
-          <li class="list f5 f4-ns fw4 dib pr3">
-            <a class="hover-white no-underline white-90" href="/categories/" title="categories page">
-              categories
-            </a>
-          </li>
-          
-          <li class="list f5 f4-ns fw4 dib pr3">
-            <a class="hover-white no-underline white-90" href="/tags/" title="Tags page">
-              Tags
-            </a>
-          </li>
-          
-          <li class="list f5 f4-ns fw4 dib pr3">
-            <a class="hover-white no-underline white-90" href="/posts/" title="Posts page">
-              Posts
-            </a>
-          </li>
-          
-        </ul>
-      
-      <div class="ananke-socials"></div>
-
-    </div>
-  </div>
-</nav>
-
-      <div class="tc-l pv4 pv6-l ph3 ph4-ns">
-        <h1 class="f2 f-subheadline-l fw2 white-90 mb0 lh-title">
-          Posts
-        </h1>
-        
-      </div>
-    </div>
-  </header>
-
-
-    <main class="pb7" role="main">
-      
-  <article class="pa3 pa4-ns nested-copy-line-height">
-    <section class="cf ph3 ph5-l pv3 pv4-l f4 tc-l center measure-wide lh-copy mid-gray"></section>
-    <section class="flex-ns flex-wrap justify-around mt5">
-      
-        <div class="relative w-100 w-30-l mb4 bg-white">
-          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
-  <div class="bg-white mb3 pa4 gray overflow-hidden">
-    <span class="f6 db">Posts</span>
-    <h1 class="f3 near-black">
-      <a href="/posts/wheel-of-life-2024/" class="link black dim">
-        Wheel of Life 2024
-      </a>
-    </h1>
-    <div class="nested-links f5 lh-copy nested-copy-line-height">
-      <blockquote>
-<p>我让大模型读取了我的2024年每个月的月报(从周报和日记中总结)，得到了以下的生命之轮得分</p>
-</blockquote>
-<h1 id="生命之轮-2024">生命之轮 2024</h1>
-<p><img alt="wheel_of_life_2024" src="/images/img/wheel_of_life_2024.jpg"></p>
-<p>基于对全年12个月的完整回顾分析，我现在重新为生命之轮的八个维度进行评分：</p>
-<hr>
-<h3 id="事业发展8分-1">事业发展：8分 (↑1)</h3>
-<p><strong>优点：</strong></p>
-<ul>
-<li>全年完成多个重要项目：ES监控系统、自动部署工具、圈子项目等</li>
-<li>技术能力持续提升，涉及多个领域（Flutter、Docker、Node.js等）</li>
-<li>论文研究有进展，完成开题答辩</li>
-<li>下半年在工作中展现出更强的影响力和决策能力</li>
-</ul>
-<p><strong>待改进：</strong></p>
-<ul>
-<li>工作压力管理仍需优化</li>
-<li>项目时间管理需要提升</li>
-</ul>
-<hr>
-<h3 id="人际关系75分-05">人际关系：7.5分 (↑0.5)</h3>
-<p><strong>优点：</strong></p>
-<ul>
-<li>团队协作能力提升，能够处理复杂的跨部门协作</li>
-<li>在工作中学会更好的沟通方式</li>
-<li>能够在矛盾中寻找共同点</li>
-<li>下半年展现出更强的沟通和影响力</li>
-</ul>
-<p><strong>待改进：</strong></p>
-<ul>
-<li>在压力下的沟通方式仍需改善</li>
-<li>家庭关系的调解技巧需要提升</li>
-</ul>
-<hr>
-<h3 id="教育学习85分-05">教育学习：8.5分 (↑0.5)</h3>
-<p><strong>优点：</strong></p>
-<ul>
-<li>持续的技术学习和算法训练</li>
-<li>广泛的知识积累：技术、心理、生产力等多个领域</li>
-<li>建立了固定的学习习惯（自习室）</li>
-<li>论文研究有实质性进展</li>
-<li>积极学习新技术和工具</li>
-</ul>
-<p><strong>待改进：</strong></p>
-<ul>
-<li>娱乐时间管理需要优化</li>
-<li>学习计划执行的连续性需要提升</li>
-</ul>
-<hr>
-<h3 id="心灵成长85分-05">心灵成长：8.5分 (↑0.5)</h3>
-<p><strong>优点：</strong></p>
-<ul>
-<li>持续的冥想练习和自我觉察</li>
-<li>情绪管理能力显著提升</li>
-<li>能够在压力下保持平和</li>
-<li>建立了有效的压力管理机制</li>
-<li>年底开始更注重生活的平衡</li>
-</ul>
-<p><strong>待改进：</strong></p>
-<ul>
-<li>在家庭矛盾中的情绪管理仍需提升</li>
-</ul>
-<hr>
-<h3 id="健康状况65分-05">健康状况：6.5分 (↓0.5)</h3>
-<p><strong>优点：</strong></p>
-<ul>
-<li>尝试建立运动习惯（健身、瑜伽）</li>
-<li>开始注意饮食健康</li>
-<li>有意识地关注身体状况</li>
-</ul>
-<p><strong>待改进：</strong></p>
-<ul>
-<li>作息极不规律，经常熬夜</li>
-<li>运动频率不稳定，年底明显下降</li>
-<li>反复出现身体不适（扁桃体、咽喉等）</li>
-</ul>
-<hr>
-<h3 id="家庭关系75分-05">家庭关系：7.5分 (↓0.5)</h3>
-<p><strong>优点：</strong></p>
-<ul>
-<li>保持固定的亲子活动和陪伴时间</li>
-<li>积极改善育儿方式</li>
-<li>重视家庭活动和出游</li>
-<li>关注家人健康</li>
-</ul>
-<p><strong>待改进：</strong></p>
-<ul>
-<li>家庭矛盾（特别是婆媳关系）需要更好的处理</li>
-<li>夫妻相处时间和质量需要提升</li>
-<li>育儿方式仍需改进</li>
-</ul>
-<hr>
-<h3 id="金钱财富7分-1">金钱财富：7分 (↑1)</h3>
-<p><strong>优点：</strong></p>
-    </div>
-    <a href="/posts/wheel-of-life-2024/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
-  </div>
-</div>
-
-        </div>
-      
-        <div class="relative w-100 w-30-l mb4 bg-white">
-          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
-  <div class="bg-white mb3 pa4 gray overflow-hidden">
-    <span class="f6 db">Posts</span>
-    <h1 class="f3 near-black">
-      <a href="/posts/reflecting-on-achievements-and-regrets/" class="link black dim">
-        放下遗憾，拥抱自我
-      </a>
-    </h1>
-    <div class="nested-links f5 lh-copy nested-copy-line-height">
-      <h2 id="时间不够了"><strong>时间不够了</strong></h2>
-<p>昨晚睡前，在冥想期间，我开始从近到远回顾自己的成长历程，回忆起大学、高中、初中和小学阶段。重温大学和高中时那种“时间不够复习，高考（毕业考试）怎么办”的绝望感，不禁让我落泪。同时，我也回想起初中刚住校时非常想家的情感。与同学们一起踢球玩游戏的快乐，高中时发现自己不如别人的焦急，以及在自习时抬头发现别人都在低头写作业的茫然，不解为什么别人都能如此投入，而我却觉得学习并没有那么吸引我。</p>
-<h2 id="成就与堕落"><strong>成就与堕落</strong></h2>
-<p>在冥想中，我意识到，相对于当时的平均水平，我几乎实现了当时的全部潜力。具体表现为：小学时成绩中上，但小升初考试考进了全县前10；初中成绩中游，但考上了顶尖高中；高中成绩虽在班级倒数，但高考成绩在班级中游；毕业时没有学位证，但最终还是得到了一份开发的工作。这些成就让我感到自己基本达到了当时的上限。然而，尽管达到了这些成就，我仍然感到非常遗憾。这种遗憾源于我的自我预期远超现实，我原本期望能够取得更高的成就，成为『别人家的孩子』。</p>
-<p>我曾以为堕落（游戏成瘾）始于高中，但实际上，整个个人体系并不是在高中形成的。习惯（学习和生活）、兴趣（追求）、韧性、精力管理、思维模式等等，这些都已经存在。高中只是整个系统的进一步演化，而这套系统并不支持在高中阶段更高水平的表现要求。除了游戏成瘾，我认为还有其他因素导致了我在学业和生活上的堕落。我曾以为自己动机不足，于是希望通过激发紧张感来获得动机，并盲目设定不切实际的宏伟目标来激发自己。然而，行动并不持久，以至于在不断的失败中失去了信心，最终几乎放弃了努力。</p>
-<h2 id="家庭影响与自我认知"><strong>家庭影响与自我认知</strong></h2>
-<p>我的愤怒源于深深的遗憾，我曾以为父母本可以通过更多的陪伴和支持让事情不至于这样发展。然而，我也明白这种“如果”假设是不成立的，现实中并不存在这样的可能性。尽管如此，我发现父母的行为并未达到我对他们的预期，导致了我的不满和失望。</p>
-<p>尽管如此，我知道我的父母非常爱我。他们在自己的方式上尽力支持我，但由于缺乏相关的经验和知识，他们的行为方式并不能完全满足我的情感需求。父母过于强调我的聪明，将成就归因于智力，而忽视了对努力和情感需求的关注。父亲性格内向，缺乏社交和行动力，常常忙于自己的事务，无法给予我足够的支持；母亲虽然更具社交性和责任感，给予了我很多爱，但她的固定型思维和对成功的狭隘定义，使我感到压力和匮乏感。父母之间的冲突也加深了我的困惑和不满，导致我在追求完美的过程中，内化了将自尊与成就绑定的观念，进而形成了完美主义和受害者心态。</p>
-<p>拥有了孩子之后，我开始更加理解我的父母，认识到他们也有自己的课题和困境。他们在各自的生活中面临挑战，尽管爱我，但他们的方式和资源有限，无法完全满足我的需求。这种理解让我意识到，父母的爱是存在的，但表达爱的方式可能并不完美。这种觉悟帮助我减少了对他们的责备，转而更多地理解和包容。</p>
-<h2 id="感激与支持"><strong>感激与支持</strong></h2>
-<p>在这一过程中，我深深感激我的妻子。她能够充分接纳我的情感，与我进行许多教练式的对话，帮助我慢慢认识自己。她不仅给予我无条件的支持，还让我对自己拥有了更多的同情和宽容。通过她的帮助，我学会了更加温柔地对待自己，理解自己的不足，并积极寻求成长。这种支持在我走出受害者心态、重建自信心的过程中起到了至关重要的作用。</p>
-<h2 id="启发与未来"><strong>启发与未来</strong></h2>
-<p>通过这次冥想，我意识到需要重新定义我对孩子的期待，希望她养成哪些品质和习惯，并规划如何长期行动，以及避免固定性思维。我还意识到我不必成为最好的（最聪明的），对高中时取得的成绩表示理解（虽然考试基本都是倒数），因此不再感到那么遗憾。这些经验教会我如何更有效地管理自己的时间和精力，培养积极的习惯，调整思维模式，并建立强有力的支持系统，以更好地面对未来的挑战。</p>
-<p>在反思过去的基础上，我对未来有了新的期望和目标。我希望能够通过自身的改变和努力，成为一个更好的父母，帮助我的孩子养成良好的习惯和积极的思维模式。持续学习、寻求专业指导以及建立稳固的支持系统来实现这些目标。</p>
-    </div>
-    <a href="/posts/reflecting-on-achievements-and-regrets/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
-  </div>
-</div>
-
-        </div>
-      
-        <div class="relative w-100 w-30-l mb4 bg-white">
-          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
-  <div class="bg-white mb3 pa4 gray overflow-hidden">
-    <span class="f6 db">Posts</span>
-    <h1 class="f3 near-black">
-      <a href="/posts/llm-driven-alert-diagnosis-engine-design/" class="link black dim">
-        Llm Driven Alert Diagnosis Engine Design(设计新一代LLM驱动的告警诊断引擎)
-      </a>
-    </h1>
-    <div class="nested-links f5 lh-copy nested-copy-line-height">
-      <p>在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。</p>
-<h2 id="引言">引言</h2>
-<p>随着系统规模和复杂性的增加，传统的基于规则的告警诊断方法往往力不从心。我们需要一种更智能、更灵活的方法来分析和诊断系统告警。这就是LLM驱动的诊断引擎发挥作用的地方。</p>
-<h2 id="宏观系统架构自动定位系统">宏观系统架构：自动定位系统</h2>
-<p>在深入探讨LLM驱动的诊断引擎之前，让我们先了解它在整个自动定位系统中的位置。自动定位系统是一个复杂的生态系统，旨在自动检测、诊断和解决IT环境中的问题。以下是系统的宏观架构：</p>
-<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">graph TB
-    A[监控系统] --&gt;|告警| B[告警聚合器]
-    B --&gt;|结构化告警| C[LLM驱动的诊断引擎]
-    D[日志系统] --&gt;|相关日志| C
-    E[配置管理数据库] --&gt;|系统配置| C
-    F[知识库] --&gt;|历史案例| C
-    C --&gt;|诊断结果| G[自动修复系统]
-    C --&gt;|诊断报告| H[运维仪表板]
-    I[人工反馈] --&gt;|优化信息| C
-</code></pre><p>以Elasticsearch作为数据源为例:</p>
-<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">sequenceDiagram
-    participant ES as Elasticsearch
-    participant AR as 告警规则执行器
-    participant AM as 告警管理器
-    participant LLM as LLM诊断引擎
-    participant NT as 通知系统
-    
-    loop 定期执行
-        AR-&gt;&gt;ES: 执行查询表达式
-        ES--&gt;&gt;AR: 返回查询结果
-        AR-&gt;&gt;AR: 应用时间窗口和阈值
-        alt 触发告警条件
-            AR-&gt;&gt;AM: 生成告警
-            AM-&gt;&gt;LLM: 请求诊断
-            LLM-&gt;&gt;LLM: 分析告警上下文
-            LLM--&gt;&gt;AM: 返回诊断结果
-            AM-&gt;&gt;NT: 发送通知
-        end
-    end
-</code></pre><p>在这个宏观架构中，LLM驱动的诊断引擎扮演着核心角色：</p>
-    </div>
-    <a href="/posts/llm-driven-alert-diagnosis-engine-design/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
-  </div>
-</div>
-
-        </div>
-      
-        <div class="relative w-100 w-30-l mb4 bg-white">
-          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
-  <div class="bg-white mb3 pa4 gray overflow-hidden">
-    <span class="f6 db">Posts</span>
-    <h1 class="f3 near-black">
-      <a href="/posts/paper_reading_a_survey_on_log_research_of_aiops/" class="link black dim">
-        [Paper reading] A Survey On Log Research Of AIOps: Methods and Trends
-      </a>
-    </h1>
-    <div class="nested-links f5 lh-copy nested-copy-line-height">
-      <ul>
-<li>link: <a href="https://dl.acm.org/doi/abs/10.1007/s11036-021-01832-3">https://dl.acm.org/doi/abs/10.1007/s11036-021-01832-3</a></li>
-</ul>
-<h1 id="first-pass">first pass</h1>
-<p>5-10 mins</p>
-<ol>
-<li>title, abstract, and introduction</li>
-<li>section and sub-section headings</li>
-<li>conclusions</li>
-<li>references</li>
-</ol>
-<h2 id="question">question</h2>
-<p><strong>Category: What type of paper is this? A measurement paper? An analysis of an existing system? A description of a research prototype?</strong></p>
-<p>It’s a survey paper on the methods and trend on log based AIOps.</p>
-<p>It does not seem to focus on a specific system or prototype, but rather explore the current state of research in the field.</p>
-    </div>
-    <a href="/posts/paper_reading_a_survey_on_log_research_of_aiops/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
-  </div>
-</div>
-
-        </div>
-      
-        <div class="relative w-100 w-30-l mb4 bg-white">
-          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
-  <div class="bg-white mb3 pa4 gray overflow-hidden">
-    <span class="f6 db">Posts</span>
-    <h1 class="f3 near-black">
-      <a href="/posts/paper_reading_aiops_real-world_challenges_and_research_innovations/" class="link black dim">
-        [paper reading]AIOps: Real-World Challenges and Research Innovations
-      </a>
-    </h1>
-    <div class="nested-links f5 lh-copy nested-copy-line-height">
-      <ul>
-<li>link: <a href="https://ieeexplore.ieee.org/abstract/document/8802836">https://ieeexplore.ieee.org/abstract/document/8802836</a></li>
-</ul>
-<h2 id="first-pass">first pass</h2>
-<p>5-10 mins</p>
-<ol>
-<li>title, abstract, and introduction</li>
-<li>section and sub-section headings</li>
-<li>conclusions</li>
-<li>references</li>
-</ol>
-<h3 id="question">question</h3>
-<p><strong>Category: What type of paper is this? A measurement paper? An analysis of an existing system? A description of a research prototype?</strong></p>
-<p>It is a descriptive paper that discusses the challenges and innovations related to the implementation of AIOps in real-world IT operations.</p>
-<p><strong>Context: Which other papers is it related to? Which theoretical bases were used to analyze the problem?</strong></p>
-    </div>
-    <a href="/posts/paper_reading_aiops_real-world_challenges_and_research_innovations/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
-  </div>
-</div>
-
-        </div>
-      
-        <div class="relative w-100 w-30-l mb4 bg-white">
-          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
-  <div class="bg-white mb3 pa4 gray overflow-hidden">
-    <span class="f6 db">Posts</span>
-    <h1 class="f3 near-black">
-      <a href="/posts/what_i_learned_from_filebeat_harvester/" class="link black dim">
-        我从filebeat-harvester中学到什么
-      </a>
-    </h1>
-    <div class="nested-links f5 lh-copy nested-copy-line-height">
-      <h3 id="总体流程">总体流程</h3>
-<p>filebeat 对每个path都会创建一个 <code>harvester</code>,  <code>harvester</code> 负责逐行读取文件内容。它的上游是 <code>input</code> , <code>input</code> 负责管理<code>harvester</code>, 它的下游是 <code>output</code>, <code>output</code> 负责消费每一行消息。</p>
-<p>通过阅读harvester代码，我学习到了如何管理多个相互依赖的协程的生命周期，具体可以拆分为4个问题</p>
-<ol>
-<li>为主协程添加超时控制协程</li>
-<li>主协程结束如何关闭超时控制协程和其他协程(<code>monitorFileSize</code>)</li>
-<li>关闭协程时如何控制不同job间的先后执行顺序</li>
-<li>如何从外部关闭任务，并等待清理完成</li>
-</ol>
-<h3 id="超时控制协程">超时控制协程</h3>
-<p><code>(h *Harvester)Run()</code> 方法里，会创建超时控制协程，在此协程中会消费2个事件</p>
-<ol>
-<li>超时事件 <code>closeTimeout</code></li>
-<li>主任务结束标志 <code>h.done</code></li>
-</ol>
-<p>一旦接收到其中一个事件，那么会调用 <code>stop</code> 并关闭 <code>reader</code></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// Closes reader after timeout or when done channel is closed
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// This routine is also responsible to properly stop the reader
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">source</span> <span style="color:#66d9ef">string</span>) {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">closeTimeout</span> <span style="color:#f92672">:=</span> make(<span style="color:#f92672">&lt;-</span><span style="color:#66d9ef">chan</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Time</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// starts close_timeout timer
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">CloseTimeout</span> &gt; <span style="color:#ae81ff">0</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">closeTimeout</span> = <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">After</span>(<span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">CloseTimeout</span>)
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">select</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Applies when timeout is reached
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">closeTimeout</span>:
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Infof</span>(<span style="color:#e6db74">&#34;Closing harvester because close_timeout was reached: %s&#34;</span>, <span style="color:#a6e22e">source</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Required when reader loop returns and reader finished
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">done</span>:
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">stop</span>()
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">reader</span>.<span style="color:#a6e22e">Close</span>()
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;Failed to stop harvester for file: %v&#34;</span>, <span style="color:#a6e22e">err</span>)
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}(<span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">state</span>.<span style="color:#a6e22e">Source</span>)
-</span></span></code></pre></div><h3 id="主协程关闭其他附属功能协程">主协程关闭其他附属功能协程</h3>
-<p>一句话，主要是通过调用 <code>stop</code> (在defer里)， <code>stop</code> 里会 <code>close(h.done)</code></p>
-    </div>
-    <a href="/posts/what_i_learned_from_filebeat_harvester/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
-  </div>
-</div>
-
-        </div>
-      
-        <div class="relative w-100 w-30-l mb4 bg-white">
-          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
-  <div class="bg-white mb3 pa4 gray overflow-hidden">
-    <span class="f6 db">Posts</span>
-    <h1 class="f3 near-black">
-      <a href="/posts/design_pattern_used_in_filebeat/" class="link black dim">
-        filebeat中使用的设计模式
-      </a>
-    </h1>
-    <div class="nested-links f5 lh-copy nested-copy-line-height">
-      <h2 id="registry-与-lazyinit-结合">registry 与 lazyinit 结合</h2>
-<p>filebeat/input.New</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">f</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">GetFactory</span>(<span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">Type</span>)
-</span></span></code></pre></div><p>GetFactory</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">GetFactory</span>(<span style="color:#a6e22e">name</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">Factory</span>, <span style="color:#66d9ef">error</span>) {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">exists</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">registry</span>[<span style="color:#a6e22e">name</span>]; !<span style="color:#a6e22e">exists</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;</span>, <span style="color:#a6e22e">name</span>)
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">registry</span>[<span style="color:#a6e22e">name</span>], <span style="color:#66d9ef">nil</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>注册</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">init</span>() {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">Register</span>(<span style="color:#e6db74">&#34;log&#34;</span>, <span style="color:#a6e22e">NewInput</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-</span></span><span style="display:flex;"><span>        panic(<span style="color:#a6e22e">err</span>)
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="observer">observer</h2>
-<p>publish</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">b</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">bus</span>) <span style="color:#a6e22e">Publish</span>(<span style="color:#a6e22e">e</span> <span style="color:#a6e22e">Event</span>) {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">RLock</span>()
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">RUnlock</span>()
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">logp</span>.<span style="color:#a6e22e">Debug</span>(<span style="color:#e6db74">&#34;bus&#34;</span>, <span style="color:#e6db74">&#34;%s: %+v&#34;</span>, <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">name</span>, <span style="color:#a6e22e">e</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">listener</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">listeners</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">listener</span>.<span style="color:#a6e22e">interested</span>(<span style="color:#a6e22e">e</span>) {
-</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">listener</span>.<span style="color:#a6e22e">channel</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">e</span>
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>Subscribe</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">b</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">bus</span>) <span style="color:#a6e22e">Subscribe</span>(<span style="color:#a6e22e">filter</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">string</span>) <span style="color:#a6e22e">Listener</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">listener</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">listener</span>{
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">filter</span>:  <span style="color:#a6e22e">filter</span>,
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">bus</span>:     <span style="color:#a6e22e">b</span>,
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">channel</span>: make(<span style="color:#66d9ef">chan</span> <span style="color:#a6e22e">Event</span>, <span style="color:#ae81ff">100</span>),
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">Lock</span>()
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">Unlock</span>()
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">listeners</span> = append(<span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">listeners</span>, <span style="color:#a6e22e">listener</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">listener</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="strategy">strategy</h2>
-<p>libbeat/outputs/kafka.makePartitioner()</p>
-    </div>
-    <a href="/posts/design_pattern_used_in_filebeat/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
-  </div>
-</div>
-
-        </div>
-      
-        <div class="relative w-100 w-30-l mb4 bg-white">
-          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
-  <div class="bg-white mb3 pa4 gray overflow-hidden">
-    <span class="f6 db">Posts</span>
-    <h1 class="f3 near-black">
-      <a href="/posts/go_string_byte/" class="link black dim">
-        go string to byte
-      </a>
-    </h1>
-    <div class="nested-links f5 lh-copy nested-copy-line-height">
-      <h2 id="0x01-背景">0x01 背景</h2>
-<p>最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">s1</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;abc&#34;</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(cap([]byte(<span style="color:#a6e22e">s1</span>)))
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="0x02-探究">0x02 探究</h2>
-<p>那么这是为什么呢，首先看汇编</p>
-<blockquote>
-<p>-N 禁止优化
--S 输出汇编代码
--l 禁止内联</p>
-</blockquote>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">build</span> <span style="color:#f92672">-</span><span style="color:#a6e22e">gcflags</span>=<span style="color:#e6db74">&#34;-N -l -S&#34;</span> <span style="color:#66d9ef">go</span>.<span style="color:#66d9ef">go</span>
-</span></span></code></pre></div><p>得到以下代码</p>
-<pre tabindex="0"><code>&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc0
-	0x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0
-	0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX
-	0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX
-	0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX)
-	0x0012 00018 (/home/xxx/go.go:5)	JLS	283
-	0x0018 00024 (/home/xxx/go.go:5)	SUBQ	$192, SP
-	0x001f 00031 (/home/xxx/go.go:5)	MOVQ	BP, 184(SP)
-	0x0027 00039 (/home/xxx/go.go:5)	LEAQ	184(SP), BP
-	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$0, gclocals·7d2d5fca80364273fb07d5820a76fef4(SB)
-	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$1, gclocals·4dc9e0f0c3406fbbbbd2ec99068e8282(SB)
-	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$2, gclocals·8dcadbff7c52509cfe2d26e4d7d24689(SB)
-	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$3, &#34;&#34;.main.stkobj(SB)
-	0x002f 00047 (/home/xxx/go.go:6)	PCDATA	$0, $1
-	0x002f 00047 (/home/xxx/go.go:6)	PCDATA	$1, $0
-	0x002f 00047 (/home/xxx/go.go:6)	LEAQ	go.string.&#34;abc&#34;(SB), AX
-	0x0036 00054 (/home/xxx/go.go:6)	MOVQ	AX, &#34;&#34;.s1+104(SP)
-	0x003b 00059 (/home/xxx/go.go:6)	MOVQ	$3, &#34;&#34;.s1+112(SP)
-	0x0044 00068 (/home/xxx/go.go:7)	PCDATA	$0, $2
-	0x0044 00068 (/home/xxx/go.go:7)	LEAQ	&#34;&#34;..autotmp_4+56(SP), CX
-	0x0049 00073 (/home/xxx/go.go:7)	PCDATA	$0, $1
-	0x0049 00073 (/home/xxx/go.go:7)	MOVQ	CX, (SP)
-	0x004d 00077 (/home/xxx/go.go:7)	PCDATA	$0, $0
-	0x004d 00077 (/home/xxx/go.go:7)	MOVQ	AX, 8(SP)
-	0x0052 00082 (/home/xxx/go.go:7)	MOVQ	$3, 16(SP)
-	0x005b 00091 (/home/xxx/go.go:7)	CALL	runtime.stringtoslicebyte(SB)
-	0x0060 00096 (/home/xxx/go.go:7)	MOVQ	40(SP), AX
-	0x0065 00101 (/home/xxx/go.go:7)	MOVQ	32(SP), CX
-	0x006a 00106 (/home/xxx/go.go:7)	PCDATA	$0, $3
-	0x006a 00106 (/home/xxx/go.go:7)	MOVQ	24(SP), DX
-	0x006f 00111 (/home/xxx/go.go:7)	PCDATA	$0, $0
-	0x006f 00111 (/home/xxx/go.go:7)	MOVQ	DX, &#34;&#34;..autotmp_2+160(SP)
-	0x0077 00119 (/home/xxx/go.go:7)	MOVQ	CX, &#34;&#34;..autotmp_2+168(SP)
-	0x007f 00127 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_2+176(SP)
-	0x0087 00135 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_3+48(SP)
-	0x008c 00140 (/home/xxx/go.go:7)	MOVQ	AX, (SP)
-	0x0090 00144 (/home/xxx/go.go:7)	CALL	runtime.convT64(SB)
-	0x0095 00149 (/home/xxx/go.go:7)	PCDATA	$0, $1
-	0x0095 00149 (/home/xxx/go.go:7)	MOVQ	8(SP), AX
-	0x009a 00154 (/home/xxx/go.go:7)	PCDATA	$0, $0
-	0x009a 00154 (/home/xxx/go.go:7)	PCDATA	$1, $1
-	0x009a 00154 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_5+96(SP)
-	0x009f 00159 (/home/xxx/go.go:7)	PCDATA	$1, $2
-	0x009f 00159 (/home/xxx/go.go:7)	XORPS	X0, X0
-	0x00a2 00162 (/home/xxx/go.go:7)	MOVUPS	X0, &#34;&#34;..autotmp_1+120(SP)
-	0x00a7 00167 (/home/xxx/go.go:7)	PCDATA	$0, $1
-	0x00a7 00167 (/home/xxx/go.go:7)	PCDATA	$1, $1
-	0x00a7 00167 (/home/xxx/go.go:7)	LEAQ	&#34;&#34;..autotmp_1+120(SP), AX
-	0x00ac 00172 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_7+88(SP)
-	0x00b1 00177 (/home/xxx/go.go:7)	TESTB	AL, (AX)
-	0x00b3 00179 (/home/xxx/go.go:7)	PCDATA	$0, $2
-	0x00b3 00179 (/home/xxx/go.go:7)	PCDATA	$1, $0
-	0x00b3 00179 (/home/xxx/go.go:7)	MOVQ	&#34;&#34;..autotmp_5+96(SP), CX
-	0x00b8 00184 (/home/xxx/go.go:7)	PCDATA	$0, $4
-	0x00b8 00184 (/home/xxx/go.go:7)	LEAQ	type.int(SB), DX
-	0x00bf 00191 (/home/xxx/go.go:7)	PCDATA	$0, $2
-	0x00bf 00191 (/home/xxx/go.go:7)	MOVQ	DX, &#34;&#34;..autotmp_1+120(SP)
-	0x00c4 00196 (/home/xxx/go.go:7)	PCDATA	$0, $1
-	0x00c4 00196 (/home/xxx/go.go:7)	MOVQ	CX, &#34;&#34;..autotmp_1+128(SP)
-	0x00cc 00204 (/home/xxx/go.go:7)	TESTB	AL, (AX)
-	0x00ce 00206 (/home/xxx/go.go:7)	JMP	208
-	0x00d0 00208 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_6+136(SP)
-	0x00d8 00216 (/home/xxx/go.go:7)	MOVQ	$1, &#34;&#34;..autotmp_6+144(SP)
-	0x00e4 00228 (/home/xxx/go.go:7)	MOVQ	$1, &#34;&#34;..autotmp_6+152(SP)
-	0x00f0 00240 (/home/xxx/go.go:7)	PCDATA	$0, $0
-	0x00f0 00240 (/home/xxx/go.go:7)	MOVQ	AX, (SP)
-	0x00f4 00244 (/home/xxx/go.go:7)	MOVQ	$1, 8(SP)
-	0x00fd 00253 (/home/xxx/go.go:7)	MOVQ	$1, 16(SP)
-	0x0106 00262 (/home/xxx/go.go:7)	CALL	fmt.Println(SB)
-	0x010b 00267 (/home/xxx/go.go:9)	MOVQ	184(SP), BP
-	0x0113 00275 (/home/xxx/go.go:9)	ADDQ	$192, SP
-	0x011a 00282 (/home/xxx/go.go:9)	RET
-	0x011b 00283 (/home/xxx/go.go:9)	NOP
-	0x011b 00283 (/home/xxx/go.go:5)	PCDATA	$1, $-1
-	0x011b 00283 (/home/xxx/go.go:5)	PCDATA	$0, $-1
-	0x011b 00283 (/home/xxx/go.go:5)	CALL	runtime.morestack_noctxt(SB)
-	0x0120 00288 (/home/xxx/go.go:5)	JMP	0
-</code></pre><p>声明部分</p>
-    </div>
-    <a href="/posts/go_string_byte/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
-  </div>
-</div>
-
-        </div>
-      
-        <div class="relative w-100 w-30-l mb4 bg-white">
-          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
-  <div class="bg-white mb3 pa4 gray overflow-hidden">
-    <span class="f6 db">Posts</span>
-    <h1 class="f3 near-black">
-      <a href="/posts/go_interface/" class="link black dim">
-        [翻译]go interface
-      </a>
-    </h1>
-    <div class="nested-links f5 lh-copy nested-copy-line-height">
-      <h2 id="译-go-interface-values">[译] Go Interface Values</h2>
-<blockquote>
-<p>原文 (<a href="https://www.airs.com/blog/archives/281">https://www.airs.com/blog/archives/281</a>)</p>
-</blockquote>
-<h2 id="原文翻译">原文翻译</h2>
-<p>虽然 Go 中interface 的指是灵活的，但它们也有令人困惑的方面。</p>
-<p>接口值例如—-一个interface类型的变量—-包含其他类型的值。 interface类型被称为静态类型，因为这是编译器在编译期看到的类型。 另一种类型只在运行时可见，称为动态类型(dynamic type)。 根据定义，动态类型可以是任何除了interface的其他类型。</p>
-<p>当通过赋值或函数调用复制一个 interface 值时，你是在复制动态类型里的值。 这通常是大多数类型通常的工作方式。 但是，使用 interface 的一个非常常见的情况是将动态类型作为指针使用。 在这种情况下，当你拷贝接口时，你拷贝的其实是指针，但是你不会拷贝指针指向的值。 在许多情况下，如果方法要更改值本身, 类型(type)的方法需要使用指针作为接收方(receiver)。 当 interface 必需的方法发生这种情况时，interface 实际上要求动态类型是指针类型。</p>
-<p>这意味着，技术上来说虽然 interface 总是作为一个值拷贝，但在实际使用中，它们的行为常常好像是通过引用拷贝的。 也就是说，尽管没有显式标记，接口对象通常充当指针的角色。 这可能会让你困惑，直到你明白到底发生了什么。</p>
-<p>在我上一篇文章中提到，对于 gccgo，一个 interface 总是包含一个指向值的指针。 现在我要纠正这个错误: 如果一个程序存储了包含了指针(或者unsafe.Pointer类型) 的 interface，那么存储在 interface 中的值就是指针本身。 也就是说，gccgo 不存储指向指针的指针(这需要分配堆空间来保存指针)。 这是一种自然的高效方法，因为实际上大多数接口对象都包含指针。</p>
-<p>这种高效的方法贯穿于方法的实现。 方法总是接受指针作为接收方(receiver)参数。 如果方法的接收方(receiver)类型实际上不是指针，那么指针将隐式解引用，并在方法代码的开头复制值。 这意味着当在接口上调用方法时，存储在接口中的值可以直接传递给方法，而不管动态类型是否是指针。 (和上一篇文章一样，gc 编译器做的事情有些不同。)</p>
-<h3 id="补充">补充</h3>
-<blockquote>
-<p>原文其实有点绕</p>
-</blockquote>
-<blockquote>
-<p>如果 v 是一个 interface{}</p>
-</blockquote>
-<p>什么是interface?</p>
-<p>Interface 同时是两种东西</p>
-<ol>
-<li>一些方法的集合</li>
-<li>它自身也是一种类型</li>
-</ol>
-<blockquote>
-<p>interface{} type, the empty interface is the interface that has no methods.</p>
-    </div>
-    <a href="/posts/go_interface/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
-  </div>
-</div>
-
-        </div>
-      
-    </section></article>
-
-    </main>
-    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
-  <div class="flex justify-between">
-  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://fancive.github.io/" >
-    &copy;  home 2025 
-  </a>
-    <div><div class="ananke-socials"></div>
-</div>
-  </div>
-</footer>
-
+    <script type="module" src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.js"></script>
   </body>
 </html>
