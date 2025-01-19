@@ -11,8 +11,6 @@ tags:
 - AIOps
 ---
 
-- link: https://ieeexplore.ieee.org/abstract/document/8802836
-
 ## first pass
 
 5-10 mins
@@ -22,6 +20,7 @@ tags:
 3. conclusions
 4. references
 <!--more-->
+
 ### question
 
 **Category: What type of paper is this? A measurement paper? An analysis of an existing system? A description of a research prototype?**

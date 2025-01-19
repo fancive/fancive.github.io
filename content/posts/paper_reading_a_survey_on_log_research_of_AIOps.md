@@ -11,8 +11,6 @@ tags:
 - AIOps
 ---
 
-- link: https://dl.acm.org/doi/abs/10.1007/s11036-021-01832-3
-
 # first pass
 
 5-10 mins
