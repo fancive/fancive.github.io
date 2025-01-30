@@ -3,45 +3,55 @@
   x-data
   :class="$store.darkMode.class()"
   :data-theme="$store.darkMode.theme()">
-  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About | home</title>
+    <title>Automating Deployment Pipeline From Code Review to Production | home</title>
 
     
 
-<link rel="canonical" href="http://localhost:1313/about/" />
+<link rel="canonical" href="https://fancive.github.io/posts/automating-deployment-pipeline-from-code-review-to-production/" />
 
 
 
-<meta name="author" content="fancive" />
-<meta name="description" content="欢迎来到荷兰" />
+<meta name="author" content="fancivez" />
+<meta name="description" content="传统部署流程的痛点 在开发自动化部署工具之前，我们的部署流程需要频繁的人工介入和等待。让我们看看一个典型的部署过程：
+评审与合并阶段 开发人员提交代码后，首先要在代码平台等待其他同学评审并给出 &#43;2。这个过程完全依赖人工，评审人可能正在开会或者忙于其他事情，导致评审时间不可控。 " />
+
+
+<meta name="keywords" content="开发工具">
 
 
 
 <meta name="generator" content="Hugo 0.138.0">
 
 
-<meta property="og:url" content="http://localhost:1313/about/">
+<meta property="og:url" content="https://fancive.github.io/posts/automating-deployment-pipeline-from-code-review-to-production/">
   <meta property="og:site_name" content="home">
-  <meta property="og:title" content="About">
-  <meta property="og:description" content="golang developer@baidu.com fancivez@gmail.com wechat:fancivez">
+  <meta property="og:title" content="Automating Deployment Pipeline From Code Review to Production">
+  <meta property="og:description" content="传统部署流程的痛点 在开发自动化部署工具之前，我们的部署流程需要频繁的人工介入和等待。让我们看看一个典型的部署过程：
+评审与合并阶段 开发人员提交代码后，首先要在代码平台等待其他同学评审并给出 &#43;2。这个过程完全依赖人工，评审人可能正在开会或者忙于其他事情，导致评审时间不可控。">
   <meta property="og:locale" content="en">
   <meta property="og:type" content="article">
-    <meta property="article:published_time" content="2019-02-28T00:00:00+00:00">
-    <meta property="article:modified_time" content="2019-02-28T00:00:00+00:00">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-01-30T14:07:06+08:00">
+    <meta property="article:modified_time" content="2025-01-30T14:07:06+08:00">
+    <meta property="article:tag" content="开发工具">
 
 
 
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="About">
-  <meta name="twitter:description" content="golang developer@baidu.com fancivez@gmail.com wechat:fancivez">
+  <meta name="twitter:title" content="Automating Deployment Pipeline From Code Review to Production">
+  <meta name="twitter:description" content="传统部署流程的痛点 在开发自动化部署工具之前，我们的部署流程需要频繁的人工介入和等待。让我们看看一个典型的部署过程：
+评审与合并阶段 开发人员提交代码后，首先要在代码平台等待其他同学评审并给出 &#43;2。这个过程完全依赖人工，评审人可能正在开会或者忙于其他事情，导致评审时间不可控。">
 
 
 
 
-<link rel="stylesheet" href="/css/output.css" />
+  
+
+<link rel="stylesheet" href="/css/output.min.css" />
 
 
 
@@ -227,17 +237,19 @@
   <div class="lg:col-span-2">
     <article class="mx-auto prose prose-quoteless dark:prose-invert" id="dream-single-post-main" itemscope itemtype="http://schema.org/Article">
       
-  <meta itemprop="name" content="About">
-  <meta itemprop="description" content="golang developer@baidu.com fancivez@gmail.com wechat:fancivez">
-  <meta itemprop="datePublished" content="2019-02-28T00:00:00+00:00">
-  <meta itemprop="dateModified" content="2019-02-28T00:00:00+00:00">
-  <meta itemprop="wordCount" content="4">
+  <meta itemprop="name" content="Automating Deployment Pipeline From Code Review to Production">
+  <meta itemprop="description" content="传统部署流程的痛点 在开发自动化部署工具之前，我们的部署流程需要频繁的人工介入和等待。让我们看看一个典型的部署过程：
+评审与合并阶段 开发人员提交代码后，首先要在代码平台等待其他同学评审并给出 &#43;2。这个过程完全依赖人工，评审人可能正在开会或者忙于其他事情，导致评审时间不可控。">
+  <meta itemprop="datePublished" content="2025-01-30T14:07:06+08:00">
+  <meta itemprop="dateModified" content="2025-01-30T14:07:06+08:00">
+  <meta itemprop="wordCount" content="60">
+  <meta itemprop="keywords" content="开发工具">
 
       <header>
-        <h1 itemprop="headline">About</h1>
+        <h1 itemprop="headline">Automating Deployment Pipeline From Code Review to Production</h1>
         <p class="text-sm">
           
-            Thursday, Feb 28, 2019
+            Thursday, Jan 30, 2025
           
 
           | <span>1 minute read</span>
@@ -245,7 +257,7 @@
           
           | <span>Updated at
             
-              Thursday, Feb 28, 2019
+              Thursday, Jan 30, 2025
             </span>
           
         </p>
@@ -275,19 +287,19 @@
   
   
     <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
-      href="https://x.com/intent/post?text=About&amp;url=http://localhost:1313/about/" target="_blank" rel="noopener noreferrer"
+      href="https://x.com/intent/post?text=Automating%20Deployment%20Pipeline%20From%20Code%20Review%20to%20Production&amp;url=https://fancive.github.io/posts/automating-deployment-pipeline-from-code-review-to-production/" target="_blank" rel="noopener noreferrer"
       title="Share on X">
       <ion-icon class="group-hover:text-primary-content" name="logo-x"></ion-icon>
     </a>
   
     <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
-      href="https://facebook.com/sharer/sharer.php?u=http://localhost:1313/about/" target="_blank" rel="noopener noreferrer"
+      href="https://facebook.com/sharer/sharer.php?u=https://fancive.github.io/posts/automating-deployment-pipeline-from-code-review-to-production/" target="_blank" rel="noopener noreferrer"
       title="Share on Facebook">
       <ion-icon class="group-hover:text-primary-content" name="logo-facebook"></ion-icon>
     </a>
   
     <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
-      href="https://wa.me/?text=About%20http://localhost:1313/about/" target="_blank" rel="noopener noreferrer"
+      href="https://wa.me/?text=Automating%20Deployment%20Pipeline%20From%20Code%20Review%20to%20Production%20https://fancive.github.io/posts/automating-deployment-pipeline-from-code-review-to-production/" target="_blank" rel="noopener noreferrer"
       title="Share on WhatsApp">
       <ion-icon class="group-hover:text-primary-content" name="logo-whatsapp"></ion-icon>
     </a>
@@ -302,15 +314,53 @@
 
       <section id="dream-single-post-content" itemprop="articleBody">
         
+        <img src="/images/img/idp.jpg" alt="Automating Deployment Pipeline From Code Review to Production" />
+        
 
-        <ul>
-<li>golang <a href="mailto:developer@baidu.com" target="_blank">developer@baidu.com</a>
-</li>
-<li><a href="mailto:fancivez@gmail.com" target="_blank">fancivez@gmail.com</a>
-</li>
-<li>wechat:fancivez</li>
-</ul>
-
+        <h2 id="传统部署流程的痛点">传统部署流程的痛点</h2>
+<p>在开发自动化部署工具之前，我们的部署流程需要频繁的人工介入和等待。让我们看看一个典型的部署过程：</p>
+<ol>
+<li>评审与合并阶段
+开发人员提交代码后，首先要在代码平台等待其他同学评审并给出 +2。这个过程完全依赖人工，评审人可能正在开会或者忙于其他事情，导致评审时间不可控。</li>
+</ol>
+<ol start="2">
+<li>流水线等待阶段
+代码合入 feature 分支后，需要等待大约 5 分钟完成流水线检查，包括编译和各类代码检查。这期间开发人员需要时不时刷新页面查看流水线状态。</li>
+<li>分支合并阶段
+流水线通过后，还需要手动将 feature 分支合入部署分支（如沙盒环境分支）。合入后又要再等待一轮流水线，又是 5 分钟左右的等待和检查时间。</li>
+<li>部署准备阶段
+接下来是最容易出错的环节：手动处理构建产物 URL。由于只有 master 分支支持构建版本号，开发人员需要手动复制编译产出的 URL，并根据部署需求修改 URL 后缀。这个步骤既繁琐又容易出错。</li>
+<li>部署配置阶段
+在部署平台上，需要手动选择正确的服务、环境和发布策略，然后填写前面准备好的编译产出 URL。每一个选项都不能出错，否则可能导致部署失败或者部署到错误的环境。</li>
+<li>部署执行阶段
+部署开始后，还需要持续关注部署状态，在特定阶段点击&quot;继续&quot;按钮。整个过程需要人工监控，无法安心去做其他事情。</li>
+</ol>
+<h2 id="痛点总结">痛点总结</h2>
+<p>这个传统的部署流程存在几个明显的问题：</p>
+<ol>
+<li>时间成本高：整个过程需要至少 15 分钟，其中大部分是等待时间。</li>
+<li>人工介入频繁：需要在不同阶段反复检查状态、手动操作，无法专注于其他工作。</li>
+<li>容易出错：特别是在处理构建 URL 和选择部署参数时，手动操作容易出现失误。</li>
+<li>体验割裂：需要在多个平台之间切换，体验非常割裂。</li>
+</ol>
+<h2 id="自动化改造">自动化改造</h2>
+<p>针对这些痛点，我们的自动化部署工具实现了以下改进：</p>
+<ol>
+<li>自动状态跟踪：工具会自动监控评审状态、流水线状态，无需人工刷新查看。</li>
+<li>智能分支管理：评审通过后自动完成分支合并，无需手动操作。</li>
+<li>自动参数处理：构建 URL 的获取和修改全部自动化，消除人工失误的可能。</li>
+<li>一站式操作：整合多平台功能，在一个工具内完成全流程操作。</li>
+<li>可视化进度：清晰展示每个阶段的状态和预计剩余时间，让等待过程更加透明。</li>
+</ol>
+<h2 id="收益">收益</h2>
+<p>通过自动化改造，我们实现了显著的效率提升：</p>
+<ol>
+<li>部署时间从 15 分钟减少到 5 分钟，大大节省了等待时间。</li>
+<li>无需人工干预，可以专注于其他工作</li>
+<li>完全消除了手动操作导致的错误</li>
+<li>标准化的部署流程，降低了新人上手难度
+这个工具很好地诠释了&quot;工欲善其事，必先利其器&quot;的理念。通过消除重复的人工操作，不仅提升了团队的开发效率，也让部署过程变得更加可靠和轻松。</li>
+</ol>
       </section>
 
       
@@ -324,9 +374,9 @@
   <div id="disqus_thread"></div>
 <script>
     window.disqus_config = function () {
-        this.page.identifier = '\/about\/';
-        this.page.title = 'About';
-        this.page.url = 'http:\/\/localhost:1313\/about\/';
+        this.page.identifier = '\/posts\/automating-deployment-pipeline-from-code-review-to-production\/';
+        this.page.title = 'Automating Deployment Pipeline From Code Review to Production';
+        this.page.url = 'https:\/\/fancive.github.io\/posts\/automating-deployment-pipeline-from-code-review-to-production\/';
 
         
     };
@@ -498,12 +548,16 @@
 
   
   
-  <script src="/js/grid.js"></script>
+    
+  
+  <script src="/js/grid.min.js"></script>
 
 
 
 
-<script src="/js/main.js"></script>
+  
+
+<script src="/js/main.min.js"></script>
 
     
 

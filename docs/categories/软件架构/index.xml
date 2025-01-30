@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>软件架构 on home</title>
+    <link>https://fancive.github.io/categories/%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</link>
+    <description>Recent content in 软件架构 on home</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 30 Jan 2025 14:07:06 +0800</lastBuildDate>
+    <atom:link href="https://fancive.github.io/categories/%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Automating Deployment Pipeline From Code Review to Production</title>
+      <link>https://fancive.github.io/posts/automating-deployment-pipeline-from-code-review-to-production/</link>
+      <pubDate>Thu, 30 Jan 2025 14:07:06 +0800</pubDate>
+      <guid>https://fancive.github.io/posts/automating-deployment-pipeline-from-code-review-to-production/</guid>
+      <description>&lt;h2 id=&#34;传统部署流程的痛点&#34;&gt;传统部署流程的痛点&lt;/h2&gt;&#xA;&lt;p&gt;在开发自动化部署工具之前，我们的部署流程需要频繁的人工介入和等待。让我们看看一个典型的部署过程：&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;评审与合并阶段&#xA;开发人员提交代码后，首先要在代码平台等待其他同学评审并给出 +2。这个过程完全依赖人工，评审人可能正在开会或者忙于其他事情，导致评审时间不可控。&lt;/li&gt;&#xA;&lt;/ol&gt;</description>
+    </item>
+  </channel>
+</rss>

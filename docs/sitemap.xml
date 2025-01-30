@@ -2,13 +2,38 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://fancive.github.io/posts/automating-deployment-pipeline-from-code-review-to-production/</loc>
+    <lastmod>2025-01-30T14:07:06+08:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://fancive.github.io/categories/</loc>
+    <lastmod>2025-01-30T14:07:06+08:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
     <loc>https://fancive.github.io/</loc>
-    <lastmod>2025-01-11T16:26:38+08:00</lastmod>
+    <lastmod>2025-01-30T14:07:06+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://fancive.github.io/posts/</loc>
-    <lastmod>2025-01-11T16:26:38+08:00</lastmod>
+    <lastmod>2025-01-30T14:07:06+08:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://fancive.github.io/tags/</loc>
+    <lastmod>2025-01-30T14:07:06+08:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://fancive.github.io/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/</loc>
+    <lastmod>2025-01-30T14:07:06+08:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://fancive.github.io/categories/%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84/</loc>
+    <lastmod>2025-01-30T14:07:06+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
@@ -22,22 +47,12 @@
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://fancive.github.io/categories/</loc>
-    <lastmod>2024-08-31T09:42:01+08:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://fancive.github.io/tags/llm/</loc>
     <lastmod>2024-08-31T09:42:01+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://fancive.github.io/posts/llm-driven-alert-diagnosis-engine-design/</loc>
-    <lastmod>2024-08-31T09:42:01+08:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://fancive.github.io/tags/</loc>
     <lastmod>2024-08-31T09:42:01+08:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
