@@ -91,6 +91,11 @@ All Tags | home</title>
         
 
 
+<li>
+  <div role="link" tabindex="0" class="inline-flex items-center p-2 cursor-pointer" @click="flip = !flip" title="About">
+    <ion-icon name="information-circle"></ion-icon>About</div>
+</li>
+
 
 
 
@@ -148,6 +153,12 @@ All Tags | home</title>
     <section class="hidden sm:flex sm:items-center sm:gap-2 md:gap-4">
       
       
+      
+      <div role="link" tabindex="0"
+        class="text-sm font-semibold cursor-pointer hover:underline"
+        @click="flip = !flip"
+        title="About"
+      >About</div>
       
       
 
@@ -212,11 +223,15 @@ All Tags | home</title>
 
   <div class="md:basis-[200px] lg:basis-[300px] p-4 prose dark:prose-invert">
     <h1 class="text-2xl">All Tags</h1>
-    <p class="text-sm">19 tags</p>
+    <p class="text-sm">20 tags</p>
     <div class="flex flex-wrap gap-4 mt-6">
       
       <a href="/tags/aiops/" class="badge h-6 no-underline hover:badge-primary">
         AIOps
+      </a>
+      
+      <a href="/tags/devops/" class="badge h-6 no-underline hover:badge-primary">
+        DevOps
       </a>
       
       <a href="/tags/filebeat/" class="badge h-6 no-underline hover:badge-primary">
@@ -235,10 +250,6 @@ All Tags | home</title>
         LLM
       </a>
       
-      <a href="/tags/mermaid/" class="badge h-6 no-underline hover:badge-primary">
-        Mermaid
-      </a>
-      
       <a href="/tags/paper-reading/" class="badge h-6 no-underline hover:badge-primary">
         Paper Reading
       </a>
@@ -249,10 +260,6 @@ All Tags | home</title>
       
       <a href="/tags/%E5%91%8A%E8%AD%A6%E7%B3%BB%E7%BB%9F/" class="badge h-6 no-underline hover:badge-primary">
         告警系统
-      </a>
-      
-      <a href="/tags/%E5%9B%BE%E8%A1%A8/" class="badge h-6 no-underline hover:badge-primary">
-        图表
       </a>
       
       <a href="/tags/%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/" class="badge h-6 no-underline hover:badge-primary">
@@ -279,8 +286,16 @@ All Tags | home</title>
         翻译
       </a>
       
+      <a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/" class="badge h-6 no-underline hover:badge-primary">
+        自动化
+      </a>
+      
       <a href="/tags/%E8%87%AA%E5%8A%A8%E5%AE%9A%E4%BD%8D%E7%B3%BB%E7%BB%9F/" class="badge h-6 no-underline hover:badge-primary">
         自动定位系统
+      </a>
+      
+      <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" class="badge h-6 no-underline hover:badge-primary">
+        设计模式
       </a>
       
       <a href="/tags/%E8%AF%8A%E6%96%AD%E5%BC%95%E6%93%8E/" class="badge h-6 no-underline hover:badge-primary">
@@ -303,74 +318,17 @@ All Tags | home</title>
     <div class="dream-grid">
     
       <div class="w-full md:w-1/2 lg:w-1/3 p-4 dream-column">
-        <a class="card card-compact bg-base-100 hover:bg-base-content/10 shadow-xl cursor-pointer dark:border dark:border-base-content/30" href="/posts/go_string_byte/">
-  
-  <figure>
-    
-    
-    <picture>
-      <source srcset="/images/default4_hu11774824972063855820.webp" type="image/webp" />
-      <img src="/images/default4.jpg" alt="/images/default4.jpg" />
-    </picture>
-    
-  </figure>
-  
-
-  <div class="card-body">
-    <h2 class="card-title">go string to byte</h2>
-
-    <p class="date text-base-content/60">
-    
-      Sunday, May 31, 2020
-    
-    </p>
-
-    <h2 id="0x01-背景">0x01 背景</h2>
-<p>最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32</p>
-
-    
-    <div class="card-actions justify-between items-center mt-4">
-      
-        <div class="flex items-center">
-  
-  <span>@</span>
-  
-
-  <span itemprop="author" itemscope itemtype="https://schema.org/Person">
-  
-    <span itemprop="name">fancive</span>
-  
-  </span>
-</div>
-
-      
-
-      <div class="flex items-center">
-        <ion-icon name="time" class="mr-1"></ion-icon>
-        <span>4 minute read</span>
-      </div>
-    </div>
-  </div>
-</a>
-
-      </div>
-    
-      <div class="w-full md:w-1/2 lg:w-1/3 p-4 dream-column">
         <a class="card card-compact bg-base-100 hover:bg-base-content/10 shadow-xl cursor-pointer dark:border dark:border-base-content/30" href="/posts/go_interface/">
   
   <figure>
     
-    
-    <picture>
-      <source srcset="/images/default1_hu18298318514717008910.webp" type="image/webp" />
-      <img src="/images/default1.jpg" alt="/images/default1.jpg" />
-    </picture>
+    <img src="/images/illustrations/interface.jpg" alt="[翻译] Go Interface 深度解析" />
     
   </figure>
   
 
   <div class="card-body">
-    <h2 class="card-title">[翻译]go interface</h2>
+    <h2 class="card-title">[翻译] Go Interface 深度解析</h2>
 
     <p class="date text-base-content/60">
     
@@ -378,18 +336,7 @@ All Tags | home</title>
     
     </p>
 
-    <h2 id="译-go-interface-values">[译] Go Interface Values</h2>
-
-
-
-  <blockquote>
-    <p>原文 (<a href="https://www.airs.com/blog/archives/281" target="_blank">https://www.airs.com/blog/archives/281</a>
-)</p>
-
-  </blockquote>
-
-<h2 id="原文翻译">原文翻译</h2>
-<p>虽然 Go 中interface 的指是灵活的，但它们也有令人困惑的方面。</p>
+    深入理解 Go 语言 interface 的内部实现机制，包括静态类型、动态类型以及值拷贝的工作原理。
 
     
     <div class="card-actions justify-between items-center mt-4">
@@ -499,6 +446,51 @@ All Tags | home</title>
             <div class="dream-grid dream-grid-about">
   
   
+  
+  <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-4 dream-column">
+    <article
+      class="card card-compact bg-base-100 hover:bg-base-content/10 shadow-xl dark:border dark:border-base-content/30"
+    >
+      <div class="card-body">
+        <div class="card-title">About</div>
+
+        <div class="prose dark:prose-invert">
+          <h2 id="-关于我">👋 关于我</h2>
+<p>我是 fancivez，一名 Golang 后端工程师，目前就职于百度。</p>
+<h2 id="-技术栈">💻 技术栈</h2>
+<ul>
+<li><strong>主要语言</strong>: Go (Golang)</li>
+<li><strong>专长领域</strong>:
+<ul>
+<li>后端服务开发</li>
+<li>AIOps (智能运维)</li>
+<li>系统架构设计</li>
+<li>自动化工具开发</li>
+</ul>
+</li>
+</ul>
+<h2 id="-博客主题">📝 博客主题</h2>
+<p>这个博客主要分享：</p>
+<ul>
+<li>Go 语言深度技术文章和源码分析</li>
+<li>软件架构设计与最佳实践</li>
+<li>AIOps 领域的研究与实践</li>
+<li>个人成长与思考</li>
+</ul>
+<h2 id="-联系方式">📫 联系方式</h2>
+<ul>
+<li><strong>Email</strong>: <a href="mailto:fancivez@gmail.com" target="_blank">fancivez@gmail.com</a>
+</li>
+<li><strong>GitHub</strong>: <a href="https://github.com/fancive" target="_blank">github.com/fancive</a>
+</li>
+<li><strong>WeChat</strong>: fancivez</li>
+</ul>
+<p>欢迎交流技术，分享想法！</p>
+
+        </div>
+      </div>
+    </article>
+  </div>
   
   
 

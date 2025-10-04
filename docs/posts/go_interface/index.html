@@ -114,6 +114,11 @@
         
 
 
+<li>
+  <div role="link" tabindex="0" class="inline-flex items-center p-2 cursor-pointer" @click="flip = !flip" title="About">
+    <ion-icon name="information-circle"></ion-icon>About</div>
+</li>
+
 
 
 
@@ -171,6 +176,12 @@
     <section class="hidden sm:flex sm:items-center sm:gap-2 md:gap-4">
       
       
+      
+      <div role="link" tabindex="0"
+        class="text-sm font-semibold cursor-pointer hover:underline"
+        @click="flip = !flip"
+        title="About"
+      >About</div>
       
       
 
@@ -574,6 +585,51 @@ Values stored in interfaces might be arbitrarily large, but only one word is ded
             <div class="dream-grid dream-grid-about">
   
   
+  
+  <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-4 dream-column">
+    <article
+      class="card card-compact bg-base-100 hover:bg-base-content/10 shadow-xl dark:border dark:border-base-content/30"
+    >
+      <div class="card-body">
+        <div class="card-title">About</div>
+
+        <div class="prose dark:prose-invert">
+          <h2 id="-关于我">👋 关于我</h2>
+<p>我是 fancivez，一名 Golang 后端工程师，目前就职于百度。</p>
+<h2 id="-技术栈">💻 技术栈</h2>
+<ul>
+<li><strong>主要语言</strong>: Go (Golang)</li>
+<li><strong>专长领域</strong>:
+<ul>
+<li>后端服务开发</li>
+<li>AIOps (智能运维)</li>
+<li>系统架构设计</li>
+<li>自动化工具开发</li>
+</ul>
+</li>
+</ul>
+<h2 id="-博客主题">📝 博客主题</h2>
+<p>这个博客主要分享：</p>
+<ul>
+<li>Go 语言深度技术文章和源码分析</li>
+<li>软件架构设计与最佳实践</li>
+<li>AIOps 领域的研究与实践</li>
+<li>个人成长与思考</li>
+</ul>
+<h2 id="-联系方式">📫 联系方式</h2>
+<ul>
+<li><strong>Email</strong>: <a href="mailto:fancivez@gmail.com" target="_blank">fancivez@gmail.com</a>
+</li>
+<li><strong>GitHub</strong>: <a href="https://github.com/fancive" target="_blank">github.com/fancive</a>
+</li>
+<li><strong>WeChat</strong>: fancivez</li>
+</ul>
+<p>欢迎交流技术，分享想法！</p>
+
+        </div>
+      </div>
+    </article>
+  </div>
   
   
 
