@@ -6,7 +6,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>filebeat中使用的设计模式 | home</title>
+    <title>Filebeat 中使用的设计模式 | home</title>
 
     
 
@@ -15,10 +15,10 @@
 
 
 <meta name="author" content="fancive" />
-<meta name="description" content="registry 与 lazyinit 结合" />
+<meta name="description" content="分析 Filebeat 源码中使用的设计模式，包括 Registry 模式、Observer 模式、Strategy 模式和 Object Pool 模式等优秀的工程实践。" />
 
 
-<meta name="keywords" content="Filebeat">
+<meta name="keywords" content="Filebeat,设计模式">
 
 
 
@@ -27,21 +27,22 @@
 
 <meta property="og:url" content="https://fancive.github.io/posts/design_pattern_used_in_filebeat/">
   <meta property="og:site_name" content="home">
-  <meta property="og:title" content="filebeat中使用的设计模式">
-  <meta property="og:description" content="registry 与 lazyinit 结合">
+  <meta property="og:title" content="Filebeat 中使用的设计模式">
+  <meta property="og:description" content="分析 Filebeat 源码中使用的设计模式，包括 Registry 模式、Observer 模式、Strategy 模式和 Object Pool 模式等优秀的工程实践。">
   <meta property="og:locale" content="en">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2020-09-16T22:15:59+08:00">
     <meta property="article:modified_time" content="2020-09-16T22:15:59+08:00">
     <meta property="article:tag" content="Filebeat">
+    <meta property="article:tag" content="设计模式">
 
 
 
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="filebeat中使用的设计模式">
-  <meta name="twitter:description" content="registry 与 lazyinit 结合">
+  <meta name="twitter:title" content="Filebeat 中使用的设计模式">
+  <meta name="twitter:description" content="分析 Filebeat 源码中使用的设计模式，包括 Registry 模式、Observer 模式、Strategy 模式和 Object Pool 模式等优秀的工程实践。">
 
 
 
@@ -234,15 +235,15 @@
   <div class="lg:col-span-2">
     <article class="mx-auto prose prose-quoteless dark:prose-invert" id="dream-single-post-main" itemscope itemtype="http://schema.org/Article">
       
-  <meta itemprop="name" content="filebeat中使用的设计模式">
-  <meta itemprop="description" content="registry 与 lazyinit 结合">
+  <meta itemprop="name" content="Filebeat 中使用的设计模式">
+  <meta itemprop="description" content="分析 Filebeat 源码中使用的设计模式，包括 Registry 模式、Observer 模式、Strategy 模式和 Object Pool 模式等优秀的工程实践。">
   <meta itemprop="datePublished" content="2020-09-16T22:15:59+08:00">
   <meta itemprop="dateModified" content="2020-09-16T22:15:59+08:00">
-  <meta itemprop="wordCount" content="222">
-  <meta itemprop="keywords" content="Filebeat">
+  <meta itemprop="wordCount" content="341">
+  <meta itemprop="keywords" content="Filebeat,设计模式">
 
       <header>
-        <h1 itemprop="headline">filebeat中使用的设计模式</h1>
+        <h1 itemprop="headline">Filebeat 中使用的设计模式</h1>
         <p class="text-sm">
           
             Wednesday, Sep 16, 2020
@@ -257,8 +258,11 @@
             </span>
           
         </p>
+
+        
         <div class="flex justify-between">
-          <div class="flex items-center">
+          
+            <div class="flex items-center">
   
   <span>@</span>
   
@@ -270,6 +274,7 @@
   </span>
 </div>
 
+          
 
           <div class="flex items-center gap-2">
   
@@ -281,7 +286,7 @@
   
   
     <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
-      href="https://x.com/intent/post?text=filebeat%e4%b8%ad%e4%bd%bf%e7%94%a8%e7%9a%84%e8%ae%be%e8%ae%a1%e6%a8%a1%e5%bc%8f&amp;url=https://fancive.github.io/posts/design_pattern_used_in_filebeat/" target="_blank" rel="noopener noreferrer"
+      href="https://x.com/intent/post?text=Filebeat%20%e4%b8%ad%e4%bd%bf%e7%94%a8%e7%9a%84%e8%ae%be%e8%ae%a1%e6%a8%a1%e5%bc%8f&amp;url=https://fancive.github.io/posts/design_pattern_used_in_filebeat/" target="_blank" rel="noopener noreferrer"
       title="Share on X">
       <ion-icon class="group-hover:text-primary-content" name="logo-x"></ion-icon>
     </a>
@@ -293,7 +298,7 @@
     </a>
   
     <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
-      href="https://wa.me/?text=filebeat%e4%b8%ad%e4%bd%bf%e7%94%a8%e7%9a%84%e8%ae%be%e8%ae%a1%e6%a8%a1%e5%bc%8f%20https://fancive.github.io/posts/design_pattern_used_in_filebeat/" target="_blank" rel="noopener noreferrer"
+      href="https://wa.me/?text=Filebeat%20%e4%b8%ad%e4%bd%bf%e7%94%a8%e7%9a%84%e8%ae%be%e8%ae%a1%e6%a8%a1%e5%bc%8f%20https://fancive.github.io/posts/design_pattern_used_in_filebeat/" target="_blank" rel="noopener noreferrer"
       title="Share on WhatsApp">
       <ion-icon class="group-hover:text-primary-content" name="logo-whatsapp"></ion-icon>
     </a>
@@ -308,71 +313,109 @@
 
       <section id="dream-single-post-content" itemprop="articleBody">
         
+        <img src="/images/illustrations/patterns.jpg" alt="Filebeat 中使用的设计模式" />
+        
 
-        <h2 id="registry-与-lazyinit-结合">registry 与 lazyinit 结合</h2>
-<p>filebeat/input.New</p>
+        <h2 id="引言">引言</h2>
+<p>Filebeat 是 Elastic Stack 中用于收集和转发日志数据的轻量级采集器。通过深入阅读 Filebeat 的源码，我们可以学习到许多优秀的设计模式应用。本文将介绍 Filebeat 中使用的四种核心设计模式：Registry + LazyInit、Observer、Strategy 和 Object Pool，并分析它们如何帮助 Filebeat 实现高性能和良好的可扩展性。</p>
+<h2 id="registry-模式与-lazyinit-的结合">Registry 模式与 LazyInit 的结合</h2>
+<h3 id="设计思想">设计思想</h3>
+<p>Registry 模式（注册表模式）允许在运行时动态注册和查找组件，而 LazyInit（延迟初始化）则确保组件只在真正需要时才被创建。Filebeat 将这两种模式结合使用，实现了灵活的插件化架构。</p>
+<h3 id="实现细节">实现细节</h3>
+<p><strong>获取工厂函数</strong></p>
+<p>在 <code>filebeat/input.New</code> 中，通过 Registry 获取对应类型的工厂函数：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">f</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">GetFactory</span>(<span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">Type</span>)
-</span></span></code></pre></div><p>GetFactory</p>
+</span></span></code></pre></div><p><strong>Registry 查找逻辑</strong></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">GetFactory</span>(<span style="color:#a6e22e">name</span> <span style="color:#66d9ef">string</span>) (<span style="color:#a6e22e">Factory</span>, <span style="color:#66d9ef">error</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">exists</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">registry</span>[<span style="color:#a6e22e">name</span>]; !<span style="color:#a6e22e">exists</span> {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;Error creating input. No such input type exist: &#39;%v&#39;&#34;</span>, <span style="color:#a6e22e">name</span>)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">registry</span>[<span style="color:#a6e22e">name</span>], <span style="color:#66d9ef">nil</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>注册</p>
+</span></span></code></pre></div><p><strong>组件注册</strong></p>
+<p>各个 input 类型在初始化时自动注册到 registry：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">init</span>() {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">Register</span>(<span style="color:#e6db74">&#34;log&#34;</span>, <span style="color:#a6e22e">NewInput</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
 </span></span><span style="display:flex;"><span>        panic(<span style="color:#a6e22e">err</span>)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="observer">observer</h2>
-<p>publish</p>
+</span></span></code></pre></div><h3 id="优势">优势</h3>
+<ul>
+<li><strong>解耦</strong>：配置和具体实现分离，便于扩展新的 input 类型</li>
+<li><strong>延迟加载</strong>：只有被使用的组件才会被实例化，节省资源</li>
+<li><strong>插件化</strong>：新增功能只需注册即可，无需修改核心代码</li>
+</ul>
+<h2 id="observer-模式观察者模式">Observer 模式（观察者模式）</h2>
+<h3 id="设计思想-1">设计思想</h3>
+<p>Observer 模式定义了对象间的一对多依赖关系，当一个对象状态改变时，所有依赖它的对象都会收到通知。Filebeat 使用 Observer 模式实现事件总线（Event Bus），用于组件间的消息传递。</p>
+<h3 id="发布事件">发布事件</h3>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">b</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">bus</span>) <span style="color:#a6e22e">Publish</span>(<span style="color:#a6e22e">e</span> <span style="color:#a6e22e">Event</span>) {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">RLock</span>()
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">RUnlock</span>()
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">logp</span>.<span style="color:#a6e22e">Debug</span>(<span style="color:#e6db74">&#34;bus&#34;</span>, <span style="color:#e6db74">&#34;%s: %+v&#34;</span>, <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">name</span>, <span style="color:#a6e22e">e</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">listener</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">listeners</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 遍历所有订阅者，发送感兴趣的事件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">listener</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">listeners</span> {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">listener</span>.<span style="color:#a6e22e">interested</span>(<span style="color:#a6e22e">e</span>) {
 </span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">listener</span>.<span style="color:#a6e22e">channel</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">e</span>
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>Subscribe</p>
+</span></span></code></pre></div><h3 id="订阅事件">订阅事件</h3>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">b</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">bus</span>) <span style="color:#a6e22e">Subscribe</span>(<span style="color:#a6e22e">filter</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">string</span>) <span style="color:#a6e22e">Listener</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">listener</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">listener</span>{
 </span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">filter</span>:  <span style="color:#a6e22e">filter</span>,
 </span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">bus</span>:     <span style="color:#a6e22e">b</span>,
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">channel</span>: make(<span style="color:#66d9ef">chan</span> <span style="color:#a6e22e">Event</span>, <span style="color:#ae81ff">100</span>),
-</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">channel</span>: make(<span style="color:#66d9ef">chan</span> <span style="color:#a6e22e">Event</span>, <span style="color:#ae81ff">100</span>), <span style="color:#75715e">// 带缓冲的 channel
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">Lock</span>()
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">Unlock</span>()
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">listeners</span> = append(<span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">listeners</span>, <span style="color:#a6e22e">listener</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">listener</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="strategy">strategy</h2>
-<p>libbeat/outputs/kafka.makePartitioner()</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">partitioners</span> = <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#a6e22e">partitionBuilder</span>{
+</span></span></code></pre></div><h3 id="应用场景">应用场景</h3>
+<ul>
+<li><strong>组件解耦</strong>：发布者和订阅者互不依赖</li>
+<li><strong>异步处理</strong>：通过 channel 实现异步事件传递</li>
+<li><strong>灵活订阅</strong>：支持基于过滤器的选择性订阅</li>
+</ul>
+<h2 id="strategy-模式策略模式">Strategy 模式（策略模式）</h2>
+<h3 id="设计思想-2">设计思想</h3>
+<p>Strategy 模式定义了一系列算法，将每个算法封装起来，使它们可以互相替换。Filebeat 在 Kafka 输出中使用 Strategy 模式来支持不同的分区策略。</p>
+<h3 id="实现代码">实现代码</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// 定义策略映射表
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">partitioners</span> = <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#a6e22e">partitionBuilder</span>{
 </span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;random&#34;</span>:      <span style="color:#a6e22e">cfgRandomPartitioner</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;round_robin&#34;</span>: <span style="color:#a6e22e">cfgRoundRobinPartitioner</span>,
 </span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;hash&#34;</span>:        <span style="color:#a6e22e">cfgHashPartitioner</span>,
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">initPartitionStrategy</span>(
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">...</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">*</span><span style="color:#75715e">// instantiate partitioner strategy*
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">initPartitionStrategy</span>(<span style="color:#a6e22e">config</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Config</span>) (<span style="color:#a6e22e">Partitioner</span>, <span style="color:#66d9ef">error</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">Partition</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 根据配置选择策略
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mk</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">partitioners</span>[<span style="color:#a6e22e">name</span>]
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">mk</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#66d9ef">false</span>, <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;unknown kafka partition mode %v&#34;</span>, <span style="color:#a6e22e">name</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;unknown kafka partition mode %v&#34;</span>, <span style="color:#a6e22e">name</span>)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">constr</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">mk</span>(<span style="color:#a6e22e">config</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">...</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="object-pool">object pool</h2>
-<p>libbeat/queue/memqueue.broker.go</p>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 构造具体的分区器
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">partitioner</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">mk</span>(<span style="color:#a6e22e">config</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h3 id="优势-1">优势</h3>
+<ul>
+<li><strong>算法可替换</strong>：通过配置切换不同的分区策略</li>
+<li><strong>易于扩展</strong>：新增策略只需添加到映射表</li>
+<li><strong>代码清晰</strong>：每种策略独立实现，职责单一</li>
+</ul>
+<h2 id="object-pool-模式对象池模式">Object Pool 模式（对象池模式）</h2>
+<h3 id="设计思想-3">设计思想</h3>
+<p>Object Pool 模式通过复用对象来减少频繁创建和销毁对象的开销。在高并发场景下，这种模式能显著提升性能并减少 GC 压力。</p>
+<h3 id="实现代码-1">实现代码</h3>
+<p><strong>定义对象池</strong></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">ackChanPool</span> = <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">Pool</span>{
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">New</span>: <span style="color:#66d9ef">func</span>() <span style="color:#66d9ef">interface</span>{} {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ackChan</span>{
@@ -380,8 +423,8 @@
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    },
 </span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">newACKChan</span>(<span style="color:#a6e22e">seq</span> <span style="color:#66d9ef">uint</span>, <span style="color:#a6e22e">start</span>, <span style="color:#a6e22e">count</span> <span style="color:#66d9ef">int</span>, <span style="color:#a6e22e">states</span> []<span style="color:#a6e22e">clientState</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">ackChan</span> {
+</span></span></code></pre></div><p><strong>从池中获取对象</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">newACKChan</span>(<span style="color:#a6e22e">seq</span> <span style="color:#66d9ef">uint</span>, <span style="color:#a6e22e">start</span>, <span style="color:#a6e22e">count</span> <span style="color:#66d9ef">int</span>, <span style="color:#a6e22e">states</span> []<span style="color:#a6e22e">clientState</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">ackChan</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">ch</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ackChanPool</span>.<span style="color:#a6e22e">Get</span>().(<span style="color:#f92672">*</span><span style="color:#a6e22e">ackChan</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">ch</span>.<span style="color:#a6e22e">next</span> = <span style="color:#66d9ef">nil</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">ch</span>.<span style="color:#a6e22e">seq</span> = <span style="color:#a6e22e">seq</span>
@@ -389,15 +432,34 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">ch</span>.<span style="color:#a6e22e">count</span> = <span style="color:#a6e22e">count</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">ch</span>.<span style="color:#a6e22e">states</span> = <span style="color:#a6e22e">states</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">ch</span>
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">releaseACKChan</span>(<span style="color:#a6e22e">c</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ackChan</span>) {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">next</span> = <span style="color:#66d9ef">nil</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">ackChanPool</span>.<span style="color:#a6e22e">Put</span>(<span style="color:#a6e22e">c</span>)
-</span></span><span style="display:flex;"><span>
+</span></span></code></pre></div><p><strong>归还对象到池</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">releaseACKChan</span>(<span style="color:#a6e22e">c</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ackChan</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">next</span> = <span style="color:#66d9ef">nil</span>  <span style="color:#75715e">// 清理引用，防止内存泄漏
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">ackChanPool</span>.<span style="color:#a6e22e">Put</span>(<span style="color:#a6e22e">c</span>)
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div>
+</span></span></code></pre></div><h3 id="性能优势">性能优势</h3>
+<ul>
+<li><strong>减少 GC 压力</strong>：复用对象减少垃圾回收次数</li>
+<li><strong>提升性能</strong>：避免频繁的内存分配和初始化</li>
+<li><strong>适用场景</strong>：高频创建销毁的短生命周期对象</li>
+</ul>
+<h2 id="总结">总结</h2>
+<p>通过分析 Filebeat 的源码，我们学习到了四种经典设计模式的实际应用：</p>
+<ol>
+<li><strong>Registry + LazyInit</strong>：实现插件化架构和延迟加载</li>
+<li><strong>Observer</strong>：解耦组件，实现灵活的事件驱动</li>
+<li><strong>Strategy</strong>：封装算法变化，支持策略切换</li>
+<li><strong>Object Pool</strong>：优化性能，减少资源开销</li>
+</ol>
+<p>这些设计模式的合理运用，使 Filebeat 具备了良好的可扩展性、可维护性和高性能。在我们日常的 Go 项目开发中，也可以借鉴这些优秀的工程实践。</p>
+<h2 id="参考资源">参考资源</h2>
+<ul>
+<li><a href="https://www.elastic.co/guide/en/beats/filebeat/current/index.html" target="_blank">Filebeat 官方文档</a>
+</li>
+<li><a href="https://github.com/elastic/beats" target="_blank">Filebeat GitHub 仓库</a>
+</li>
+</ul>
       </section>
 
       
@@ -412,7 +474,7 @@
 <script>
     window.disqus_config = function () {
         this.page.identifier = '\/posts\/design_pattern_used_in_filebeat\/';
-        this.page.title = 'filebeat中使用的设计模式';
+        this.page.title = 'Filebeat 中使用的设计模式';
         this.page.url = 'https:\/\/fancive.github.io\/posts\/design_pattern_used_in_filebeat\/';
 
         

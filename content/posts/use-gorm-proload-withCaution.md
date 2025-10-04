@@ -1,6 +1,13 @@
 ---
 title: "慎用 Preload：深入理解 GORM 的预加载"
 date: 2024-11-12T14:44:19+08:00
+cover: "/images/illustrations/patterns.jpg"
+description: "深入剖析 GORM Preload 的性能陷阱，提供预加载的最佳实践和优化建议。"
+categories:
+  - Go语言
+tags:
+  - GORM
+  - 数据库
 draft: true
 ---
 
@@ -11,7 +18,7 @@ Preload 是 GORM 提供的一个方法，用于在查询主记录时一并加载
 
 ```go
 db.Preload("Orders").Find(&users)
-```
+```go
 这行代码将在查询 users 表的同时，预加载每个用户的 Orders。
 
 ## 为什么要慎用 Preload？
@@ -27,7 +34,7 @@ db.Preload("Orders").Find(&users)
 
 ```go
 db.Preload("Orders.Items").Find(&users)
-```
+```go
 
 这将生成三条查询：查询用户、用户的订单以及订单的商品。
 
@@ -40,7 +47,7 @@ db.Find(&users)
 for _, user := range users {
     db.Preload("Orders").Find(&user)
 }
-```
+```go
 这会对每个用户执行一次预加载查询，导致大量的数据库请求。
 
 ### 3. 过多的数据传输
@@ -55,13 +62,13 @@ for _, user := range users {
 db.Preload("Orders", func(db *gorm.DB) *gorm.DB {
     return db.Select("id", "user_id", "amount")
 }).Find(&users)
-```
+```go
 ### 2. 使用条件预加载
 只加载符合条件的关联数据。
 
 ```go
 db.Preload("Orders", "status = ?", "completed").Find(&users)
-```
+```go
 ### 3. 控制预加载的层级
 尽量避免多级预加载，必要时可分开查询。
 
@@ -70,7 +77,7 @@ db.Preload("Orders", "status = ?", "completed").Find(&users)
 
 ```go
 db.Joins("LEFT JOIN orders ON orders.user_id = users.id").Find(&users)
-```
+```go
 
 ## 实际案例分析
 假设我们有一个电商系统，需要查询用户及其订单信息。
@@ -78,7 +85,7 @@ db.Joins("LEFT JOIN orders ON orders.user_id = users.id").Find(&users)
 ```go
 // 不推荐的做法
 db.Preload("Orders").Find(&users)
-```
+```go
 如果用户数量和订单数量都很大，这种做法会导致性能问题。
 
 #### 改进：
@@ -88,7 +95,7 @@ db.Preload("Orders").Find(&users)
 db.Preload("Orders", func(db *gorm.DB) *gorm.DB {
     return db.Select("id", "user_id", "amount").Where("status = ?", "completed")
 }).Find(&users)
-```
+```go
 
 ## 总结
 Preload 是一个便捷的工具，但在大数据量和复杂关联的情况下，需要慎重使用。合理地使用 Preload，可以提高查询效率，减少不必要的性能开销。

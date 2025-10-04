@@ -9,18 +9,18 @@
     <lastBuildDate>Sun, 31 May 2020 21:30:28 +0800</lastBuildDate>
     <atom:link href="https://fancive.github.io/tags/go-runtime/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>go string to byte</title>
+      <title>深入理解 Go String 转 []byte 的容量分配机制</title>
       <link>https://fancive.github.io/posts/go_string_byte/</link>
       <pubDate>Sun, 31 May 2020 21:30:28 +0800</pubDate>
       <guid>https://fancive.github.io/posts/go_string_byte/</guid>
-      <description>&lt;h2 id=&#34;0x01-背景&#34;&gt;0x01 背景&lt;/h2&gt;&#xA;&lt;p&gt;最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32&lt;/p&gt;</description>
+      <description>&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;&#xA;&lt;p&gt;在 Go 语言中，string 和 []byte 之间的转换是非常常见的操作。但你是否注意到，当将一个 3 字节的字符串转为 []byte 时，得到的切片容量却是 32？这背后隐藏着 Go 运行时的内存分配策略。本文将通过汇编代码分析，深入探究这个有趣的现象，帮助你理解 Go 在底层是如何处理类型转换和内存分配的。&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;核心问题&lt;/strong&gt;：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;为什么 &lt;code&gt;[]byte(&amp;quot;abc&amp;quot;)&lt;/code&gt; 的容量是 32 而不是 3？&lt;/li&gt;&#xA;&lt;li&gt;string 转 []byte 的底层实现是什么？&lt;/li&gt;&#xA;&lt;li&gt;Go 运行时如何进行内存分配？&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
     </item>
     <item>
-      <title>[翻译]go interface</title>
+      <title>[翻译] Go Interface 深度解析</title>
       <link>https://fancive.github.io/posts/go_interface/</link>
       <pubDate>Wed, 06 May 2020 22:20:18 +0800</pubDate>
       <guid>https://fancive.github.io/posts/go_interface/</guid>
-      <description>&lt;h2 id=&#34;译-go-interface-values&#34;&gt;[译] Go Interface Values&lt;/h2&gt;&#xA;&#xA;&#xA;&#xA;  &lt;blockquote&gt;&#xA;    &lt;p&gt;原文 (&lt;a href=&#34;https://www.airs.com/blog/archives/281&#34; target=&#34;_blank&#34;&gt;https://www.airs.com/blog/archives/281&lt;/a&gt;&#xA;)&lt;/p&gt;&#xA;&#xA;  &lt;/blockquote&gt;&#xA;&#xA;&lt;h2 id=&#34;原文翻译&#34;&gt;原文翻译&lt;/h2&gt;&#xA;&lt;p&gt;虽然 Go 中interface 的指是灵活的，但它们也有令人困惑的方面。&lt;/p&gt;</description>
+      <description>&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;&#xA;&lt;p&gt;Interface 是 Go 语言最强大的特性之一，但同时也是最容易让人困惑的部分。本文翻译自 Ian Lance Taylor 的博客文章，深入探讨了 Go interface 的内部实现机制，帮助你理解 interface 的静态类型、动态类型以及值拷贝的工作原理。&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;核心要点&lt;/strong&gt;：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Interface 同时具有静态类型和动态类型&lt;/li&gt;&#xA;&lt;li&gt;Interface 的值拷贝行为&lt;/li&gt;&#xA;&lt;li&gt;Interface 的内部数据结构（itable）&lt;/li&gt;&#xA;&lt;li&gt;指针接收者与值接收者的区别&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&#xA;&#xA;&#xA;  &lt;blockquote&gt;&#xA;    &lt;p&gt;原文链接：https://www.airs.com/blog/archives/281&lt;/p&gt;&#xA;&#xA;  &lt;/blockquote&gt;</description>
     </item>
   </channel>
 </rss>

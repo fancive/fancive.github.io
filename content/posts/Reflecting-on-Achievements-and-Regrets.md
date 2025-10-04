@@ -1,6 +1,13 @@
 ---
 title: "放下遗憾，拥抱自我"
 date: 2025-01-07T13:41:38+08:00
+cover: "/images/covers/reflection.jpg"
+description: "通过冥想回顾成长历程，理解自我预期与现实的差距，学会接纳不完美的自己。"
+categories:
+  - 个人思考
+tags:
+  - 成长
+  - 反思
 draft: false
 ---
 

@@ -13,14 +13,14 @@
       <link>https://fancive.github.io/posts/what_i_learned_from_filebeat_harvester/</link>
       <pubDate>Mon, 28 Nov 2022 14:13:14 +0800</pubDate>
       <guid>https://fancive.github.io/posts/what_i_learned_from_filebeat_harvester/</guid>
-      <description>&lt;h3 id=&#34;总体流程&#34;&gt;总体流程&lt;/h3&gt;&#xA;&lt;p&gt;filebeat 对每个path都会创建一个 &lt;code&gt;harvester&lt;/code&gt;,  &lt;code&gt;harvester&lt;/code&gt; 负责逐行读取文件内容。它的上游是 &lt;code&gt;input&lt;/code&gt; , &lt;code&gt;input&lt;/code&gt; 负责管理&lt;code&gt;harvester&lt;/code&gt;, 它的下游是 &lt;code&gt;output&lt;/code&gt;, &lt;code&gt;output&lt;/code&gt; 负责消费每一行消息。&lt;/p&gt;</description>
+      <description>&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;&#xA;&lt;p&gt;在学习优秀开源项目的源码时，我们不仅能学到具体的技术实现，更能领悟到工程实践中的设计智慧。Filebeat 作为 Elastic Stack 中的日志采集器，其 Harvester 模块的设计就是一个典范。本文通过深入分析 Harvester 的协程管理机制，总结了四个核心问题的解决方案，这些经验可以直接应用到我们日常的 Go 项目开发中。&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;核心问题&lt;/strong&gt;：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;如何为主协程添加超时控制？&lt;/li&gt;&#xA;&lt;li&gt;主协程结束时如何优雅关闭其他协程？&lt;/li&gt;&#xA;&lt;li&gt;如何控制多个协程的关闭顺序？&lt;/li&gt;&#xA;&lt;li&gt;如何从外部安全地关闭任务并等待清理完成？&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
     </item>
     <item>
-      <title>filebeat中使用的设计模式</title>
+      <title>Filebeat 中使用的设计模式</title>
       <link>https://fancive.github.io/posts/design_pattern_used_in_filebeat/</link>
       <pubDate>Wed, 16 Sep 2020 22:15:59 +0800</pubDate>
       <guid>https://fancive.github.io/posts/design_pattern_used_in_filebeat/</guid>
-      <description>&lt;h2 id=&#34;registry-与-lazyinit-结合&#34;&gt;registry 与 lazyinit 结合&lt;/h2&gt;</description>
+      <description>&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;&#xA;&lt;p&gt;Filebeat 是 Elastic Stack 中用于收集和转发日志数据的轻量级采集器。通过深入阅读 Filebeat 的源码，我们可以学习到许多优秀的设计模式应用。本文将介绍 Filebeat 中使用的四种核心设计模式：Registry + LazyInit、Observer、Strategy 和 Object Pool，并分析它们如何帮助 Filebeat 实现高性能和良好的可扩展性。&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

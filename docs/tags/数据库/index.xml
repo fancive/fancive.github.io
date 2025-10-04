@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>数据库 on home</title>
+    <link>http://localhost:1313/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/</link>
+    <description>Recent content in 数据库 on home</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 12 Nov 2024 14:44:19 +0800</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>慎用 Preload：深入理解 GORM 的预加载</title>
+      <link>http://localhost:1313/posts/use-gorm-proload-withcaution/</link>
+      <pubDate>Tue, 12 Nov 2024 14:44:19 +0800</pubDate>
+      <guid>http://localhost:1313/posts/use-gorm-proload-withcaution/</guid>
+      <description>&lt;p&gt;在使用 GORM 进行数据库操作时，预加载（Preload）是一个常用的功能，用于在查询主记录的同时加载其关联的记录。然而，如果不慎使用 Preload，可能会导致性能问题，甚至引发难以发现的错误。本文将深入探讨为什么要慎用 Preload，以及如何正确地使用它。&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

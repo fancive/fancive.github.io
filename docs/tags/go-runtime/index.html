@@ -223,6 +223,12 @@
       
       
       
+      <a href="/tags/devops/" class="badge h-6 no-underline hover:badge-primary">
+        DevOps
+      </a>
+      
+      
+      
       <a href="/tags/filebeat/" class="badge h-6 no-underline hover:badge-primary">
         Filebeat
       </a>
@@ -247,8 +253,20 @@
       
       
       
+      <a href="/tags/%E5%8F%8D%E6%80%9D/" class="badge h-6 no-underline hover:badge-primary">
+        反思
+      </a>
+      
+      
+      
       <a href="/tags/%E5%91%8A%E8%AD%A6%E7%B3%BB%E7%BB%9F/" class="badge h-6 no-underline hover:badge-primary">
         告警系统
+      </a>
+      
+      
+      
+      <a href="/tags/%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/" class="badge h-6 no-underline hover:badge-primary">
+        年度总结
       </a>
       
       
@@ -259,14 +277,38 @@
       
       
       
+      <a href="/tags/%E6%88%90%E9%95%BF/" class="badge h-6 no-underline hover:badge-primary">
+        成长
+      </a>
+      
+      
+      
+      <a href="/tags/%E7%94%9F%E6%B4%BB/" class="badge h-6 no-underline hover:badge-primary">
+        生活
+      </a>
+      
+      
+      
       <a href="/tags/%E7%BF%BB%E8%AF%91/" class="badge h-6 no-underline hover:badge-primary">
         翻译
       </a>
       
       
       
+      <a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/" class="badge h-6 no-underline hover:badge-primary">
+        自动化
+      </a>
+      
+      
+      
       <a href="/tags/%E8%87%AA%E5%8A%A8%E5%AE%9A%E4%BD%8D%E7%B3%BB%E7%BB%9F/" class="badge h-6 no-underline hover:badge-primary">
         自动定位系统
+      </a>
+      
+      
+      
+      <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" class="badge h-6 no-underline hover:badge-primary">
+        设计模式
       </a>
       
       
@@ -298,17 +340,13 @@
   
   <figure>
     
-    
-    <picture>
-      <source srcset="/images/default2_hu4245215999118357849.webp" type="image/webp" />
-      <img src="/images/default2.jpg" alt="/images/default2.jpg" />
-    </picture>
+    <img src="/images/illustrations/interface.jpg" alt="深入理解 Go String 转 []byte 的容量分配机制" />
     
   </figure>
   
 
   <div class="card-body">
-    <h2 class="card-title">go string to byte</h2>
+    <h2 class="card-title">深入理解 Go String 转 []byte 的容量分配机制</h2>
 
     <p class="date text-base-content/60">
     
@@ -316,11 +354,12 @@
     
     </p>
 
-    <h2 id="0x01-背景">0x01 背景</h2>
-<p>最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32</p>
+    探究 Go 语言中 string 转 []byte 时容量变化的底层原理，通过汇编代码分析内存分配机制。
 
+    
     <div class="card-actions justify-between items-center mt-4">
-      <div class="flex items-center">
+      
+        <div class="flex items-center">
   
   <span>@</span>
   
@@ -332,10 +371,11 @@
   </span>
 </div>
 
+      
 
       <div class="flex items-center">
         <ion-icon name="time" class="mr-1"></ion-icon>
-        <span>4 minute read</span>
+        <span>5 minute read</span>
       </div>
     </div>
   </div>
@@ -348,17 +388,13 @@
   
   <figure>
     
-    
-    <picture>
-      <source srcset="/images/default3_hu11811107914568380876.webp" type="image/webp" />
-      <img src="/images/default3.jpg" alt="/images/default3.jpg" />
-    </picture>
+    <img src="/images/illustrations/interface.jpg" alt="[翻译] Go Interface 深度解析" />
     
   </figure>
   
 
   <div class="card-body">
-    <h2 class="card-title">[翻译]go interface</h2>
+    <h2 class="card-title">[翻译] Go Interface 深度解析</h2>
 
     <p class="date text-base-content/60">
     
@@ -366,21 +402,12 @@
     
     </p>
 
-    <h2 id="译-go-interface-values">[译] Go Interface Values</h2>
+    深入理解 Go 语言 interface 的内部实现机制，包括静态类型、动态类型以及值拷贝的工作原理。
 
-
-
-  <blockquote>
-    <p>原文 (<a href="https://www.airs.com/blog/archives/281" target="_blank">https://www.airs.com/blog/archives/281</a>
-)</p>
-
-  </blockquote>
-
-<h2 id="原文翻译">原文翻译</h2>
-<p>虽然 Go 中interface 的指是灵活的，但它们也有令人困惑的方面。</p>
-
+    
     <div class="card-actions justify-between items-center mt-4">
-      <div class="flex items-center">
+      
+        <div class="flex items-center">
   
   <span>@</span>
   
@@ -392,6 +419,7 @@
   </span>
 </div>
 
+      
 
       <div class="flex items-center">
         <ion-icon name="time" class="mr-1"></ion-icon>

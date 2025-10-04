@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>设计模式 on home</title>
+    <link>https://fancive.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</link>
+    <description>Recent content in 设计模式 on home</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 16 Sep 2020 22:15:59 +0800</lastBuildDate>
+    <atom:link href="https://fancive.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Filebeat 中使用的设计模式</title>
+      <link>https://fancive.github.io/posts/design_pattern_used_in_filebeat/</link>
+      <pubDate>Wed, 16 Sep 2020 22:15:59 +0800</pubDate>
+      <guid>https://fancive.github.io/posts/design_pattern_used_in_filebeat/</guid>
+      <description>&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;&#xA;&lt;p&gt;Filebeat 是 Elastic Stack 中用于收集和转发日志数据的轻量级采集器。通过深入阅读 Filebeat 的源码，我们可以学习到许多优秀的设计模式应用。本文将介绍 Filebeat 中使用的四种核心设计模式：Registry + LazyInit、Observer、Strategy 和 Object Pool，并分析它们如何帮助 Filebeat 实现高性能和良好的可扩展性。&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

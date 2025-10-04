@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mermaid on home</title>
+    <link>http://localhost:1313/tags/mermaid/</link>
+    <description>Recent content in Mermaid on home</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <lastBuildDate>Sat, 04 Oct 2025 09:58:59 +0800</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/mermaid/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Mermaid 图表测试</title>
+      <link>http://localhost:1313/posts/mermaid-test/</link>
+      <pubDate>Sat, 04 Oct 2025 09:58:59 +0800</pubDate>
+      <guid>http://localhost:1313/posts/mermaid-test/</guid>
+      <description>&lt;p&gt;Dream 主题原生支持 Mermaid 图表！下面是一些示例。&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

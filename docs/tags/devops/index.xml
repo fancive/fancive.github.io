@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>DevOps on home</title>
+    <link>https://fancive.github.io/tags/devops/</link>
+    <description>Recent content in DevOps on home</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 30 Jan 2025 14:07:06 +0800</lastBuildDate>
+    <atom:link href="https://fancive.github.io/tags/devops/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>从代码评审到生产部署：自动化流水线实践</title>
+      <link>https://fancive.github.io/posts/automating-deployment-pipeline-from-code-review-to-production/</link>
+      <pubDate>Thu, 30 Jan 2025 14:07:06 +0800</pubDate>
+      <guid>https://fancive.github.io/posts/automating-deployment-pipeline-from-code-review-to-production/</guid>
+      <description>&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;&#xA;&lt;p&gt;在现代软件开发中，部署效率直接影响团队的整体生产力。本文分享了我们团队从手动部署到全自动化部署的实践经验，通过自动化工具将部署时间从 15 分钟缩短到 5 分钟，并完全消除了人工操作带来的错误。&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

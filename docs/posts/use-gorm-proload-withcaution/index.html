@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en"
+  x-data
+  :class="$store.darkMode.class()"
+  :data-theme="$store.darkMode.theme()">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>慎用 Preload：深入理解 GORM 的预加载 | home</title>
+
+    
+
+<link rel="canonical" href="http://localhost:1313/posts/use-gorm-proload-withcaution/" />
+
+
+
+<meta name="author" content="fancive" />
+<meta name="description" content="在使用 GORM 进行数据库操作时，预加载（Preload）是一个常用的功能，用于在查询主记录的同时加载其关联的记录。然而，如果不慎使用 Preload，可能会导致性能问题，甚至引发难以发现的错误。本文将深入探讨为什么要慎用 Preload，以及如何正确地使用它。
+" />
+
+
+<meta name="keywords" content="GORM,数据库">
+
+
+
+<meta name="generator" content="Hugo 0.138.0">
+
+
+<meta property="og:url" content="http://localhost:1313/posts/use-gorm-proload-withcaution/">
+  <meta property="og:site_name" content="home">
+  <meta property="og:title" content="慎用 Preload：深入理解 GORM 的预加载">
+  <meta property="og:description" content="在使用 GORM 进行数据库操作时，预加载（Preload）是一个常用的功能，用于在查询主记录的同时加载其关联的记录。然而，如果不慎使用 Preload，可能会导致性能问题，甚至引发难以发现的错误。本文将深入探讨为什么要慎用 Preload，以及如何正确地使用它。">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-11-12T14:44:19+08:00">
+    <meta property="article:modified_time" content="2024-11-12T14:44:19+08:00">
+    <meta property="article:tag" content="GORM">
+    <meta property="article:tag" content="数据库">
+
+
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="慎用 Preload：深入理解 GORM 的预加载">
+  <meta name="twitter:description" content="在使用 GORM 进行数据库操作时，预加载（Preload）是一个常用的功能，用于在查询主记录的同时加载其关联的记录。然而，如果不慎使用 Preload，可能会导致性能问题，甚至引发难以发现的错误。本文将深入探讨为什么要慎用 Preload，以及如何正确地使用它。">
+
+
+
+
+<link rel="stylesheet" href="/css/output.css" />
+
+
+
+
+    
+
+
+<style>
+  pre {
+    padding: 1em;
+    overflow: auto;
+  }
+</style>
+
+
+
+
+
+
+
+
+
+    
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  </head>
+
+  <body x-data="{
+    flip: false,
+  }">
+    
+    <div id="dream-global-bg"></div>
+
+    
+<nav class="mt-4 lg:mt-8 py-4">
+
+  
+  <div class="container flex justify-between px-4">
+  
+    <section class="flex items-center gap-4">
+      <div class="avatar cursor-pointer hover:online" @click="flip = !flip" title="Flip it!">
+        <div class="h-10 rounded-full">
+          <img src="/images/profile.jpg" alt="" />
+        </div>
+      </div>
+
+      
+      <div>
+        
+        
+        <div class="text-base-content/60 text-sm">欢迎来到荷兰</div>
+        
+      </div>
+      
+    </section>
+
+    <div class="dropdown dropdown-end sm:hidden">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-square" aria-label="Select an option">
+        <ion-icon name="menu" class="text-2xl"></ion-icon>
+      </div>
+      <ul tabindex="0" class="dropdown-content menu w-36 bg-base-100 rounded-box z-[1] shadow-md">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+  <a class="inline-flex items-center p-2 cursor-pointer" href="/posts" title="Archives">
+    <ion-icon name="archive"></ion-icon>
+    Archives
+  </a>
+</li>
+
+
+
+
+<li>
+  <a class="inline-flex items-center p-2 cursor-pointer" href="/categories" title="All Categories">
+    <ion-icon name="grid"></ion-icon>
+    All Categories
+  </a>
+</li>
+
+
+
+
+<li>
+  <a class="inline-flex items-center p-2 cursor-pointer" href="/tags" title="All Tags">
+    <ion-icon name="pricetags"></ion-icon>
+    All Tags
+  </a>
+</li>
+
+
+
+
+
+
+      </ul>
+    </div>
+    <section class="hidden sm:flex sm:items-center sm:gap-2 md:gap-4">
+      
+      
+      
+      
+
+      
+      
+
+      
+
+      
+      
+
+
+
+
+
+      
+      
+
+
+
+
+
+      
+      
+<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/posts" title="Archives">
+  <ion-icon class="group-hover:text-primary-content" name="archive"></ion-icon>
+</a>
+
+
+      
+      
+<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/categories" title="All Categories">
+  <ion-icon class="group-hover:text-primary-content" name="grid"></ion-icon>
+</a>
+
+
+      
+      
+<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/tags" title="All Tags">
+  <ion-icon class="group-hover:text-primary-content" name="pricetags"></ion-icon>
+</a>
+
+
+      
+
+      
+
+      
+    </section>
+  </div>
+</nav>
+
+
+    <div class="flip-container" :class="{ 'flip-it': flip }">
+      <div class="flipper">
+        <div class="front">
+          <div class="container">
+            
+<div class="lg:grid lg:grid-cols-4 gap-4 mt-4 px-4">
+  <div class="hidden lg:block"></div>
+
+  <div class="lg:col-span-2">
+    <article class="mx-auto prose prose-quoteless dark:prose-invert" id="dream-single-post-main" itemscope itemtype="http://schema.org/Article">
+      
+  <meta itemprop="name" content="慎用 Preload：深入理解 GORM 的预加载">
+  <meta itemprop="description" content="在使用 GORM 进行数据库操作时，预加载（Preload）是一个常用的功能，用于在查询主记录的同时加载其关联的记录。然而，如果不慎使用 Preload，可能会导致性能问题，甚至引发难以发现的错误。本文将深入探讨为什么要慎用 Preload，以及如何正确地使用它。">
+  <meta itemprop="datePublished" content="2024-11-12T14:44:19+08:00">
+  <meta itemprop="dateModified" content="2024-11-12T14:44:19+08:00">
+  <meta itemprop="wordCount" content="132">
+  <meta itemprop="keywords" content="GORM,数据库">
+
+      <header>
+        <h1 itemprop="headline">慎用 Preload：深入理解 GORM 的预加载</h1>
+        <p class="text-sm">
+          
+            Tuesday, Nov 12, 2024
+          
+
+          | <span>1 minute read</span>
+
+          
+          | <span>Updated at
+            
+              Tuesday, Nov 12, 2024
+            </span>
+          
+        </p>
+
+        
+        <div class="flex justify-between">
+          
+            <div class="flex items-center">
+  
+  <span>@</span>
+  
+
+  <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+  
+    <span itemprop="name">fancive</span>
+  
+  </span>
+</div>
+
+          
+
+          <div class="flex items-center gap-2">
+  
+  
+
+  
+  
+  
+  
+  
+    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
+      href="https://x.com/intent/post?text=%e6%85%8e%e7%94%a8%20Preload%ef%bc%9a%e6%b7%b1%e5%85%a5%e7%90%86%e8%a7%a3%20GORM%20%e7%9a%84%e9%a2%84%e5%8a%a0%e8%bd%bd&amp;url=http://localhost:1313/posts/use-gorm-proload-withcaution/" target="_blank" rel="noopener noreferrer"
+      title="Share on X">
+      <ion-icon class="group-hover:text-primary-content" name="logo-x"></ion-icon>
+    </a>
+  
+    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
+      href="https://facebook.com/sharer/sharer.php?u=http://localhost:1313/posts/use-gorm-proload-withcaution/" target="_blank" rel="noopener noreferrer"
+      title="Share on Facebook">
+      <ion-icon class="group-hover:text-primary-content" name="logo-facebook"></ion-icon>
+    </a>
+  
+    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
+      href="https://wa.me/?text=%e6%85%8e%e7%94%a8%20Preload%ef%bc%9a%e6%b7%b1%e5%85%a5%e7%90%86%e8%a7%a3%20GORM%20%e7%9a%84%e9%a2%84%e5%8a%a0%e8%bd%bd%20http://localhost:1313/posts/use-gorm-proload-withcaution/" target="_blank" rel="noopener noreferrer"
+      title="Share on WhatsApp">
+      <ion-icon class="group-hover:text-primary-content" name="logo-whatsapp"></ion-icon>
+    </a>
+  
+
+  
+  
+</div>
+
+        </div>
+      </header>
+
+      <section id="dream-single-post-content" itemprop="articleBody">
+        
+
+        <p>在使用 GORM 进行数据库操作时，预加载（Preload）是一个常用的功能，用于在查询主记录的同时加载其关联的记录。然而，如果不慎使用 Preload，可能会导致性能问题，甚至引发难以发现的错误。本文将深入探讨为什么要慎用 Preload，以及如何正确地使用它。</p>
+<h2 id="什么是-preload">什么是 Preload？</h2>
+<p>Preload 是 GORM 提供的一个方法，用于在查询主记录时一并加载其关联的记录。例如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Preload</span>(<span style="color:#e6db74">&#34;Orders&#34;</span>).<span style="color:#a6e22e">Find</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">users</span>)
+</span></span></code></pre></div><p>这行代码将在查询 users 表的同时，预加载每个用户的 Orders。</p>
+<h2 id="为什么要慎用-preload">为什么要慎用 Preload？</h2>
+<h3 id="1-性能问题">1. 性能问题</h3>
+<h4 id="数据量过大">数据量过大</h4>
+<p>当关联的数据量很大时，使用 Preload 会一次性将所有关联数据加载到内存中，可能导致内存占用过高，影响性能。</p>
+<h4 id="多级预加载">多级预加载</h4>
+<p>多级预加载会生成多条 SQL 查询，增加数据库压力。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Preload</span>(<span style="color:#e6db74">&#34;Orders.Items&#34;</span>).<span style="color:#a6e22e">Find</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">users</span>)
+</span></span></code></pre></div><p>这将生成三条查询：查询用户、用户的订单以及订单的商品。</p>
+<h3 id="2-n1-查询问题">2. N+1 查询问题</h3>
+<p>如果不正确使用 Preload，可能会导致 N+1 查询问题，即在循环中查询关联数据，每次循环都执行一次查询。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">users</span> []<span style="color:#a6e22e">User</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Find</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">users</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">user</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">users</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Preload</span>(<span style="color:#e6db74">&#34;Orders&#34;</span>).<span style="color:#a6e22e">Find</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">user</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>这会对每个用户执行一次预加载查询，导致大量的数据库请求。</p>
+<h3 id="3-过多的数据传输">3. 过多的数据传输</h3>
+<p>默认情况下，Preload 会加载关联表的所有字段，可能导致不必要的数据传输。</p>
+<h2 id="如何正确使用-preload">如何正确使用 Preload？</h2>
+<h3 id="1-使用-select-优化字段">1. 使用 Select 优化字段</h3>
+<p>指定需要的字段，减少数据传输量。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Preload</span>(<span style="color:#e6db74">&#34;Orders&#34;</span>, <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">db</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">gorm</span>.<span style="color:#a6e22e">DB</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">gorm</span>.<span style="color:#a6e22e">DB</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Select</span>(<span style="color:#e6db74">&#34;id&#34;</span>, <span style="color:#e6db74">&#34;user_id&#34;</span>, <span style="color:#e6db74">&#34;amount&#34;</span>)
+</span></span><span style="display:flex;"><span>}).<span style="color:#a6e22e">Find</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">users</span>)
+</span></span></code></pre></div><h3 id="2-使用条件预加载">2. 使用条件预加载</h3>
+<p>只加载符合条件的关联数据。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Preload</span>(<span style="color:#e6db74">&#34;Orders&#34;</span>, <span style="color:#e6db74">&#34;status = ?&#34;</span>, <span style="color:#e6db74">&#34;completed&#34;</span>).<span style="color:#a6e22e">Find</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">users</span>)
+</span></span></code></pre></div><h3 id="3-控制预加载的层级">3. 控制预加载的层级</h3>
+<p>尽量避免多级预加载，必要时可分开查询。</p>
+<h3 id="4-考虑使用-joins">4. 考虑使用 Joins</h3>
+<p>对于简单的关联，可以使用 Joins 来替代 Preload。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Joins</span>(<span style="color:#e6db74">&#34;LEFT JOIN orders ON orders.user_id = users.id&#34;</span>).<span style="color:#a6e22e">Find</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">users</span>)
+</span></span></code></pre></div><h2 id="实际案例分析">实际案例分析</h2>
+<p>假设我们有一个电商系统，需要查询用户及其订单信息。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// 不推荐的做法
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Preload</span>(<span style="color:#e6db74">&#34;Orders&#34;</span>).<span style="color:#a6e22e">Find</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">users</span>)
+</span></span></code></pre></div><p>如果用户数量和订单数量都很大，这种做法会导致性能问题。</p>
+<h4 id="改进">改进：</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// 仅加载需要的字段和条件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Preload</span>(<span style="color:#e6db74">&#34;Orders&#34;</span>, <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">db</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">gorm</span>.<span style="color:#a6e22e">DB</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">gorm</span>.<span style="color:#a6e22e">DB</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Select</span>(<span style="color:#e6db74">&#34;id&#34;</span>, <span style="color:#e6db74">&#34;user_id&#34;</span>, <span style="color:#e6db74">&#34;amount&#34;</span>).<span style="color:#a6e22e">Where</span>(<span style="color:#e6db74">&#34;status = ?&#34;</span>, <span style="color:#e6db74">&#34;completed&#34;</span>)
+</span></span><span style="display:flex;"><span>}).<span style="color:#a6e22e">Find</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">users</span>)
+</span></span></code></pre></div><h2 id="总结">总结</h2>
+<p>Preload 是一个便捷的工具，但在大数据量和复杂关联的情况下，需要慎重使用。合理地使用 Preload，可以提高查询效率，减少不必要的性能开销。</p>
+<p>最佳实践：</p>
+<ul>
+<li>明确需求：只加载必要的关联数据。</li>
+<li>优化查询：使用 Select 和条件预加载。</li>
+<li>控制层级：避免过深的预加载。</li>
+<li>替代方案：使用 Joins 或者手动查询。</li>
+</ul>
+      </section>
+
+      
+
+      
+      <div class="divider"></div>
+
+      <section class="space-y-4">
+        
+<article>
+  <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+        this.page.identifier = '\/posts\/use-gorm-proload-withcaution\/';
+        this.page.title = '慎用 Preload：深入理解 GORM 的预加载';
+        this.page.url = 'http:\/\/localhost:1313\/posts\/use-gorm-proload-withcaution\/';
+
+        
+    };
+    function initDisqus() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "fancive-github-com" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    };
+    setTimeout(() => {
+        initDisqus();
+    }, 3000);
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</article>
+
+
+
+
+
+
+
+
+      </section>
+      
+    </article>
+  </div>
+
+  <div class="hidden lg:flex lg:flex-col lg:items-end">
+    
+
+    
+  </div>
+</div>
+
+
+            
+<footer class="flex justify-between items-center gap-2 px-4 py-12">
+
+  <div>
+  
+  <p>© 2025 home</p>
+  
+
+  
+  <p class="text-sm">
+    🌱
+    <span class="text-base-content/60">
+      Powered by <a class="hover:underline" href="https://gohugo.io/" target="_blank">Hugo</a> with theme
+      <a class="hover:underline" href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</span
+    >
+  </p>
+  
+</div>
+
+  <div
+  x-data="{ icons: [
+    { name: 'moon', status: 'y' },
+    { name: 'sunny', status: 'n' },
+    { name: 'desktop', status: 'auto' }
+  ] }"
+  class="flex items-center gap-2 h-[32px] px-2 bg-base-100 border border-base-content/30 rounded-full"
+>
+  <template x-for="icon in icons">
+    <div
+      role="button"
+      tabindex="0"
+      :aria-label="'Select ' + icon.name + ' mode'"
+      class="group inline-flex justify-center items-center p-1 rounded-full cursor-pointer hover:bg-primary"
+      :class="$store.darkMode.icon() === icon.name && 'bg-primary'"
+      @click="$store.darkMode.toggle(icon.status)"
+    >
+      <ion-icon
+        :name="`${icon.name}-outline`"
+        class="group-hover:text-primary-content"
+        :class="$store.darkMode.icon() === icon.name && 'text-primary-content'"
+      >
+      </ion-icon>
+    </div>
+  </template>
+</div>
+
+</footer>
+
+          </div>
+        </div>
+        <div class="back">
+          <div class="container">
+            
+            <div class="dream-grid dream-grid-about">
+  
+  
+  
+  
+
+  
+
+  
+</div>
+
+            
+
+            
+<footer class="flex justify-between items-center gap-2 px-4 py-12">
+
+  <div>
+  
+  <p>© 2025 home</p>
+  
+
+  
+  <p class="text-sm">
+    🌱
+    <span class="text-base-content/60">
+      Powered by <a class="hover:underline" href="https://gohugo.io/" target="_blank">Hugo</a> with theme
+      <a class="hover:underline" href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</span
+    >
+  </p>
+  
+</div>
+
+  <div
+  x-data="{ icons: [
+    { name: 'moon', status: 'y' },
+    { name: 'sunny', status: 'n' },
+    { name: 'desktop', status: 'auto' }
+  ] }"
+  class="flex items-center gap-2 h-[32px] px-2 bg-base-100 border border-base-content/30 rounded-full"
+>
+  <template x-for="icon in icons">
+    <div
+      role="button"
+      tabindex="0"
+      :aria-label="'Select ' + icon.name + ' mode'"
+      class="group inline-flex justify-center items-center p-1 rounded-full cursor-pointer hover:bg-primary"
+      :class="$store.darkMode.icon() === icon.name && 'bg-primary'"
+      @click="$store.darkMode.toggle(icon.status)"
+    >
+      <ion-icon
+        :name="`${icon.name}-outline`"
+        class="group-hover:text-primary-content"
+        :class="$store.darkMode.icon() === icon.name && 'text-primary-content'"
+      >
+      </ion-icon>
+    </div>
+  </template>
+</div>
+
+</footer>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+  window.lightTheme =  null 
+  window.darkTheme =  null 
+</script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script>
+
+  
+  
+  <script src="/js/grid.js"></script>
+
+
+
+
+<script src="/js/main.js"></script>
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+    
+
+    
+
+    
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-7N49ZFJ61J');
+        }
+      </script>
+    
+
+    <script type="module" src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.js"></script>
+  </body>
+</html>

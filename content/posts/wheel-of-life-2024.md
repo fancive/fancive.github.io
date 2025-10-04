@@ -1,6 +1,13 @@
 ---
 title: "Wheel of Life 2024"
 date: 2025-01-11T16:26:38+08:00
+cover: "/images/img/wheel_of_life_2024.jpg"
+description: "2024 年度生命之轮回顾：从事业、学习、健康、家庭等八个维度全面反思这一年的成长与不足。"
+categories:
+  - 个人思考
+tags:
+  - 年度总结
+  - 生活
 draft: false
 ---
 > 我让大模型读取了我的2024年每个月的月报(从周报和日记中总结)，得到了以下的生命之轮得分

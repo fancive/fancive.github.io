@@ -15,8 +15,7 @@
 
 
 <meta name="author" content="fancive" />
-<meta name="description" content="总体流程 filebeat 对每个path都会创建一个 harvester, harvester 负责逐行读取文件内容。它的上游是 input , input 负责管理harvester, 它的下游是 output, output 负责消费每一行消息。
-" />
+<meta name="description" content="通过分析 Filebeat Harvester 模块的实现，学习文件采集、状态管理和并发控制的最佳实践。" />
 
 
 <meta name="keywords" content="Filebeat">
@@ -29,7 +28,7 @@
 <meta property="og:url" content="https://fancive.github.io/posts/what_i_learned_from_filebeat_harvester/">
   <meta property="og:site_name" content="home">
   <meta property="og:title" content="我从filebeat-harvester中学到什么">
-  <meta property="og:description" content="总体流程 filebeat 对每个path都会创建一个 harvester, harvester 负责逐行读取文件内容。它的上游是 input , input 负责管理harvester, 它的下游是 output, output 负责消费每一行消息。">
+  <meta property="og:description" content="通过分析 Filebeat Harvester 模块的实现，学习文件采集、状态管理和并发控制的最佳实践。">
   <meta property="og:locale" content="en">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
@@ -42,7 +41,7 @@
 
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="我从filebeat-harvester中学到什么">
-  <meta name="twitter:description" content="总体流程 filebeat 对每个path都会创建一个 harvester, harvester 负责逐行读取文件内容。它的上游是 input , input 负责管理harvester, 它的下游是 output, output 负责消费每一行消息。">
+  <meta name="twitter:description" content="通过分析 Filebeat Harvester 模块的实现，学习文件采集、状态管理和并发控制的最佳实践。">
 
 
 
@@ -236,10 +235,10 @@
     <article class="mx-auto prose prose-quoteless dark:prose-invert" id="dream-single-post-main" itemscope itemtype="http://schema.org/Article">
       
   <meta itemprop="name" content="我从filebeat-harvester中学到什么">
-  <meta itemprop="description" content="总体流程 filebeat 对每个path都会创建一个 harvester, harvester 负责逐行读取文件内容。它的上游是 input , input 负责管理harvester, 它的下游是 output, output 负责消费每一行消息。">
+  <meta itemprop="description" content="通过分析 Filebeat Harvester 模块的实现，学习文件采集、状态管理和并发控制的最佳实践。">
   <meta itemprop="datePublished" content="2022-11-28T14:13:14+08:00">
   <meta itemprop="dateModified" content="2022-11-28T14:13:14+08:00">
-  <meta itemprop="wordCount" content="449">
+  <meta itemprop="wordCount" content="678">
   <meta itemprop="keywords" content="Filebeat">
 
       <header>
@@ -249,7 +248,7 @@
             Monday, Nov 28, 2022
           
 
-          | <span>3 minute read</span>
+          | <span>4 minute read</span>
 
           
           | <span>Updated at
@@ -258,8 +257,11 @@
             </span>
           
         </p>
+
+        
         <div class="flex justify-between">
-          <div class="flex items-center">
+          
+            <div class="flex items-center">
   
   <span>@</span>
   
@@ -271,6 +273,7 @@
   </span>
 </div>
 
+          
 
           <div class="flex items-center gap-2">
   
@@ -309,23 +312,34 @@
 
       <section id="dream-single-post-content" itemprop="articleBody">
         
+        <img src="/images/illustrations/harvester.jpg" alt="我从filebeat-harvester中学到什么" />
+        
 
-        <h3 id="总体流程">总体流程</h3>
-<p>filebeat 对每个path都会创建一个 <code>harvester</code>,  <code>harvester</code> 负责逐行读取文件内容。它的上游是 <code>input</code> , <code>input</code> 负责管理<code>harvester</code>, 它的下游是 <code>output</code>, <code>output</code> 负责消费每一行消息。</p>
-<p>通过阅读harvester代码，我学习到了如何管理多个相互依赖的协程的生命周期，具体可以拆分为4个问题</p>
+        <h2 id="引言">引言</h2>
+<p>在学习优秀开源项目的源码时，我们不仅能学到具体的技术实现，更能领悟到工程实践中的设计智慧。Filebeat 作为 Elastic Stack 中的日志采集器，其 Harvester 模块的设计就是一个典范。本文通过深入分析 Harvester 的协程管理机制，总结了四个核心问题的解决方案，这些经验可以直接应用到我们日常的 Go 项目开发中。</p>
+<p><strong>核心问题</strong>：</p>
+<ul>
+<li>如何为主协程添加超时控制？</li>
+<li>主协程结束时如何优雅关闭其他协程？</li>
+<li>如何控制多个协程的关闭顺序？</li>
+<li>如何从外部安全地关闭任务并等待清理完成？</li>
+</ul>
+<h2 id="总体流程">总体流程</h2>
+<p>Filebeat 对每个 path 都会创建一个 <code>harvester</code>，<code>harvester</code> 负责逐行读取文件内容。它的上游是 <code>input</code>，<code>input</code> 负责管理 <code>harvester</code>，它的下游是 <code>output</code>，<code>output</code> 负责消费每一行消息。</p>
+<p>通过阅读 harvester 代码，我学习到了如何管理多个相互依赖的协程的生命周期，具体可以拆分为 4 个问题：</p>
 <ol>
 <li>为主协程添加超时控制协程</li>
-<li>主协程结束如何关闭超时控制协程和其他协程(<code>monitorFileSize</code>)</li>
-<li>关闭协程时如何控制不同job间的先后执行顺序</li>
+<li>主协程结束如何关闭超时控制协程和其他协程 (<code>monitorFileSize</code>)</li>
+<li>关闭协程时如何控制不同 job 间的先后执行顺序</li>
 <li>如何从外部关闭任务，并等待清理完成</li>
 </ol>
-<h3 id="超时控制协程">超时控制协程</h3>
-<p><code>(h *Harvester)Run()</code> 方法里，会创建超时控制协程，在此协程中会消费2个事件</p>
+<h2 id="超时控制协程">超时控制协程</h2>
+<p><code>(h *Harvester)Run()</code> 方法里，会创建超时控制协程，在此协程中会消费 2 个事件：</p>
 <ol>
 <li>超时事件 <code>closeTimeout</code></li>
 <li>主任务结束标志 <code>h.done</code></li>
 </ol>
-<p>一旦接收到其中一个事件，那么会调用 <code>stop</code> 并关闭 <code>reader</code></p>
+<p>一旦接收到其中一个事件，那么会调用 <code>stop</code> 并关闭 <code>reader</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// Closes reader after timeout or when done channel is closed
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// This routine is also responsible to properly stop the reader
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">source</span> <span style="color:#66d9ef">string</span>) {
@@ -349,8 +363,8 @@
 </span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;Failed to stop harvester for file: %v&#34;</span>, <span style="color:#a6e22e">err</span>)
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}(<span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">state</span>.<span style="color:#a6e22e">Source</span>)
-</span></span></code></pre></div><h3 id="主协程关闭其他附属功能协程">主协程关闭其他附属功能协程</h3>
-<p>一句话，主要是通过调用 <code>stop</code> (在defer里)， <code>stop</code> 里会 <code>close(h.done)</code></p>
+</span></span></code></pre></div><h2 id="主协程关闭其他附属功能协程">主协程关闭其他附属功能协程</h2>
+<p>一句话，主要是通过调用 <code>stop</code> (在 defer 里)，<code>stop</code> 里会 <code>close(h.done)</code>：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> {
 </span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">done</span>:
 </span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">stopWg</span>.<span style="color:#a6e22e">Done</span>()
@@ -370,10 +384,10 @@
 </span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Marks harvester stopping completed
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">stopWg</span>.<span style="color:#a6e22e">Done</span>()
 </span></span><span style="display:flex;"><span>}()
-</span></span></code></pre></div><p>其他协程会消费 <code>h.done</code></p>
+</span></span></code></pre></div><p>其他协程会消费 <code>h.done</code>：</p>
 <ol>
-<li>Run 函数开头, 用于立刻停止</li>
-<li>超时控制协程，这里select 消费了2个chan (其中一个是h.done)</li>
+<li>Run 函数开头，用于立刻停止</li>
+<li>超时控制协程，这里 select 消费了 2 个 chan (其中一个是 h.done)</li>
 </ol>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">select</span>{
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Applies when timeout is reached
@@ -382,8 +396,8 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Required when reader loop returns and reader finished
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">case</span><span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">done</span>:
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><ol>
-<li>Run函数的for-loop，这里是主要的逻辑实现地方</li>
+</span></span></code></pre></div><ol start="3">
+<li>Run 函数的 for-loop，这里是主要的逻辑实现地方</li>
 </ol>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">for</span>{
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">select</span>{
@@ -394,24 +408,24 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 读文件
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">...</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><ol>
-<li><code>monitorFileSize</code>监控文件大小协程，需要和主协程一起结束</li>
+</span></span></code></pre></div><ol start="4">
+<li><code>monitorFileSize</code> 监控文件大小协程，需要和主协程一起结束</li>
 <li><code>Run</code> 方法开始的地方，创建其他子协程之前</li>
 <li>逐行读文件的 <code>for-loop</code> 里</li>
 </ol>
-<h3 id="donewg-waitgroup"><code>doneWg</code> waitGroup</h3>
-<p>用来在主协程(<em><code>Run</code></em>)发送结束信号*<code>close*(h.done)</code>时等 <code>monitorFileSize</code>协程关闭</p>
-<p>2个问题，这个wg用来等什么协程，在哪等</p>
+<h2 id="donewg-waitgroup"><code>doneWg</code> waitGroup</h2>
+<p>用来在主协程 (<code>Run</code>) 发送结束信号 <code>close(h.done)</code> 时等 <code>monitorFileSize</code> 协程关闭。</p>
+<p>2 个问题，这个 wg 用来等什么协程，在哪等：</p>
 <ol>
-<li>用来等的是<code>monitorFileSize</code>监控文件大小协程</li>
+<li>用来等的是 <code>monitorFileSize</code> 监控文件大小协程</li>
 </ol>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">doneWg</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">1</span>)
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
 </span></span><span style="display:flex;"><span>   <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">monitorFileSize</span>()
 </span></span><span style="display:flex;"><span>   <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">doneWg</span>.<span style="color:#a6e22e">Done</span>()
 </span></span><span style="display:flex;"><span>}()
-</span></span></code></pre></div><ol>
-<li>在 <code>stop</code> 函数里等(小写stop)</li>
+</span></span></code></pre></div><ol start="2">
+<li>在 <code>stop</code> 函数里等 (小写 stop)</li>
 </ol>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//stop is intended for internal use and closed thedone channel tostop execution
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">h</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Harvester</span>) <span style="color:#a6e22e">stop</span>() {
@@ -424,21 +438,21 @@
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>那么 <code>stop</code> 函数在哪被调用呢？</p>
 <ol>
-<li><em><code>Run</code> 函数的的defer操作里</em></li>
+<li><code>Run</code> 函数的 defer 操作里</li>
 <li>超时控制的协程里</li>
 <li>外部调用 <code>Stop</code> 时</li>
 </ol>
-<p>这里有个疑问，为什么在 <code>stop</code> 里面要<code>h.doneWg.Wait()</code>, 看上去 <code>monitorFileSize</code> 即使不wait也能正常退出，后来再读后面代码发现是为了先执行 <code>monitorFileSize</code> 后执行 <code>cleanup</code> 关闭句柄并改变关闭状态</p>
-<p>这里可以看出，当主协程因为某种原因结束时，我们希望先等 <code>monitorFileSize</code> 协程先退出后再执行后续操作 <code>cleanup</code> ，这里的顺序是</p>
+<p>这里有个疑问，为什么在 <code>stop</code> 里面要 <code>h.doneWg.Wait()</code>，看上去 <code>monitorFileSize</code> 即使不 wait 也能正常退出，后来再读后面代码发现是为了先执行 <code>monitorFileSize</code> 后执行 <code>cleanup</code> 关闭句柄并改变关闭状态。</p>
+<p>这里可以看出，当主协程因为某种原因结束时，我们希望先等 <code>monitorFileSize</code> 协程先退出后再执行后续操作 <code>cleanup</code>，这里的顺序是：</p>
 <ol>
 <li><code>h.stop()</code></li>
 <li><code>h.monitorFileSize</code> 协程退出</li>
 <li><code>h.cleanup()</code></li>
 </ol>
-<h3 id="stopwg-waitgroup-结束完成"><code>stopWg</code> waitGroup, 结束完成</h3>
-<p>2个问题，这个wg用来等什么协程，在哪等</p>
+<h2 id="stopwg-waitgroup---结束完成"><code>stopWg</code> waitGroup - 结束完成</h2>
+<p>2 个问题，这个 wg 用来等什么协程，在哪等：</p>
 <ol>
-<li>用来等待*<code>Run</code>函数的defer也完成后再退出 (<em><code>cleanup</code>函数, 改变<code>Harvester</code>状态为关闭,并关闭句柄</em>)*</li>
+<li>用来等待 <code>Run</code> 函数的 defer 也完成后再退出 (<code>cleanup</code> 函数，改变 <code>Harvester</code> 状态为关闭，并关闭句柄)</li>
 </ol>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">defer</span> <span style="color:#66d9ef">func</span>() {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Channel to stop internal harvester routines
@@ -452,8 +466,8 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Marks harvester stopping completed
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">stopWg</span>.<span style="color:#a6e22e">Done</span>()
 </span></span><span style="display:flex;"><span>}()
-</span></span></code></pre></div><ol>
-<li>在 <em><code>Stop</code> 函数里等(大写)</em></li>
+</span></span></code></pre></div><ol start="2">
+<li>在 <code>Stop</code> 函数里等 (大写)</li>
 </ol>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">//Stop stops harvester and waits for completion
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">h</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Harvester</span>)<span style="color:#a6e22e">Stop</span>() {
@@ -463,8 +477,155 @@
 </span></span><span style="display:flex;"><span>   <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">stopWg</span>.<span style="color:#a6e22e">Wait</span>()
 </span></span><span style="display:flex;"><span>   <span style="color:#a6e22e">h</span>.<span style="color:#a6e22e">stopLock</span>.<span style="color:#a6e22e">Unlock</span>()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>可以看出，这个wg的用途是当外部关闭该任务时，保证 <code>stop</code> 和 <code>cleanup</code> 被执行完成</p>
-<h3 id="参考">参考</h3>
+</span></span></code></pre></div><p>可以看出，这个 wg 的用途是当外部关闭该任务时，保证 <code>stop</code> 和 <code>cleanup</code> 被执行完成。</p>
+<h2 id="总结">总结</h2>
+<h3 id="核心设计模式">核心设计模式</h3>
+<p>通过对 Filebeat Harvester 的分析，我们学习到了优雅的协程生命周期管理模式：</p>
+<ol>
+<li>
+<p><strong>双 WaitGroup 模式</strong></p>
+<ul>
+<li><code>doneWg</code>：用于等待内部协程（如 <code>monitorFileSize</code>）完成</li>
+<li><code>stopWg</code>：用于外部调用者等待整个任务完全清理</li>
+<li>这种设计实现了分层的关闭控制</li>
+</ul>
+</li>
+<li>
+<p><strong>Channel + WaitGroup 组合</strong></p>
+<ul>
+<li><code>done channel</code>：作为广播信号，通知所有协程停止</li>
+<li><code>sync.Once</code>：保证关闭操作只执行一次</li>
+<li>WaitGroup：确保关闭顺序可控</li>
+</ul>
+</li>
+<li>
+<p><strong>优雅关闭的顺序控制</strong></p>
+<pre tabindex="0"><code>主协程结束 → close(h.done) → 等待 monitorFileSize → cleanup → stopWg.Done()
+</code></pre></li>
+</ol>
+<h3 id="关键技术要点">关键技术要点</h3>
+<table>
+  <thead>
+      <tr>
+          <th>技术点</th>
+          <th>作用</th>
+          <th>使用场景</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>done channel</code></td>
+          <td>广播停止信号</td>
+          <td>通知多个协程同时停止</td>
+      </tr>
+      <tr>
+          <td><code>doneWg</code></td>
+          <td>等待内部协程</td>
+          <td>保证清理前内部任务完成</td>
+      </tr>
+      <tr>
+          <td><code>stopWg</code></td>
+          <td>等待清理完成</td>
+          <td>外部调用者等待资源释放</td>
+      </tr>
+      <tr>
+          <td><code>sync.Once</code></td>
+          <td>防止重复关闭</td>
+          <td>多个协程可能触发关闭</td>
+      </tr>
+      <tr>
+          <td><code>stopLock</code></td>
+          <td>防止竞态</td>
+          <td>保护 stopWg 的并发访问</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="实践建议">实践建议</h3>
+<ol>
+<li>
+<p><strong>设计长生命周期协程时</strong></p>
+<ul>
+<li>提供明确的停止信号机制（如 <code>done channel</code>）</li>
+<li>为主协程设计超时控制，避免无限等待</li>
+<li>使用 defer 确保清理代码一定执行</li>
+</ul>
+</li>
+<li>
+<p><strong>管理多个协程时</strong></p>
+<ul>
+<li>使用 WaitGroup 控制关闭顺序</li>
+<li>区分内部协程等待和外部调用等待</li>
+<li>使用 <code>sync.Once</code> 保证关闭操作幂等性</li>
+</ul>
+</li>
+<li>
+<p><strong>资源清理时</strong></p>
+<ul>
+<li>先停止业务逻辑（close channel）</li>
+<li>再等待子任务完成（doneWg.Wait）</li>
+<li>最后清理资源（cleanup）</li>
+<li>通知外部调用者（stopWg.Done）</li>
+</ul>
+</li>
+</ol>
+<h3 id="可复用的代码模式">可复用的代码模式</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Worker</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">done</span>     <span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">struct</span>{}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">doneWg</span>   <span style="color:#f92672">*</span><span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>  <span style="color:#75715e">// 等待内部协程
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">stopOnce</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">Once</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">stopWg</span>   <span style="color:#f92672">*</span><span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>  <span style="color:#75715e">// 等待清理完成
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">stopLock</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">Mutex</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">w</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Worker</span>) <span style="color:#a6e22e">Run</span>() <span style="color:#66d9ef">error</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">stopWg</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> <span style="color:#66d9ef">func</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">stop</span>()
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">cleanup</span>()
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">stopWg</span>.<span style="color:#a6e22e">Done</span>()
+</span></span><span style="display:flex;"><span>    }()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 启动监控协程
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">doneWg</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">monitor</span>()
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">doneWg</span>.<span style="color:#a6e22e">Done</span>()
+</span></span><span style="display:flex;"><span>    }()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 主逻辑
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">select</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">done</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">default</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 业务处理
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">w</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Worker</span>) <span style="color:#a6e22e">stop</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">stopOnce</span>.<span style="color:#a6e22e">Do</span>(<span style="color:#66d9ef">func</span>() {
+</span></span><span style="display:flex;"><span>        close(<span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">done</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">doneWg</span>.<span style="color:#a6e22e">Wait</span>()  <span style="color:#75715e">// 等待内部协程
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    })
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">w</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Worker</span>) <span style="color:#a6e22e">Stop</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">stop</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">stopLock</span>.<span style="color:#a6e22e">Lock</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">stopWg</span>.<span style="color:#a6e22e">Wait</span>()  <span style="color:#75715e">// 等待清理完成
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">stopLock</span>.<span style="color:#a6e22e">Unlock</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="扩展思考">扩展思考</h3>
+<p>这种协程管理模式不仅适用于文件采集场景，也可以应用于：</p>
+<ul>
+<li>网络连接池管理</li>
+<li>定时任务调度</li>
+<li>消息队列消费者</li>
+<li>长连接服务（WebSocket、gRPC）</li>
+</ul>
+<p>关键是理解<strong>分层关闭</strong>和<strong>顺序控制</strong>的设计思想。</p>
+<h2 id="参考">参考</h2>
 <p>filebeat/input/log/harvester.go</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// Harvester contains all harvester related data
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Harvester</span> <span style="color:#66d9ef">struct</span> {

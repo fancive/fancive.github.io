@@ -1,14 +1,14 @@
 ---
 title: "[Paper reading] A Survey On Log Research Of AIOps: Methods and Trends"
 date: 2023-03-25T13:43:03+08:00
-draft: false
-
+cover: "/images/img/log_4_ops.png"
+description: "AIOps 日志研究综述：系统梳理日志分析的方法、趋势以及在智能运维中的应用。"
 categories:
-- software engineering
-
+  - AIOps
 tags:
-- paper reading
-- AIOps
+  - paper reading
+  - AIOps
+draft: false
 ---
 
 # first pass

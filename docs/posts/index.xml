@@ -9,11 +9,11 @@
     <lastBuildDate>Thu, 30 Jan 2025 14:07:06 +0800</lastBuildDate>
     <atom:link href="https://fancive.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Automating Deployment Pipeline From Code Review to Production</title>
+      <title>从代码评审到生产部署：自动化流水线实践</title>
       <link>https://fancive.github.io/posts/automating-deployment-pipeline-from-code-review-to-production/</link>
       <pubDate>Thu, 30 Jan 2025 14:07:06 +0800</pubDate>
       <guid>https://fancive.github.io/posts/automating-deployment-pipeline-from-code-review-to-production/</guid>
-      <description>&lt;h2 id=&#34;传统部署流程的痛点&#34;&gt;传统部署流程的痛点&lt;/h2&gt;&#xA;&lt;p&gt;在开发自动化部署工具之前，我们的部署流程需要频繁的人工介入和等待。让我们看看一个典型的部署过程：&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;评审与合并阶段&#xA;开发人员提交代码后，首先要在代码平台等待其他同学评审并给出 +2。这个过程完全依赖人工，评审人可能正在开会或者忙于其他事情，导致评审时间不可控。&lt;/li&gt;&#xA;&lt;/ol&gt;</description>
+      <description>&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;&#xA;&lt;p&gt;在现代软件开发中，部署效率直接影响团队的整体生产力。本文分享了我们团队从手动部署到全自动化部署的实践经验，通过自动化工具将部署时间从 15 分钟缩短到 5 分钟，并完全消除了人工操作带来的错误。&lt;/p&gt;</description>
     </item>
     <item>
       <title>Wheel of Life 2024</title>
@@ -55,28 +55,28 @@
       <link>https://fancive.github.io/posts/what_i_learned_from_filebeat_harvester/</link>
       <pubDate>Mon, 28 Nov 2022 14:13:14 +0800</pubDate>
       <guid>https://fancive.github.io/posts/what_i_learned_from_filebeat_harvester/</guid>
-      <description>&lt;h3 id=&#34;总体流程&#34;&gt;总体流程&lt;/h3&gt;&#xA;&lt;p&gt;filebeat 对每个path都会创建一个 &lt;code&gt;harvester&lt;/code&gt;,  &lt;code&gt;harvester&lt;/code&gt; 负责逐行读取文件内容。它的上游是 &lt;code&gt;input&lt;/code&gt; , &lt;code&gt;input&lt;/code&gt; 负责管理&lt;code&gt;harvester&lt;/code&gt;, 它的下游是 &lt;code&gt;output&lt;/code&gt;, &lt;code&gt;output&lt;/code&gt; 负责消费每一行消息。&lt;/p&gt;</description>
+      <description>&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;&#xA;&lt;p&gt;在学习优秀开源项目的源码时，我们不仅能学到具体的技术实现，更能领悟到工程实践中的设计智慧。Filebeat 作为 Elastic Stack 中的日志采集器，其 Harvester 模块的设计就是一个典范。本文通过深入分析 Harvester 的协程管理机制，总结了四个核心问题的解决方案，这些经验可以直接应用到我们日常的 Go 项目开发中。&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;核心问题&lt;/strong&gt;：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;如何为主协程添加超时控制？&lt;/li&gt;&#xA;&lt;li&gt;主协程结束时如何优雅关闭其他协程？&lt;/li&gt;&#xA;&lt;li&gt;如何控制多个协程的关闭顺序？&lt;/li&gt;&#xA;&lt;li&gt;如何从外部安全地关闭任务并等待清理完成？&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
     </item>
     <item>
-      <title>filebeat中使用的设计模式</title>
+      <title>Filebeat 中使用的设计模式</title>
       <link>https://fancive.github.io/posts/design_pattern_used_in_filebeat/</link>
       <pubDate>Wed, 16 Sep 2020 22:15:59 +0800</pubDate>
       <guid>https://fancive.github.io/posts/design_pattern_used_in_filebeat/</guid>
-      <description>&lt;h2 id=&#34;registry-与-lazyinit-结合&#34;&gt;registry 与 lazyinit 结合&lt;/h2&gt;</description>
+      <description>&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;&#xA;&lt;p&gt;Filebeat 是 Elastic Stack 中用于收集和转发日志数据的轻量级采集器。通过深入阅读 Filebeat 的源码，我们可以学习到许多优秀的设计模式应用。本文将介绍 Filebeat 中使用的四种核心设计模式：Registry + LazyInit、Observer、Strategy 和 Object Pool，并分析它们如何帮助 Filebeat 实现高性能和良好的可扩展性。&lt;/p&gt;</description>
     </item>
     <item>
-      <title>go string to byte</title>
+      <title>深入理解 Go String 转 []byte 的容量分配机制</title>
       <link>https://fancive.github.io/posts/go_string_byte/</link>
       <pubDate>Sun, 31 May 2020 21:30:28 +0800</pubDate>
       <guid>https://fancive.github.io/posts/go_string_byte/</guid>
-      <description>&lt;h2 id=&#34;0x01-背景&#34;&gt;0x01 背景&lt;/h2&gt;&#xA;&lt;p&gt;最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32&lt;/p&gt;</description>
+      <description>&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;&#xA;&lt;p&gt;在 Go 语言中，string 和 []byte 之间的转换是非常常见的操作。但你是否注意到，当将一个 3 字节的字符串转为 []byte 时，得到的切片容量却是 32？这背后隐藏着 Go 运行时的内存分配策略。本文将通过汇编代码分析，深入探究这个有趣的现象，帮助你理解 Go 在底层是如何处理类型转换和内存分配的。&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;核心问题&lt;/strong&gt;：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;为什么 &lt;code&gt;[]byte(&amp;quot;abc&amp;quot;)&lt;/code&gt; 的容量是 32 而不是 3？&lt;/li&gt;&#xA;&lt;li&gt;string 转 []byte 的底层实现是什么？&lt;/li&gt;&#xA;&lt;li&gt;Go 运行时如何进行内存分配？&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
     </item>
     <item>
-      <title>[翻译]go interface</title>
+      <title>[翻译] Go Interface 深度解析</title>
       <link>https://fancive.github.io/posts/go_interface/</link>
       <pubDate>Wed, 06 May 2020 22:20:18 +0800</pubDate>
       <guid>https://fancive.github.io/posts/go_interface/</guid>
-      <description>&lt;h2 id=&#34;译-go-interface-values&#34;&gt;[译] Go Interface Values&lt;/h2&gt;&#xA;&#xA;&#xA;&#xA;  &lt;blockquote&gt;&#xA;    &lt;p&gt;原文 (&lt;a href=&#34;https://www.airs.com/blog/archives/281&#34; target=&#34;_blank&#34;&gt;https://www.airs.com/blog/archives/281&lt;/a&gt;&#xA;)&lt;/p&gt;&#xA;&#xA;  &lt;/blockquote&gt;&#xA;&#xA;&lt;h2 id=&#34;原文翻译&#34;&gt;原文翻译&lt;/h2&gt;&#xA;&lt;p&gt;虽然 Go 中interface 的指是灵活的，但它们也有令人困惑的方面。&lt;/p&gt;</description>
+      <description>&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;&#xA;&lt;p&gt;Interface 是 Go 语言最强大的特性之一，但同时也是最容易让人困惑的部分。本文翻译自 Ian Lance Taylor 的博客文章，深入探讨了 Go interface 的内部实现机制，帮助你理解 interface 的静态类型、动态类型以及值拷贝的工作原理。&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;核心要点&lt;/strong&gt;：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Interface 同时具有静态类型和动态类型&lt;/li&gt;&#xA;&lt;li&gt;Interface 的值拷贝行为&lt;/li&gt;&#xA;&lt;li&gt;Interface 的内部数据结构（itable）&lt;/li&gt;&#xA;&lt;li&gt;指针接收者与值接收者的区别&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&#xA;&#xA;&#xA;  &lt;blockquote&gt;&#xA;    &lt;p&gt;原文链接：https://www.airs.com/blog/archives/281&lt;/p&gt;&#xA;&#xA;  &lt;/blockquote&gt;</description>
     </item>
   </channel>
 </rss>

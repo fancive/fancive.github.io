@@ -6,7 +6,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>go string to byte | home</title>
+    <title>深入理解 Go String 转 []byte 的容量分配机制 | home</title>
 
     
 
@@ -15,8 +15,7 @@
 
 
 <meta name="author" content="fancive" />
-<meta name="description" content="0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32
-" />
+<meta name="description" content="探究 Go 语言中 string 转 []byte 时容量变化的底层原理，通过汇编代码分析内存分配机制。" />
 
 
 <meta name="keywords" content="Go Runtime,翻译">
@@ -28,8 +27,8 @@
 
 <meta property="og:url" content="https://fancive.github.io/posts/go_string_byte/">
   <meta property="og:site_name" content="home">
-  <meta property="og:title" content="go string to byte">
-  <meta property="og:description" content="0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32">
+  <meta property="og:title" content="深入理解 Go String 转 []byte 的容量分配机制">
+  <meta property="og:description" content="探究 Go 语言中 string 转 []byte 时容量变化的底层原理，通过汇编代码分析内存分配机制。">
   <meta property="og:locale" content="en">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
@@ -42,8 +41,8 @@
 
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="go string to byte">
-  <meta name="twitter:description" content="0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32">
+  <meta name="twitter:title" content="深入理解 Go String 转 []byte 的容量分配机制">
+  <meta name="twitter:description" content="探究 Go 语言中 string 转 []byte 时容量变化的底层原理，通过汇编代码分析内存分配机制。">
 
 
 
@@ -236,21 +235,21 @@
   <div class="lg:col-span-2">
     <article class="mx-auto prose prose-quoteless dark:prose-invert" id="dream-single-post-main" itemscope itemtype="http://schema.org/Article">
       
-  <meta itemprop="name" content="go string to byte">
-  <meta itemprop="description" content="0x01 背景 最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32">
+  <meta itemprop="name" content="深入理解 Go String 转 []byte 的容量分配机制">
+  <meta itemprop="description" content="探究 Go 语言中 string 转 []byte 时容量变化的底层原理，通过汇编代码分析内存分配机制。">
   <meta itemprop="datePublished" content="2020-05-31T21:30:28+08:00">
   <meta itemprop="dateModified" content="2020-05-31T21:30:28+08:00">
-  <meta itemprop="wordCount" content="776">
+  <meta itemprop="wordCount" content="1006">
   <meta itemprop="keywords" content="Go Runtime,翻译">
 
       <header>
-        <h1 itemprop="headline">go string to byte</h1>
+        <h1 itemprop="headline">深入理解 Go String 转 []byte 的容量分配机制</h1>
         <p class="text-sm">
           
             Sunday, May 31, 2020
           
 
-          | <span>4 minute read</span>
+          | <span>5 minute read</span>
 
           
           | <span>Updated at
@@ -259,8 +258,11 @@
             </span>
           
         </p>
+
+        
         <div class="flex justify-between">
-          <div class="flex items-center">
+          
+            <div class="flex items-center">
   
   <span>@</span>
   
@@ -272,6 +274,7 @@
   </span>
 </div>
 
+          
 
           <div class="flex items-center gap-2">
   
@@ -283,7 +286,7 @@
   
   
     <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
-      href="https://x.com/intent/post?text=go%20string%20to%20byte&amp;url=https://fancive.github.io/posts/go_string_byte/" target="_blank" rel="noopener noreferrer"
+      href="https://x.com/intent/post?text=%e6%b7%b1%e5%85%a5%e7%90%86%e8%a7%a3%20Go%20String%20%e8%bd%ac%20[]byte%20%e7%9a%84%e5%ae%b9%e9%87%8f%e5%88%86%e9%85%8d%e6%9c%ba%e5%88%b6&amp;url=https://fancive.github.io/posts/go_string_byte/" target="_blank" rel="noopener noreferrer"
       title="Share on X">
       <ion-icon class="group-hover:text-primary-content" name="logo-x"></ion-icon>
     </a>
@@ -295,7 +298,7 @@
     </a>
   
     <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
-      href="https://wa.me/?text=go%20string%20to%20byte%20https://fancive.github.io/posts/go_string_byte/" target="_blank" rel="noopener noreferrer"
+      href="https://wa.me/?text=%e6%b7%b1%e5%85%a5%e7%90%86%e8%a7%a3%20Go%20String%20%e8%bd%ac%20[]byte%20%e7%9a%84%e5%ae%b9%e9%87%8f%e5%88%86%e9%85%8d%e6%9c%ba%e5%88%b6%20https://fancive.github.io/posts/go_string_byte/" target="_blank" rel="noopener noreferrer"
       title="Share on WhatsApp">
       <ion-icon class="group-hover:text-primary-content" name="logo-whatsapp"></ion-icon>
     </a>
@@ -310,15 +313,26 @@
 
       <section id="dream-single-post-content" itemprop="articleBody">
         
+        <img src="/images/illustrations/interface.jpg" alt="深入理解 Go String 转 []byte 的容量分配机制" />
+        
 
-        <h2 id="0x01-背景">0x01 背景</h2>
-<p>最近在review其他同学代码发现将 string转[]byte的时候，得到的[]byte的容量是会变的, 比如如下一段代码的输出是32</p>
+        <h2 id="引言">引言</h2>
+<p>在 Go 语言中，string 和 []byte 之间的转换是非常常见的操作。但你是否注意到，当将一个 3 字节的字符串转为 []byte 时，得到的切片容量却是 32？这背后隐藏着 Go 运行时的内存分配策略。本文将通过汇编代码分析，深入探究这个有趣的现象，帮助你理解 Go 在底层是如何处理类型转换和内存分配的。</p>
+<p><strong>核心问题</strong>：</p>
+<ul>
+<li>为什么 <code>[]byte(&quot;abc&quot;)</code> 的容量是 32 而不是 3？</li>
+<li>string 转 []byte 的底层实现是什么？</li>
+<li>Go 运行时如何进行内存分配？</li>
+</ul>
+<h2 id="问题发现">问题发现</h2>
+<p>最近在 code review 时发现，将 string 转 []byte 时，得到的 []byte 的容量会发生变化。比如下面这段代码的输出是 32：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
 </span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">s1</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;abc&#34;</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(cap([]byte(<span style="color:#a6e22e">s1</span>)))
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="0x02-探究">0x02 探究</h2>
-<p>那么这是为什么呢，首先看汇编</p>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(cap([]byte(<span style="color:#a6e22e">s1</span>)))  <span style="color:#75715e">// 输出：32
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>为什么长度为 3 的字符串转换后，容量却是 32？</p>
+<h2 id="汇编代码分析">汇编代码分析</h2>
+<p>要理解这个问题，我们需要深入到汇编层面。首先编译代码并查看汇编输出：</p>
 
 
 
@@ -466,15 +480,142 @@ jumps to 283 if SP &lt;= g.stackguard0
 <pre tabindex="0"><code>0x003b 00059 (/Users/fancivez/tmp/go.go:6)	MOVQ	$3, &#34;&#34;.s1+112(SP)
 </code></pre><p>把字符串长度(3)移动到112字节位置</p>
 <pre tabindex="0"><code>0x005b 00091 (/Users/fancivez/tmp/go.go:7)	CALL	runtime.stringtoslicebyte(SB)
-</code></pre><h2 id="参考">参考</h2>
+</code></pre><p>这个函数调用就是关键！<code>runtime.stringtoslicebyte</code> 负责执行 string 到 []byte 的转换，它会分配内存并复制数据。</p>
+<h2 id="内存分配策略">内存分配策略</h2>
+<p>Go 运行时的内存分配器采用了<strong>预分配策略</strong>来优化性能。当分配小对象时，不会精确分配所需的字节数，而是按照预定义的 size class 进行分配。</p>
+<h3 id="size-class-机制">Size Class 机制</h3>
+<p>Go 运行时定义了多个内存块大小等级（size class），常见的包括：</p>
+<ul>
+<li>8 bytes</li>
+<li>16 bytes</li>
+<li>32 bytes</li>
+<li>48 bytes</li>
+<li>64 bytes</li>
+<li>&hellip;</li>
+</ul>
+<p>当我们需要分配 3 字节时，运行时会选择最接近且大于等于 3 的 size class，也就是 <strong>32 bytes</strong>。这就解释了为什么容量是 32 而不是 3。</p>
+<h3 id="为什么这样设计">为什么这样设计？</h3>
 <ol>
-<li><a href="https://xargin.com/go-and-plan9-asm/" target="_blank">https://xargin.com/go-and-plan9-asm/</a>
+<li><strong>减少内存碎片</strong>：统一的 size class 可以更好地复用内存块</li>
+<li><strong>提升分配效率</strong>：预定义的大小等级简化了内存管理逻辑</li>
+<li><strong>降低开销</strong>：避免为每个微小的分配请求都进行精确的内存管理</li>
+</ol>
+<h2 id="总结">总结</h2>
+<h3 id="核心发现">核心发现</h3>
+<ol>
+<li>
+<p><strong>string 转 []byte 会发生内存分配和数据复制</strong></p>
+<ul>
+<li>通过 <code>runtime.stringtoslicebyte</code> 函数实现</li>
+<li>不是简单的类型转换，涉及实际的内存操作</li>
+</ul>
 </li>
-<li><a href="https://golang.org/doc/asm" target="_blank">https://golang.org/doc/asm</a>
+<li>
+<p><strong>容量由内存分配器的 size class 决定</strong></p>
+<ul>
+<li>小对象按预定义的 size class 分配</li>
+<li>3 字节的需求会分配到 32 字节的 size class</li>
+<li>这是性能优化的结果，不是 bug</li>
+</ul>
 </li>
-<li><a href="https://www.youtube.com/watch?v=KINIAgRpkDA" target="_blank">https://www.youtube.com/watch?v=KINIAgRpkDA</a>
+<li>
+<p><strong>汇编代码揭示了底层实现</strong></p>
+<ul>
+<li>字符串字面值存储在 <code>.data</code> 段</li>
+<li>栈帧分配遵循特定的布局规则</li>
+<li>函数调用约定包括参数传递和寄存器使用</li>
+</ul>
 </li>
-<li><a href="https://www.cnblogs.com/yjf512/p/6132868.html" target="_blank">https://www.cnblogs.com/yjf512/p/6132868.html</a>
+</ol>
+<h3 id="性能影响">性能影响</h3>
+<p>这个发现对实际编程有重要意义：</p>
+<table>
+  <thead>
+      <tr>
+          <th>场景</th>
+          <th>建议</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>频繁转换</td>
+          <td>尽量避免重复的 string ↔ []byte 转换</td>
+      </tr>
+      <tr>
+          <td>大字符串</td>
+          <td>考虑使用 <code>unsafe</code> 包进行零拷贝转换（需注意安全性）</td>
+      </tr>
+      <tr>
+          <td>性能敏感</td>
+          <td>复用 []byte 切片，避免频繁分配</td>
+      </tr>
+      <tr>
+          <td>小字符串</td>
+          <td>容量&quot;浪费&quot;可以接受，因为分配器本来就会这样做</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="实践建议">实践建议</h3>
+<ol>
+<li>
+<p><strong>理解转换成本</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// 低效：每次循环都分配新内存
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">s</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">strings</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">b</span> <span style="color:#f92672">:=</span> []byte(<span style="color:#a6e22e">s</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">process</span>(<span style="color:#a6e22e">b</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 高效：复用缓冲区
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">buf</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">byte</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1024</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">s</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">strings</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">buf</span> = append(<span style="color:#a6e22e">buf</span>[:<span style="color:#ae81ff">0</span>], <span style="color:#a6e22e">s</span><span style="color:#f92672">...</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">process</span>(<span style="color:#a6e22e">buf</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+<li>
+<p><strong>零拷贝转换</strong>（仅在确保安全的情况下使用）</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;unsafe&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 危险！仅当你确定不会修改返回的 []byte 时使用
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">stringToByteSliceUnsafe</span>(<span style="color:#a6e22e">s</span> <span style="color:#66d9ef">string</span>) []<span style="color:#66d9ef">byte</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">*</span>(<span style="color:#f92672">*</span>[]<span style="color:#66d9ef">byte</span>)(<span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">s</span>))
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+<li>
+<p><strong>选择合适的类型</strong></p>
+<ul>
+<li>如果数据不需要修改，保持 string 类型</li>
+<li>如果需要频繁修改，使用 []byte</li>
+<li>避免两者之间的频繁转换</li>
+</ul>
+</li>
+</ol>
+<h3 id="扩展阅读">扩展阅读</h3>
+<p>通过本文的分析方法，你也可以探究其他 Go 语言特性的底层实现：</p>
+<ul>
+<li>interface 的内存布局</li>
+<li>map 的扩容机制</li>
+<li>channel 的通信原理</li>
+<li>goroutine 的调度过程</li>
+</ul>
+<p>掌握汇编级别的理解能力，可以帮助你：</p>
+<ul>
+<li>写出更高性能的代码</li>
+<li>深入理解语言特性</li>
+<li>定位复杂的性能问题</li>
+<li>做出更明智的技术决策</li>
+</ul>
+<h2 id="参考资源">参考资源</h2>
+<ol>
+<li><a href="https://xargin.com/go-and-plan9-asm/" target="_blank">Go and Plan9 Assembly</a>
+</li>
+<li><a href="https://golang.org/doc/asm" target="_blank">A Quick Guide to Go&rsquo;s Assembler</a>
+</li>
+<li><a href="https://www.youtube.com/watch?v=KINIAgRpkDA" target="_blank">Go Assembly by Example</a>
+</li>
+<li><a href="https://www.cnblogs.com/yjf512/p/6132868.html" target="_blank">Go 汇编入门知识</a>
+</li>
+<li><a href="https://go.dev/blog/ismmkeynote" target="_blank">Go 内存分配器设计</a>
 </li>
 </ol>
       </section>
@@ -491,7 +632,7 @@ jumps to 283 if SP &lt;= g.stackguard0
 <script>
     window.disqus_config = function () {
         this.page.identifier = '\/posts\/go_string_byte\/';
-        this.page.title = 'go string to byte';
+        this.page.title = '深入理解 Go String 转 []byte 的容量分配机制';
         this.page.url = 'https:\/\/fancive.github.io\/posts\/go_string_byte\/';
 
         
