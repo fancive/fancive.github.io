@@ -3,14 +3,14 @@
   x-data
   :class="$store.darkMode.class()"
   :data-theme="$store.darkMode.theme()">
-  <head>
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home | home</title>
 
     
 
-<link rel="canonical" href="https://fancive.github.io/" />
+<link rel="canonical" href="http://localhost:1313/" />
 
 
 
@@ -22,7 +22,7 @@
 <meta name="generator" content="Hugo 0.138.0">
 
 
-<meta property="og:url" content="https://fancive.github.io/">
+<meta property="og:url" content="http://localhost:1313/">
   <meta property="og:site_name" content="home">
   <meta property="og:title" content="fancivez">
   <meta property="og:description" content="欢迎来到荷兰">
@@ -39,9 +39,7 @@
 
 
 
-  
-
-<link rel="stylesheet" href="/css/output.min.css" />
+<link rel="stylesheet" href="/css/output.css" />
 
 
 
@@ -223,6 +221,56 @@
 <div class="dream-grid">
   
   <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-4 dream-column">
+    <a class="card card-compact bg-base-100 hover:bg-base-content/10 shadow-xl cursor-pointer dark:border dark:border-base-content/30" href="/posts/quantify-api-cpu-consumption-with-regression/">
+  
+  <figure>
+    
+    <img src="/images/img/cpu-analysis.jpg" alt="如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法" />
+    
+  </figure>
+  
+
+  <div class="card-body">
+    <h2 class="card-title">如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法</h2>
+
+    <p class="date text-base-content/60">
+    
+      Friday, Jan 23, 2026
+    
+    </p>
+
+    利用线性回归和现有监控数据（QPS、CPU 使用率），量化微服务中各 API 接口的 CPU 资源消耗，指导性能优化。
+
+    
+    <div class="card-actions justify-between items-center mt-4">
+      
+        <div class="flex items-center">
+  
+  <span>@</span>
+  
+
+  <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+  
+    
+      <span itemprop="name">fancivez</span>
+    
+  
+  </span>
+</div>
+
+      
+
+      <div class="flex items-center">
+        <ion-icon name="time" class="mr-1"></ion-icon>
+        <span>5 minute read</span>
+      </div>
+    </div>
+  </div>
+</a>
+
+  </div>
+  
+  <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-4 dream-column">
     <a class="card card-compact bg-base-100 hover:bg-base-content/10 shadow-xl cursor-pointer dark:border dark:border-base-content/30" href="/posts/automating-deployment-pipeline-from-code-review-to-production/">
   
   <figure>
@@ -340,6 +388,54 @@
     </p>
 
     通过冥想回顾成长历程，理解自我预期与现实的差距，学会接纳不完美的自己。
+
+    
+    <div class="card-actions justify-between items-center mt-4">
+      
+        <div class="flex items-center">
+  
+  <span>@</span>
+  
+
+  <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+  
+    <span itemprop="name">fancive</span>
+  
+  </span>
+</div>
+
+      
+
+      <div class="flex items-center">
+        <ion-icon name="time" class="mr-1"></ion-icon>
+        <span>1 minute read</span>
+      </div>
+    </div>
+  </div>
+</a>
+
+  </div>
+  
+  <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-4 dream-column">
+    <a class="card card-compact bg-base-100 hover:bg-base-content/10 shadow-xl cursor-pointer dark:border dark:border-base-content/30" href="/posts/use-gorm-proload-withcaution/">
+  
+  <figure>
+    
+    <img src="/images/illustrations/patterns.jpg" alt="慎用 Preload：深入理解 GORM 的预加载" />
+    
+  </figure>
+  
+
+  <div class="card-body">
+    <h2 class="card-title">慎用 Preload：深入理解 GORM 的预加载</h2>
+
+    <p class="date text-base-content/60">
+    
+      Tuesday, Nov 12, 2024
+    
+    </p>
+
+    深入剖析 GORM Preload 的性能陷阱，提供预加载的最佳实践和优化建议。
 
     
     <div class="card-actions justify-between items-center mt-4">
@@ -608,105 +704,25 @@
 
   </div>
   
-  <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-4 dream-column">
-    <a class="card card-compact bg-base-100 hover:bg-base-content/10 shadow-xl cursor-pointer dark:border dark:border-base-content/30" href="/posts/go_string_byte/">
-  
-  <figure>
-    
-    <img src="/images/illustrations/interface.jpg" alt="深入理解 Go String 转 []byte 的容量分配机制" />
-    
-  </figure>
-  
-
-  <div class="card-body">
-    <h2 class="card-title">深入理解 Go String 转 []byte 的容量分配机制</h2>
-
-    <p class="date text-base-content/60">
-    
-      Sunday, May 31, 2020
-    
-    </p>
-
-    探究 Go 语言中 string 转 []byte 时容量变化的底层原理，通过汇编代码分析内存分配机制。
-
-    
-    <div class="card-actions justify-between items-center mt-4">
-      
-        <div class="flex items-center">
-  
-  <span>@</span>
-  
-
-  <span itemprop="author" itemscope itemtype="https://schema.org/Person">
-  
-    <span itemprop="name">fancive</span>
-  
-  </span>
-</div>
-
-      
-
-      <div class="flex items-center">
-        <ion-icon name="time" class="mr-1"></ion-icon>
-        <span>5 minute read</span>
-      </div>
-    </div>
-  </div>
-</a>
-
-  </div>
-  
-  <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-4 dream-column">
-    <a class="card card-compact bg-base-100 hover:bg-base-content/10 shadow-xl cursor-pointer dark:border dark:border-base-content/30" href="/posts/go_interface/">
-  
-  <figure>
-    
-    <img src="/images/illustrations/interface.jpg" alt="[翻译] Go Interface 深度解析" />
-    
-  </figure>
-  
-
-  <div class="card-body">
-    <h2 class="card-title">[翻译] Go Interface 深度解析</h2>
-
-    <p class="date text-base-content/60">
-    
-      Wednesday, May 6, 2020
-    
-    </p>
-
-    深入理解 Go 语言 interface 的内部实现机制，包括静态类型、动态类型以及值拷贝的工作原理。
-
-    
-    <div class="card-actions justify-between items-center mt-4">
-      
-        <div class="flex items-center">
-  
-  <span>@</span>
-  
-
-  <span itemprop="author" itemscope itemtype="https://schema.org/Person">
-  
-    <span itemprop="name">fancive</span>
-  
-  </span>
-</div>
-
-      
-
-      <div class="flex items-center">
-        <ion-icon name="time" class="mr-1"></ion-icon>
-        <span>2 minute read</span>
-      </div>
-    </div>
-  </div>
-</a>
-
-  </div>
-  
 </div>
 
 
+
+<div class="flex justify-center mt-8">
+  <div class="join grid grid-cols-2">
+  
+  <button class="join-item btn btn-outline btn-sm" disabled>
+    Previous page
+  </button>
+  
+  
+  <a href="/page/2/" title="Next page" class="join-item btn btn-outline btn-sm">
+    Next page
+  </a>
+  
+</div>
+
+</div>
 
 
 
@@ -716,7 +732,7 @@
 
   <div>
   
-  <p>© 2025 home</p>
+  <p>© 2026 home</p>
   
 
   
@@ -828,7 +844,7 @@
     window.disqus_config = function () {
         this.page.identifier = '\/';
         this.page.title = 'fancivez';
-        this.page.url = 'https:\/\/fancive.github.io\/';
+        this.page.url = 'http:\/\/localhost:1313\/';
 
         
         this.callbacks.onReady.push(function () {
@@ -865,7 +881,7 @@
 
   <div>
   
-  <p>© 2025 home</p>
+  <p>© 2026 home</p>
   
 
   
@@ -924,16 +940,12 @@
 
   
   
-    
-  
-  <script src="/js/grid.min.js"></script>
+  <script src="/js/grid.js"></script>
 
 
 
 
-  
-
-<script src="/js/main.min.js"></script>
+<script src="/js/main.js"></script>
 
     
 

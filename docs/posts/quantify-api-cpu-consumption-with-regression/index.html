@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en"
+  x-data
+  :class="$store.darkMode.class()"
+  :data-theme="$store.darkMode.theme()">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法 | home</title>
+
+    
+
+<link rel="canonical" href="http://localhost:1313/posts/quantify-api-cpu-consumption-with-regression/" />
+
+
+
+<meta name="author" content="fancivez" />
+<meta name="description" content="利用线性回归和现有监控数据（QPS、CPU 使用率），量化微服务中各 API 接口的 CPU 资源消耗，指导性能优化。" />
+
+
+<meta name="keywords" content="机器学习,微服务,监控,Python">
+
+
+
+<meta name="generator" content="Hugo 0.138.0">
+
+
+<meta property="og:url" content="http://localhost:1313/posts/quantify-api-cpu-consumption-with-regression/">
+  <meta property="og:site_name" content="home">
+  <meta property="og:title" content="如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法">
+  <meta property="og:description" content="利用线性回归和现有监控数据（QPS、CPU 使用率），量化微服务中各 API 接口的 CPU 资源消耗，指导性能优化。">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-01-23T12:00:00+08:00">
+    <meta property="article:modified_time" content="2026-01-23T12:00:00+08:00">
+    <meta property="article:tag" content="机器学习">
+    <meta property="article:tag" content="微服务">
+    <meta property="article:tag" content="监控">
+    <meta property="article:tag" content="Python">
+
+
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法">
+  <meta name="twitter:description" content="利用线性回归和现有监控数据（QPS、CPU 使用率），量化微服务中各 API 接口的 CPU 资源消耗，指导性能优化。">
+
+
+
+
+<link rel="stylesheet" href="/css/output.css" />
+
+
+
+
+    
+
+
+<style>
+  pre {
+    padding: 1em;
+    overflow: auto;
+  }
+</style>
+
+
+
+
+
+
+
+
+
+    
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  </head>
+
+  <body x-data="{
+    flip: false,
+  }">
+    
+    <div id="dream-global-bg"></div>
+
+    
+<nav class="mt-4 lg:mt-8 py-4">
+
+  
+  <div class="container flex justify-between px-4">
+  
+    <section class="flex items-center gap-4">
+      <div class="avatar cursor-pointer hover:online" @click="flip = !flip" title="Flip it!">
+        <div class="h-10 rounded-full">
+          <img src="/images/profile.jpg" alt="" />
+        </div>
+      </div>
+
+      
+      <div>
+        
+        
+        <div class="text-base-content/60 text-sm">欢迎来到荷兰</div>
+        
+      </div>
+      
+    </section>
+
+    <div class="dropdown dropdown-end sm:hidden">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-square" aria-label="Select an option">
+        <ion-icon name="menu" class="text-2xl"></ion-icon>
+      </div>
+      <ul tabindex="0" class="dropdown-content menu w-36 bg-base-100 rounded-box z-[1] shadow-md">
+        
+
+
+<li>
+  <div role="link" tabindex="0" class="inline-flex items-center p-2 cursor-pointer" @click="flip = !flip" title="About">
+    <ion-icon name="information-circle"></ion-icon>About</div>
+</li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
+  <a class="inline-flex items-center p-2 cursor-pointer" href="/posts" title="Archives">
+    <ion-icon name="archive"></ion-icon>
+    Archives
+  </a>
+</li>
+
+
+
+
+<li>
+  <a class="inline-flex items-center p-2 cursor-pointer" href="/categories" title="All Categories">
+    <ion-icon name="grid"></ion-icon>
+    All Categories
+  </a>
+</li>
+
+
+
+
+<li>
+  <a class="inline-flex items-center p-2 cursor-pointer" href="/tags" title="All Tags">
+    <ion-icon name="pricetags"></ion-icon>
+    All Tags
+  </a>
+</li>
+
+
+
+
+
+
+      </ul>
+    </div>
+    <section class="hidden sm:flex sm:items-center sm:gap-2 md:gap-4">
+      
+      
+      
+      <div role="link" tabindex="0"
+        class="text-sm font-semibold cursor-pointer hover:underline"
+        @click="flip = !flip"
+        title="About"
+      >About</div>
+      
+      
+
+      
+      
+
+      
+
+      
+      
+
+
+
+
+
+      
+      
+
+
+
+
+
+      
+      
+<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/posts" title="Archives">
+  <ion-icon class="group-hover:text-primary-content" name="archive"></ion-icon>
+</a>
+
+
+      
+      
+<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/categories" title="All Categories">
+  <ion-icon class="group-hover:text-primary-content" name="grid"></ion-icon>
+</a>
+
+
+      
+      
+<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/tags" title="All Tags">
+  <ion-icon class="group-hover:text-primary-content" name="pricetags"></ion-icon>
+</a>
+
+
+      
+
+      
+
+      
+    </section>
+  </div>
+</nav>
+
+
+    <div class="flip-container" :class="{ 'flip-it': flip }">
+      <div class="flipper">
+        <div class="front">
+          <div class="container">
+            
+<div class="lg:grid lg:grid-cols-4 gap-4 mt-4 px-4">
+  <div class="hidden lg:block"></div>
+
+  <div class="lg:col-span-2">
+    <article class="mx-auto prose prose-quoteless dark:prose-invert" id="dream-single-post-main" itemscope itemtype="http://schema.org/Article">
+      
+  <meta itemprop="name" content="如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法">
+  <meta itemprop="description" content="利用线性回归和现有监控数据（QPS、CPU 使用率），量化微服务中各 API 接口的 CPU 资源消耗，指导性能优化。">
+  <meta itemprop="datePublished" content="2026-01-23T12:00:00+08:00">
+  <meta itemprop="dateModified" content="2026-01-23T12:00:00+08:00">
+  <meta itemprop="wordCount" content="960">
+  <meta itemprop="keywords" content="机器学习,微服务,监控,Python">
+
+      <header>
+        <h1 itemprop="headline">如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法</h1>
+        <p class="text-sm">
+          
+            Friday, Jan 23, 2026
+          
+
+          | <span>5 minute read</span>
+
+          
+          | <span>Updated at
+            
+              Friday, Jan 23, 2026
+            </span>
+          
+        </p>
+
+        
+        <div class="flex justify-between">
+          
+            <div class="flex items-center">
+  
+  <span>@</span>
+  
+
+  <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+  
+    
+      <span itemprop="name">fancivez</span>
+    
+  
+  </span>
+</div>
+
+          
+
+          <div class="flex items-center gap-2">
+  
+  
+
+  
+  
+  
+  
+  
+    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
+      href="https://x.com/intent/post?text=%e5%a6%82%e4%bd%95%e9%87%8f%e5%8c%96%20API%20%e6%8e%a5%e5%8f%a3%e7%9a%84%20CPU%20%e8%b5%84%e6%ba%90%e6%b6%88%e8%80%97%ef%bc%9a%e4%b8%80%e7%a7%8d%e5%9f%ba%e4%ba%8e%e5%9b%9e%e5%bd%92%e5%88%86%e6%9e%90%e7%9a%84%e6%96%b9%e6%b3%95&amp;url=http://localhost:1313/posts/quantify-api-cpu-consumption-with-regression/" target="_blank" rel="noopener noreferrer"
+      title="Share on X">
+      <ion-icon class="group-hover:text-primary-content" name="logo-x"></ion-icon>
+    </a>
+  
+    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
+      href="https://facebook.com/sharer/sharer.php?u=http://localhost:1313/posts/quantify-api-cpu-consumption-with-regression/" target="_blank" rel="noopener noreferrer"
+      title="Share on Facebook">
+      <ion-icon class="group-hover:text-primary-content" name="logo-facebook"></ion-icon>
+    </a>
+  
+    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
+      href="https://wa.me/?text=%e5%a6%82%e4%bd%95%e9%87%8f%e5%8c%96%20API%20%e6%8e%a5%e5%8f%a3%e7%9a%84%20CPU%20%e8%b5%84%e6%ba%90%e6%b6%88%e8%80%97%ef%bc%9a%e4%b8%80%e7%a7%8d%e5%9f%ba%e4%ba%8e%e5%9b%9e%e5%bd%92%e5%88%86%e6%9e%90%e7%9a%84%e6%96%b9%e6%b3%95%20http://localhost:1313/posts/quantify-api-cpu-consumption-with-regression/" target="_blank" rel="noopener noreferrer"
+      title="Share on WhatsApp">
+      <ion-icon class="group-hover:text-primary-content" name="logo-whatsapp"></ion-icon>
+    </a>
+  
+
+  
+  
+</div>
+
+        </div>
+      </header>
+
+      <section id="dream-single-post-content" itemprop="articleBody">
+        
+        <img src="/images/img/cpu-analysis.jpg" alt="如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法" />
+        
+
+        <h2 id="背景">背景</h2>
+<p>在微服务架构中，一个服务通常包含数十甚至上百个 API 接口。当我们需要优化 CPU 资源消耗时，往往面临一个问题：<strong>哪些接口消耗了最多的 CPU？</strong></p>
+<p>传统方法是通过 profiling 工具（如 pprof）分析，但这种方法：</p>
+<ul>
+<li>只能看到函数级别的消耗，难以直接关联到接口</li>
+<li>需要在生产环境开启采样，有一定性能开销</li>
+<li>难以持续监控和量化</li>
+</ul>
+<p>本文介绍一种<strong>基于线性回归</strong>的方法，利用现有的监控数据（QPS 和 CPU 使用率），估算每个接口的 CPU 贡献。</p>
+<h2 id="核心思路">核心思路</h2>
+<h3 id="基本假设">基本假设</h3>
+<p>假设服务的 CPU 使用率可以表示为各接口 QPS 的线性组合：</p>
+<pre tabindex="0"><code>CPU% = β₀ + β₁×QPS₁ + β₂×QPS₂ + ... + βₙ×QPSₙ + ε
+</code></pre><p>其中：</p>
+<ul>
+<li><code>βᵢ</code> 是接口 i 的<strong>单请求 CPU 成本</strong>（每处理一个请求消耗的 CPU 百分比，例如 β=0.001 表示每个请求消耗 0.001% CPU）</li>
+<li><code>β₀</code> 是截距，表示基础 CPU 消耗（与请求无关的开销，如 GC、定时任务等）</li>
+<li><code>ε</code> 是误差项</li>
+</ul>
+<p><strong>单位说明</strong>：本文中 CPU% 范围为 0-100，表示单核 CPU 的使用百分比。如果服务运行在多核机器上，需要先将监控数据归一化到单核。</p>
+<h3 id="为什么可行">为什么可行？</h3>
+<ol>
+<li><strong>线性可加性</strong>：在高并发场景下，CPU 消耗近似与请求量成正比</li>
+<li><strong>数据可得</strong>：QPS 和 CPU 使用率是最常见的监控指标</li>
+<li><strong>可解释性</strong>：回归系数直接表示&quot;单请求成本&quot;，业务含义清晰</li>
+</ol>
+<h3 id="注意相关性--因果性">注意：相关性 ≠ 因果性</h3>
+<p>回归分析只能揭示相关关系，不能证明因果。如果有外部因素同时影响 QPS 和 CPU（如流量高峰时段），系数可能存在偏差。因此，分析结果应作为优化方向的参考，具体接口仍需结合代码审查确认。</p>
+<h2 id="实现步骤">实现步骤</h2>
+<h3 id="step-1-数据采集">Step 1: 数据采集</h3>
+<p>从监控系统获取时序数据：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> pandas <span style="color:#66d9ef">as</span> pd
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 伪代码：从 Prometheus 获取数据</span>
+</span></span><span style="display:flex;"><span>qps_data <span style="color:#f92672">=</span> prometheus<span style="color:#f92672">.</span>query(
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;sum(rate(http_requests_total[5m])) by (api)&#39;</span>,
+</span></span><span style="display:flex;"><span>    start_time, end_time, step<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;5m&#39;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cpu_data <span style="color:#f92672">=</span> prometheus<span style="color:#f92672">.</span>query(
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;avg(cpu_usage_percent)&#39;</span>,
+</span></span><span style="display:flex;"><span>    start_time, end_time, step<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;5m&#39;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 转换为 DataFrame</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># X: 特征矩阵，每列是一个接口的 QPS，每行是一个时间点</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># y: 目标向量，CPU 使用率</span>
+</span></span><span style="display:flex;"><span>X <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>DataFrame(qps_data)<span style="color:#f92672">.</span>pivot(index<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;timestamp&#39;</span>, columns<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;api&#39;</span>, values<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;qps&#39;</span>)
+</span></span><span style="display:flex;"><span>y <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>Series(cpu_data[<span style="color:#e6db74">&#39;cpu_percent&#39;</span>], index<span style="color:#f92672">=</span>X<span style="color:#f92672">.</span>index)
+</span></span></code></pre></div><p><strong>关键点</strong>：</p>
+<ul>
+<li>时间对齐：QPS 和 CPU 数据的时间戳必须一致</li>
+<li>采样间隔：建议 5-10 分钟，太短噪声大，太长样本少</li>
+<li>数据量：至少 500+ 个时间点，保证回归的稳定性</li>
+<li>多实例聚合：如果服务有多个实例，需将 QPS 和 CPU 分别求和/平均后再分析</li>
+</ul>
+<h3 id="step-2-数据预处理">Step 2: 数据预处理</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># 处理缺失值</span>
+</span></span><span style="display:flex;"><span>X <span style="color:#f92672">=</span> X<span style="color:#f92672">.</span>fillna(<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>y <span style="color:#f92672">=</span> y<span style="color:#f92672">.</span>fillna(y<span style="color:#f92672">.</span>mean())
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 过滤零值过多的接口（&gt;90% 为零的接口剔除）</span>
+</span></span><span style="display:flex;"><span>non_zero_ratio <span style="color:#f92672">=</span> (X <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>)<span style="color:#f92672">.</span>mean()
+</span></span><span style="display:flex;"><span>valid_cols <span style="color:#f92672">=</span> X<span style="color:#f92672">.</span>columns[non_zero_ratio <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.1</span>]
+</span></span><span style="display:flex;"><span>X <span style="color:#f92672">=</span> X[valid_cols]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;保留 </span><span style="color:#e6db74">{</span>len(valid_cols)<span style="color:#e6db74">}</span><span style="color:#e6db74"> 个接口，剔除 </span><span style="color:#e6db74">{</span>len(non_zero_ratio) <span style="color:#f92672">-</span> len(valid_cols)<span style="color:#e6db74">}</span><span style="color:#e6db74"> 个低频接口&#34;</span>)
+</span></span></code></pre></div><p><strong>为什么要过滤零值过多的接口？</strong></p>
+<p>低频接口的数据稀疏，回归系数不稳定，置信区间很宽，结论不可靠。</p>
+<h3 id="step-3-回归建模">Step 3: 回归建模</h3>
+<p>使用 <strong>Ridge 回归</strong>（L2 正则化）而非普通最小二乘：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> sklearn.linear_model <span style="color:#f92672">import</span> RidgeCV
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> sklearn.model_selection <span style="color:#f92672">import</span> train_test_split, TimeSeriesSplit
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 划分训练集和测试集，用于验证模型泛化能力</span>
+</span></span><span style="display:flex;"><span>X_train, X_test, y_train, y_test <span style="color:#f92672">=</span> train_test_split(
+</span></span><span style="display:flex;"><span>    X, y, test_size<span style="color:#f92672">=</span><span style="color:#ae81ff">0.2</span>, shuffle<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>  <span style="color:#75715e"># 时序数据不打乱</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Ridge 回归，自动选择最优正则化参数</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 注意：使用 TimeSeriesSplit 保持时序顺序，避免数据泄漏</span>
+</span></span><span style="display:flex;"><span>model <span style="color:#f92672">=</span> RidgeCV(
+</span></span><span style="display:flex;"><span>    alphas<span style="color:#f92672">=</span>[<span style="color:#ae81ff">0.001</span>, <span style="color:#ae81ff">0.01</span>, <span style="color:#ae81ff">0.1</span>, <span style="color:#ae81ff">1.0</span>, <span style="color:#ae81ff">10.0</span>],
+</span></span><span style="display:flex;"><span>    cv<span style="color:#f92672">=</span>TimeSeriesSplit(n_splits<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span>)
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>model<span style="color:#f92672">.</span>fit(X_train, y_train)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 评估模型</span>
+</span></span><span style="display:flex;"><span>train_r2 <span style="color:#f92672">=</span> model<span style="color:#f92672">.</span>score(X_train, y_train)
+</span></span><span style="display:flex;"><span>test_r2 <span style="color:#f92672">=</span> model<span style="color:#f92672">.</span>score(X_test, y_test)
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;训练集 R²: </span><span style="color:#e6db74">{</span>train_r2<span style="color:#e6db74">:</span><span style="color:#e6db74">.4f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">, 测试集 R²: </span><span style="color:#e6db74">{</span>test_r2<span style="color:#e6db74">:</span><span style="color:#e6db74">.4f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;最优 alpha: </span><span style="color:#e6db74">{</span>model<span style="color:#f92672">.</span>alpha_<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 系数即为各接口的单请求 CPU 成本</span>
+</span></span><span style="display:flex;"><span>coefficients <span style="color:#f92672">=</span> dict(zip(X<span style="color:#f92672">.</span>columns, model<span style="color:#f92672">.</span>coef_))
+</span></span></code></pre></div><p><strong>为什么用 Ridge？</strong></p>
+<ol>
+<li><strong>共线性缓解</strong>：当接口 QPS 存在相关性时，Ridge 能给出更稳定的系数估计</li>
+<li><strong>过拟合风险</strong>：接口数量多时，普通回归容易过拟合</li>
+<li><strong>系数稳定性</strong>：正则化使系数更稳定</li>
+</ol>
+<p><strong>处理负系数</strong>：</p>
+<p>理论上，单请求 CPU 成本不应为负。如果出现负系数，可能原因：</p>
+<ul>
+<li>共线性：与其他接口高度相关，系数被&quot;分摊&quot;</li>
+<li>数据噪声：低频接口数据不足</li>
+<li>遗漏变量：存在未建模的因素</li>
+</ul>
+<p>建议将负系数视为 0（无显著贡献），或使用非负最小二乘（<code>scipy.optimize.nnls</code>）。</p>
+<h3 id="step-4-置信区间估计block-bootstrap">Step 4: 置信区间估计（Block Bootstrap）</h3>
+<p>由于时序数据存在自相关，传统的 Bootstrap 会低估方差。使用 <strong>Block Bootstrap</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> sklearn.linear_model <span style="color:#f92672">import</span> Ridge
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">block_bootstrap_ci</span>(X, y, alpha, block_size<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>, n_iterations<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span>, random_state<span style="color:#f92672">=</span><span style="color:#ae81ff">42</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    使用 Block Bootstrap 计算回归系数的置信区间
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    参数:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        X: 特征矩阵 (DataFrame)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        y: 目标向量 (Series)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        alpha: Ridge 正则化参数
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        block_size: 块大小，建议为自相关衰减长度
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        n_iterations: Bootstrap 迭代次数
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        random_state: 随机种子，保证结果可复现
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    返回:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        lower, upper: 95% 置信区间的下界和上界
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    rng <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>random<span style="color:#f92672">.</span>default_rng(random_state)
+</span></span><span style="display:flex;"><span>    n_samples <span style="color:#f92672">=</span> len(y)
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 使用 ceiling division 确保覆盖所有样本</span>
+</span></span><span style="display:flex;"><span>    n_blocks <span style="color:#f92672">=</span> (n_samples <span style="color:#f92672">+</span> block_size <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">//</span> block_size
+</span></span><span style="display:flex;"><span>    coefficients_list <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(n_iterations):
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># 随机选择块（有放回）</span>
+</span></span><span style="display:flex;"><span>        block_indices <span style="color:#f92672">=</span> rng<span style="color:#f92672">.</span>choice(n_blocks, n_blocks, replace<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>        sample_indices <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> idx <span style="color:#f92672">in</span> block_indices:
+</span></span><span style="display:flex;"><span>            start <span style="color:#f92672">=</span> idx <span style="color:#f92672">*</span> block_size
+</span></span><span style="display:flex;"><span>            end <span style="color:#f92672">=</span> min((idx <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">*</span> block_size, n_samples)
+</span></span><span style="display:flex;"><span>            sample_indices<span style="color:#f92672">.</span>extend(range(start, end))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># 每次迭代创建新的模型实例</span>
+</span></span><span style="display:flex;"><span>        boot_model <span style="color:#f92672">=</span> Ridge(alpha<span style="color:#f92672">=</span>alpha)
+</span></span><span style="display:flex;"><span>        X_boot <span style="color:#f92672">=</span> X<span style="color:#f92672">.</span>iloc[sample_indices]<span style="color:#f92672">.</span>values
+</span></span><span style="display:flex;"><span>        y_boot <span style="color:#f92672">=</span> y<span style="color:#f92672">.</span>iloc[sample_indices]<span style="color:#f92672">.</span>values
+</span></span><span style="display:flex;"><span>        boot_model<span style="color:#f92672">.</span>fit(X_boot, y_boot)
+</span></span><span style="display:flex;"><span>        coefficients_list<span style="color:#f92672">.</span>append(boot_model<span style="color:#f92672">.</span>coef_)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 计算 95% 置信区间</span>
+</span></span><span style="display:flex;"><span>    coefficients_array <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>array(coefficients_list)
+</span></span><span style="display:flex;"><span>    lower <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>percentile(coefficients_array, <span style="color:#ae81ff">2.5</span>, axis<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>    upper <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>percentile(coefficients_array, <span style="color:#ae81ff">97.5</span>, axis<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> lower, upper
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 使用示例</span>
+</span></span><span style="display:flex;"><span>lower, upper <span style="color:#f92672">=</span> block_bootstrap_ci(X_train, y_train, alpha<span style="color:#f92672">=</span>model<span style="color:#f92672">.</span>alpha_)
+</span></span><span style="display:flex;"><span>ci <span style="color:#f92672">=</span> {col: (lower[i], upper[i]) <span style="color:#66d9ef">for</span> i, col <span style="color:#f92672">in</span> enumerate(X_train<span style="color:#f92672">.</span>columns)}
+</span></span></code></pre></div><p><strong>置信区间下界 &gt; 0</strong> 的接口，我们认为其系数是<strong>统计显著</strong>的。</p>
+<h3 id="step-5-计算-cpu-贡献">Step 5: 计算 CPU 贡献</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># 计算各接口的平均 QPS</span>
+</span></span><span style="display:flex;"><span>avg_qps <span style="color:#f92672">=</span> X<span style="color:#f92672">.</span>mean()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 计算 CPU 贡献 = 系数 × 平均 QPS</span>
+</span></span><span style="display:flex;"><span>contribution <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    api: max(<span style="color:#ae81ff">0</span>, coefficients[api]) <span style="color:#f92672">*</span> avg_qps[api]  <span style="color:#75715e"># 负系数视为 0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> api <span style="color:#f92672">in</span> X<span style="color:#f92672">.</span>columns
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 按贡献排序</span>
+</span></span><span style="display:flex;"><span>top_consumers <span style="color:#f92672">=</span> sorted(contribution<span style="color:#f92672">.</span>items(), key<span style="color:#f92672">=</span><span style="color:#66d9ef">lambda</span> x: x[<span style="color:#ae81ff">1</span>], reverse<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 输出 Top 10</span>
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;CPU 贡献 Top 10:&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> api, contrib <span style="color:#f92672">in</span> top_consumers[:<span style="color:#ae81ff">10</span>]:
+</span></span><span style="display:flex;"><span>    coef <span style="color:#f92672">=</span> coefficients[api]
+</span></span><span style="display:flex;"><span>    qps <span style="color:#f92672">=</span> avg_qps[api]
+</span></span><span style="display:flex;"><span>    is_significant <span style="color:#f92672">=</span> ci[api][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;  </span><span style="color:#e6db74">{</span>api<span style="color:#e6db74">}</span><span style="color:#e6db74">: 系数=</span><span style="color:#e6db74">{</span>coef<span style="color:#e6db74">:</span><span style="color:#e6db74">.6f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">, QPS=</span><span style="color:#e6db74">{</span>qps<span style="color:#e6db74">:</span><span style="color:#e6db74">.1f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">, 贡献=</span><span style="color:#e6db74">{</span>contrib<span style="color:#e6db74">:</span><span style="color:#e6db74">.2f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">%, 显著=</span><span style="color:#e6db74">{</span><span style="color:#e6db74">&#39;✓&#39;</span> <span style="color:#66d9ef">if</span> is_significant <span style="color:#66d9ef">else</span> <span style="color:#e6db74">&#39;✗&#39;</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span></code></pre></div><h2 id="结果解读">结果解读</h2>
+<h3 id="输出示例">输出示例</h3>
+<table>
+  <thead>
+      <tr>
+          <th>接口</th>
+          <th>单请求成本</th>
+          <th>平均 QPS</th>
+          <th>总贡献(%)</th>
+          <th>显著性</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>/api/user/info</td>
+          <td>0.00107</td>
+          <td>4,250</td>
+          <td>4.55</td>
+          <td>✓</td>
+      </tr>
+      <tr>
+          <td>/api/feed/list</td>
+          <td>0.00023</td>
+          <td>12,676</td>
+          <td>2.92</td>
+          <td>✓</td>
+      </tr>
+      <tr>
+          <td>/api/search</td>
+          <td>0.25000</td>
+          <td>5</td>
+          <td>1.25</td>
+          <td>✓</td>
+      </tr>
+  </tbody>
+</table>
+
+
+
+  <blockquote>
+    <p>注：总贡献 = 单请求成本 × 平均 QPS（如 0.00107 × 4250 ≈ 4.55）</p>
+
+  </blockquote>
+
+<h3 id="两种优化方向">两种优化方向</h3>
+<ol>
+<li>
+<p><strong>高 QPS × 低成本</strong>：如 <code>/api/feed/list</code></p>
+<ul>
+<li>特点：单次请求成本低，但调用量大，积少成多</li>
+<li>优化思路：客户端缓存、请求合并、限流</li>
+</ul>
+</li>
+<li>
+<p><strong>低 QPS × 高成本</strong>：如 <code>/api/search</code></p>
+<ul>
+<li>特点：单次请求成本高，是&quot;重&quot;接口</li>
+<li>优化思路：算法优化、减少数据库查询、增加服务端缓存</li>
+</ul>
+</li>
+</ol>
+<h2 id="方法局限性">方法局限性</h2>
+<h3 id="1-线性假设的局限">1. 线性假设的局限</h3>
+<p>真实场景中，CPU 消耗可能是非线性的：</p>
+<ul>
+<li>当 QPS 超过阈值时，GC 压力陡增</li>
+<li>某些接口有批处理逻辑，边际成本递减</li>
+</ul>
+<p><strong>应对</strong>：检查残差图，如有明显模式，考虑分段回归或非线性模型。</p>
+<h3 id="2-共线性问题">2. 共线性问题</h3>
+<p>如果两个接口的 QPS 高度相关（如总是被一起调用），系数会相互&quot;分摊&quot;，单独解读不准确。</p>
+<p><strong>应对</strong>：</p>
+<ul>
+<li>检查 VIF（方差膨胀因子），VIF &gt; 10 需警惕</li>
+<li>检查条件数（condition number &gt; 1000 说明共线性严重）</li>
+<li>对于轻度共线性，Ridge 已能缓解；重度共线性建议合并分析</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># VIF 计算示例</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> statsmodels.stats.outliers_influence <span style="color:#f92672">import</span> variance_inflation_factor
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>vif <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>DataFrame({
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;api&#39;</span>: X<span style="color:#f92672">.</span>columns,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;VIF&#39;</span>: [variance_inflation_factor(X<span style="color:#f92672">.</span>values, i) <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(X<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">1</span>])]
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span>print(vif[vif[<span style="color:#e6db74">&#39;VIF&#39;</span>] <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">10</span>])  <span style="color:#75715e"># 显示 VIF &gt; 10 的高共线性特征</span>
+</span></span></code></pre></div><p><strong>注意</strong>：如果接口间存在强依赖（A 调用 B），共线性会很严重。此时可考虑：</p>
+<ul>
+<li>将强相关接口合并为一组分析</li>
+<li>使用 Elastic Net（L1+L2）自动筛选特征</li>
+<li>结合调用链路分析，单独评估</li>
+</ul>
+<h3 id="3-遗漏变量偏差">3. 遗漏变量偏差</h3>
+<p>如果有重要因素未纳入模型（如定时任务、后台 GC），系数估计会有偏。</p>
+<p><strong>应对</strong>：检查截距项，如果截距很大（&gt;10%）或为负，说明模型可能遗漏了重要因素。</p>
+<h2 id="模型诊断">模型诊断</h2>
+<h3 id="必查指标">必查指标</h3>
+<table>
+  <thead>
+      <tr>
+          <th>指标</th>
+          <th>健康范围</th>
+          <th>说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>测试集 R²</td>
+          <td>&gt; 0.85</td>
+          <td>模型泛化能力，低于训练集 R² 是正常的</td>
+      </tr>
+      <tr>
+          <td>训练集 R²</td>
+          <td>&gt; 0.9</td>
+          <td>模型拟合能力</td>
+      </tr>
+      <tr>
+          <td>Durbin-Watson</td>
+          <td>1.5-2.5</td>
+          <td>残差自相关检验，&lt;1.5 说明正自相关</td>
+      </tr>
+      <tr>
+          <td>Condition Number</td>
+          <td>&lt; 1000</td>
+          <td>共线性检验，&gt;1000 说明严重共线性</td>
+      </tr>
+      <tr>
+          <td>截距</td>
+          <td>&gt; 0 且 &lt; 10%</td>
+          <td>基础开销合理性</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="诊断代码">诊断代码</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> statsmodels.stats.stattools <span style="color:#f92672">import</span> durbin_watson
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 计算诊断指标</span>
+</span></span><span style="display:flex;"><span>train_residuals <span style="color:#f92672">=</span> y_train <span style="color:#f92672">-</span> model<span style="color:#f92672">.</span>predict(X_train)
+</span></span><span style="display:flex;"><span>test_residuals <span style="color:#f92672">=</span> y_test <span style="color:#f92672">-</span> model<span style="color:#f92672">.</span>predict(X_test)
+</span></span><span style="display:flex;"><span>cond_number <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>linalg<span style="color:#f92672">.</span>cond(X_train<span style="color:#f92672">.</span>values)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Durbin-Watson (训练): </span><span style="color:#e6db74">{</span>durbin_watson(train_residuals)<span style="color:#e6db74">:</span><span style="color:#e6db74">.2f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Durbin-Watson (测试): </span><span style="color:#e6db74">{</span>durbin_watson(test_residuals)<span style="color:#e6db74">:</span><span style="color:#e6db74">.2f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Condition Number: </span><span style="color:#e6db74">{</span>cond_number<span style="color:#e6db74">:</span><span style="color:#e6db74">.0f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;截距: </span><span style="color:#e6db74">{</span>model<span style="color:#f92672">.</span>intercept_<span style="color:#e6db74">:</span><span style="color:#e6db74">.2f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">%&#34;</span>)
+</span></span></code></pre></div><h3 id="异常处理">异常处理</h3>
+<ul>
+<li><strong>测试集 R² 远低于训练集</strong>：过拟合，增大正则化参数或减少特征</li>
+<li><strong>DW &lt; 1.5</strong>：残差有正自相关，增大 Bootstrap 块大小</li>
+<li><strong>截距为负</strong>：模型存在问题，检查数据质量或遗漏变量</li>
+<li><strong>系数大面积为负</strong>：共线性严重，考虑特征筛选或使用 Elastic Net</li>
+</ul>
+<h2 id="总结">总结</h2>
+<p>这种方法的优势：</p>
+<ol>
+<li><strong>成本低</strong>：利用现有监控数据，无需额外埋点</li>
+<li><strong>可持续</strong>：可自动化运行，持续追踪</li>
+<li><strong>可解释</strong>：系数有明确的业务含义</li>
+</ol>
+<p>适用场景：</p>
+<ul>
+<li>服务接口数量多（&gt;20 个）</li>
+<li>有稳定的监控数据（&gt;500 个采样点）</li>
+<li>需要量化各接口的资源消耗占比</li>
+<li>接口间依赖关系不太复杂</li>
+</ul>
+<p>不适用场景：</p>
+<ul>
+<li>接口之间有强依赖关系（共线性严重）</li>
+<li>CPU 消耗主要来自异步任务/定时任务</li>
+<li>服务处于非稳态（如大促期间流量模式剧变）</li>
+</ul>
+<h2 id="完整代码示例">完整代码示例</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> pandas <span style="color:#66d9ef">as</span> pd
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> sklearn.linear_model <span style="color:#f92672">import</span> RidgeCV, Ridge
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> sklearn.model_selection <span style="color:#f92672">import</span> train_test_split, TimeSeriesSplit
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> statsmodels.stats.stattools <span style="color:#f92672">import</span> durbin_watson
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 注意：需要先定义 Step 4 中的 block_bootstrap_ci 函数</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">analyze_api_cpu_contribution</span>(X, y, test_size<span style="color:#f92672">=</span><span style="color:#ae81ff">0.2</span>, bootstrap_iterations<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    分析各 API 接口的 CPU 贡献
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    参数:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        X: 特征矩阵，每列是一个接口的 QPS (DataFrame)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        y: CPU 使用率 (Series)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        test_size: 测试集比例
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        bootstrap_iterations: Bootstrap 迭代次数
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    返回:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        results: 包含系数、置信区间、贡献的 DataFrame
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 1. 数据预处理</span>
+</span></span><span style="display:flex;"><span>    X <span style="color:#f92672">=</span> X<span style="color:#f92672">.</span>fillna(<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>    y <span style="color:#f92672">=</span> y<span style="color:#f92672">.</span>fillna(y<span style="color:#f92672">.</span>mean())
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    non_zero_ratio <span style="color:#f92672">=</span> (X <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>)<span style="color:#f92672">.</span>mean()
+</span></span><span style="display:flex;"><span>    valid_cols <span style="color:#f92672">=</span> X<span style="color:#f92672">.</span>columns[non_zero_ratio <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.1</span>]
+</span></span><span style="display:flex;"><span>    X <span style="color:#f92672">=</span> X[valid_cols]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 2. 计算平均 QPS（在划分数据集之前，使用全量数据）</span>
+</span></span><span style="display:flex;"><span>    avg_qps <span style="color:#f92672">=</span> X<span style="color:#f92672">.</span>mean()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 3. 划分数据集</span>
+</span></span><span style="display:flex;"><span>    X_train, X_test, y_train, y_test <span style="color:#f92672">=</span> train_test_split(
+</span></span><span style="display:flex;"><span>        X, y, test_size<span style="color:#f92672">=</span>test_size, shuffle<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 4. 训练模型（使用 TimeSeriesSplit 保持时序）</span>
+</span></span><span style="display:flex;"><span>    model <span style="color:#f92672">=</span> RidgeCV(
+</span></span><span style="display:flex;"><span>        alphas<span style="color:#f92672">=</span>[<span style="color:#ae81ff">0.001</span>, <span style="color:#ae81ff">0.01</span>, <span style="color:#ae81ff">0.1</span>, <span style="color:#ae81ff">1.0</span>, <span style="color:#ae81ff">10.0</span>],
+</span></span><span style="display:flex;"><span>        cv<span style="color:#f92672">=</span>TimeSeriesSplit(n_splits<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span>)
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>    model<span style="color:#f92672">.</span>fit(X_train, y_train)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 5. 计算置信区间</span>
+</span></span><span style="display:flex;"><span>    lower, upper <span style="color:#f92672">=</span> block_bootstrap_ci(
+</span></span><span style="display:flex;"><span>        X_train, y_train, model<span style="color:#f92672">.</span>alpha_, n_iterations<span style="color:#f92672">=</span>bootstrap_iterations
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 6. 整理结果</span>
+</span></span><span style="display:flex;"><span>    results <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>DataFrame({
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;api&#39;</span>: X<span style="color:#f92672">.</span>columns,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;coefficient&#39;</span>: model<span style="color:#f92672">.</span>coef_,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;ci_lower&#39;</span>: lower,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;ci_upper&#39;</span>: upper,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;avg_qps&#39;</span>: avg_qps<span style="color:#f92672">.</span>values,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;contribution&#39;</span>: [max(<span style="color:#ae81ff">0</span>, c) <span style="color:#f92672">*</span> q <span style="color:#66d9ef">for</span> c, q <span style="color:#f92672">in</span> zip(model<span style="color:#f92672">.</span>coef_, avg_qps)],
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;significant&#39;</span>: lower <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>    results <span style="color:#f92672">=</span> results<span style="color:#f92672">.</span>sort_values(<span style="color:#e6db74">&#39;contribution&#39;</span>, ascending<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 7. 诊断信息</span>
+</span></span><span style="display:flex;"><span>    train_residuals <span style="color:#f92672">=</span> y_train <span style="color:#f92672">-</span> model<span style="color:#f92672">.</span>predict(X_train)
+</span></span><span style="display:flex;"><span>    test_residuals <span style="color:#f92672">=</span> y_test <span style="color:#f92672">-</span> model<span style="color:#f92672">.</span>predict(X_test)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;训练集 R²: </span><span style="color:#e6db74">{</span>model<span style="color:#f92672">.</span>score(X_train, y_train)<span style="color:#e6db74">:</span><span style="color:#e6db74">.4f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;测试集 R²: </span><span style="color:#e6db74">{</span>model<span style="color:#f92672">.</span>score(X_test, y_test)<span style="color:#e6db74">:</span><span style="color:#e6db74">.4f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Durbin-Watson (训练): </span><span style="color:#e6db74">{</span>durbin_watson(train_residuals)<span style="color:#e6db74">:</span><span style="color:#e6db74">.2f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Durbin-Watson (测试): </span><span style="color:#e6db74">{</span>durbin_watson(test_residuals)<span style="color:#e6db74">:</span><span style="color:#e6db74">.2f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Condition Number: </span><span style="color:#e6db74">{</span>np<span style="color:#f92672">.</span>linalg<span style="color:#f92672">.</span>cond(X_train<span style="color:#f92672">.</span>values)<span style="color:#e6db74">:</span><span style="color:#e6db74">.0f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;截距: </span><span style="color:#e6db74">{</span>model<span style="color:#f92672">.</span>intercept_<span style="color:#e6db74">:</span><span style="color:#e6db74">.2f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">%&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> results
+</span></span></code></pre></div><h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="https://scikit-learn.org/stable/modules/linear_model.html#ridge-regression" target="_blank">Ridge Regression - scikit-learn</a>
+</li>
+<li><a href="https://en.wikipedia.org/wiki/Bootstrapping_%28statistics%29#Block_bootstrap" target="_blank">Block Bootstrap for Time Series</a>
+</li>
+<li><a href="https://en.wikipedia.org/wiki/Variance_inflation_factor" target="_blank">Variance Inflation Factor</a>
+</li>
+<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.nnls.html" target="_blank">Non-negative Least Squares - scipy</a>
+</li>
+</ul>
+<hr>
+<p><em>本文方法已在生产环境验证，模型 R² 达到 94%-99%，成功定位多个高消耗接口并指导优化。</em></p>
+      </section>
+
+      
+
+      
+      <div class="divider"></div>
+
+      <section class="space-y-4">
+        
+<article>
+  <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+        this.page.identifier = '\/posts\/quantify-api-cpu-consumption-with-regression\/';
+        this.page.title = '如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法';
+        this.page.url = 'http:\/\/localhost:1313\/posts\/quantify-api-cpu-consumption-with-regression\/';
+
+        
+    };
+    function initDisqus() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "fancive-github-com" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    };
+    setTimeout(() => {
+        initDisqus();
+    }, 3000);
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</article>
+
+
+
+
+
+
+
+
+      </section>
+      
+    </article>
+  </div>
+
+  <div class="hidden lg:flex lg:flex-col lg:items-end">
+    
+
+    
+  </div>
+</div>
+
+
+            
+<footer class="flex justify-between items-center gap-2 px-4 py-12">
+
+  <div>
+  
+  <p>© 2026 home</p>
+  
+
+  
+  <p class="text-sm">
+    🌱
+    <span class="text-base-content/60">
+      Powered by <a class="hover:underline" href="https://gohugo.io/" target="_blank">Hugo</a> with theme
+      <a class="hover:underline" href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</span
+    >
+  </p>
+  
+</div>
+
+  <div
+  x-data="{ icons: [
+    { name: 'moon', status: 'y' },
+    { name: 'sunny', status: 'n' },
+    { name: 'desktop', status: 'auto' }
+  ] }"
+  class="flex items-center gap-2 h-[32px] px-2 bg-base-100 border border-base-content/30 rounded-full"
+>
+  <template x-for="icon in icons">
+    <div
+      role="button"
+      tabindex="0"
+      :aria-label="'Select ' + icon.name + ' mode'"
+      class="group inline-flex justify-center items-center p-1 rounded-full cursor-pointer hover:bg-primary"
+      :class="$store.darkMode.icon() === icon.name && 'bg-primary'"
+      @click="$store.darkMode.toggle(icon.status)"
+    >
+      <ion-icon
+        :name="`${icon.name}-outline`"
+        class="group-hover:text-primary-content"
+        :class="$store.darkMode.icon() === icon.name && 'text-primary-content'"
+      >
+      </ion-icon>
+    </div>
+  </template>
+</div>
+
+</footer>
+
+          </div>
+        </div>
+        <div class="back">
+          <div class="container">
+            
+            <div class="dream-grid dream-grid-about">
+  
+  
+  
+  <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-4 dream-column">
+    <article
+      class="card card-compact bg-base-100 hover:bg-base-content/10 shadow-xl dark:border dark:border-base-content/30"
+    >
+      <div class="card-body">
+        <div class="card-title">About</div>
+
+        <div class="prose dark:prose-invert">
+          <h2 id="-关于我">👋 关于我</h2>
+<p>我是 fancivez，一名 Golang 后端工程师，目前就职于百度。</p>
+<h2 id="-技术栈">💻 技术栈</h2>
+<ul>
+<li><strong>主要语言</strong>: Go (Golang)</li>
+<li><strong>专长领域</strong>:
+<ul>
+<li>后端服务开发</li>
+<li>AIOps (智能运维)</li>
+<li>系统架构设计</li>
+<li>自动化工具开发</li>
+</ul>
+</li>
+</ul>
+<h2 id="-博客主题">📝 博客主题</h2>
+<p>这个博客主要分享：</p>
+<ul>
+<li>Go 语言深度技术文章和源码分析</li>
+<li>软件架构设计与最佳实践</li>
+<li>AIOps 领域的研究与实践</li>
+<li>个人成长与思考</li>
+</ul>
+<h2 id="-联系方式">📫 联系方式</h2>
+<ul>
+<li><strong>Email</strong>: <a href="mailto:fancivez@gmail.com" target="_blank">fancivez@gmail.com</a>
+</li>
+<li><strong>GitHub</strong>: <a href="https://github.com/fancive" target="_blank">github.com/fancive</a>
+</li>
+<li><strong>WeChat</strong>: fancivez</li>
+</ul>
+<p>欢迎交流技术，分享想法！</p>
+
+        </div>
+      </div>
+    </article>
+  </div>
+  
+  
+
+  
+
+  
+</div>
+
+            
+
+            
+<footer class="flex justify-between items-center gap-2 px-4 py-12">
+
+  <div>
+  
+  <p>© 2026 home</p>
+  
+
+  
+  <p class="text-sm">
+    🌱
+    <span class="text-base-content/60">
+      Powered by <a class="hover:underline" href="https://gohugo.io/" target="_blank">Hugo</a> with theme
+      <a class="hover:underline" href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</span
+    >
+  </p>
+  
+</div>
+
+  <div
+  x-data="{ icons: [
+    { name: 'moon', status: 'y' },
+    { name: 'sunny', status: 'n' },
+    { name: 'desktop', status: 'auto' }
+  ] }"
+  class="flex items-center gap-2 h-[32px] px-2 bg-base-100 border border-base-content/30 rounded-full"
+>
+  <template x-for="icon in icons">
+    <div
+      role="button"
+      tabindex="0"
+      :aria-label="'Select ' + icon.name + ' mode'"
+      class="group inline-flex justify-center items-center p-1 rounded-full cursor-pointer hover:bg-primary"
+      :class="$store.darkMode.icon() === icon.name && 'bg-primary'"
+      @click="$store.darkMode.toggle(icon.status)"
+    >
+      <ion-icon
+        :name="`${icon.name}-outline`"
+        class="group-hover:text-primary-content"
+        :class="$store.darkMode.icon() === icon.name && 'text-primary-content'"
+      >
+      </ion-icon>
+    </div>
+  </template>
+</div>
+
+</footer>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+  window.lightTheme =  null 
+  window.darkTheme =  null 
+</script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script>
+
+  
+  
+  <script src="/js/grid.js"></script>
+
+
+
+
+<script src="/js/main.js"></script>
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+    
+
+    
+
+    
+    
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-7N49ZFJ61J');
+        }
+      </script>
+    
+
+    <script type="module" src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.js"></script>
+  </body>
+</html>
