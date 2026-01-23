@@ -3,14 +3,14 @@
   x-data
   :class="$store.darkMode.class()"
   :data-theme="$store.darkMode.theme()">
-  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法 | home</title>
 
     
 
-<link rel="canonical" href="http://localhost:1313/posts/quantify-api-cpu-consumption-with-regression/" />
+<link rel="canonical" href="https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/" />
 
 
 
@@ -25,7 +25,7 @@
 <meta name="generator" content="Hugo 0.138.0">
 
 
-<meta property="og:url" content="http://localhost:1313/posts/quantify-api-cpu-consumption-with-regression/">
+<meta property="og:url" content="https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/">
   <meta property="og:site_name" content="home">
   <meta property="og:title" content="如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法">
   <meta property="og:description" content="利用线性回归和现有监控数据（QPS、CPU 使用率），量化微服务中各 API 接口的 CPU 资源消耗，指导性能优化。">
@@ -38,18 +38,22 @@
     <meta property="article:tag" content="微服务">
     <meta property="article:tag" content="监控">
     <meta property="article:tag" content="Python">
+    <meta property="og:image" content="https://fancive.github.io/images/img/cpu-analysis.jpg">
 
 
 
 
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://fancive.github.io/images/img/cpu-analysis.jpg">
   <meta name="twitter:title" content="如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法">
   <meta name="twitter:description" content="利用线性回归和现有监控数据（QPS、CPU 使用率），量化微服务中各 API 接口的 CPU 资源消耗，指导性能优化。">
 
 
 
 
-<link rel="stylesheet" href="/css/output.css" />
+  
+
+<link rel="stylesheet" href="/css/output.min.css" />
 
 
 
@@ -251,6 +255,7 @@
   <meta itemprop="datePublished" content="2026-01-23T12:00:00+08:00">
   <meta itemprop="dateModified" content="2026-01-23T12:00:00+08:00">
   <meta itemprop="wordCount" content="960">
+  <meta itemprop="image" content="https://fancive.github.io/images/img/cpu-analysis.jpg">
   <meta itemprop="keywords" content="机器学习,微服务,监控,Python">
 
       <header>
@@ -299,19 +304,19 @@
   
   
     <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
-      href="https://x.com/intent/post?text=%e5%a6%82%e4%bd%95%e9%87%8f%e5%8c%96%20API%20%e6%8e%a5%e5%8f%a3%e7%9a%84%20CPU%20%e8%b5%84%e6%ba%90%e6%b6%88%e8%80%97%ef%bc%9a%e4%b8%80%e7%a7%8d%e5%9f%ba%e4%ba%8e%e5%9b%9e%e5%bd%92%e5%88%86%e6%9e%90%e7%9a%84%e6%96%b9%e6%b3%95&amp;url=http://localhost:1313/posts/quantify-api-cpu-consumption-with-regression/" target="_blank" rel="noopener noreferrer"
+      href="https://x.com/intent/post?text=%e5%a6%82%e4%bd%95%e9%87%8f%e5%8c%96%20API%20%e6%8e%a5%e5%8f%a3%e7%9a%84%20CPU%20%e8%b5%84%e6%ba%90%e6%b6%88%e8%80%97%ef%bc%9a%e4%b8%80%e7%a7%8d%e5%9f%ba%e4%ba%8e%e5%9b%9e%e5%bd%92%e5%88%86%e6%9e%90%e7%9a%84%e6%96%b9%e6%b3%95&amp;url=https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/" target="_blank" rel="noopener noreferrer"
       title="Share on X">
       <ion-icon class="group-hover:text-primary-content" name="logo-x"></ion-icon>
     </a>
   
     <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
-      href="https://facebook.com/sharer/sharer.php?u=http://localhost:1313/posts/quantify-api-cpu-consumption-with-regression/" target="_blank" rel="noopener noreferrer"
+      href="https://facebook.com/sharer/sharer.php?u=https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/" target="_blank" rel="noopener noreferrer"
       title="Share on Facebook">
       <ion-icon class="group-hover:text-primary-content" name="logo-facebook"></ion-icon>
     </a>
   
     <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
-      href="https://wa.me/?text=%e5%a6%82%e4%bd%95%e9%87%8f%e5%8c%96%20API%20%e6%8e%a5%e5%8f%a3%e7%9a%84%20CPU%20%e8%b5%84%e6%ba%90%e6%b6%88%e8%80%97%ef%bc%9a%e4%b8%80%e7%a7%8d%e5%9f%ba%e4%ba%8e%e5%9b%9e%e5%bd%92%e5%88%86%e6%9e%90%e7%9a%84%e6%96%b9%e6%b3%95%20http://localhost:1313/posts/quantify-api-cpu-consumption-with-regression/" target="_blank" rel="noopener noreferrer"
+      href="https://wa.me/?text=%e5%a6%82%e4%bd%95%e9%87%8f%e5%8c%96%20API%20%e6%8e%a5%e5%8f%a3%e7%9a%84%20CPU%20%e8%b5%84%e6%ba%90%e6%b6%88%e8%80%97%ef%bc%9a%e4%b8%80%e7%a7%8d%e5%9f%ba%e4%ba%8e%e5%9b%9e%e5%bd%92%e5%88%86%e6%9e%90%e7%9a%84%e6%96%b9%e6%b3%95%20https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/" target="_blank" rel="noopener noreferrer"
       title="Share on WhatsApp">
       <ion-icon class="group-hover:text-primary-content" name="logo-whatsapp"></ion-icon>
     </a>
@@ -784,7 +789,7 @@
     window.disqus_config = function () {
         this.page.identifier = '\/posts\/quantify-api-cpu-consumption-with-regression\/';
         this.page.title = '如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法';
-        this.page.url = 'http:\/\/localhost:1313\/posts\/quantify-api-cpu-consumption-with-regression\/';
+        this.page.url = 'https:\/\/fancive.github.io\/posts\/quantify-api-cpu-consumption-with-regression\/';
 
         
     };
@@ -1001,12 +1006,16 @@
 
   
   
-  <script src="/js/grid.js"></script>
+    
+  
+  <script src="/js/grid.min.js"></script>
 
 
 
 
-<script src="/js/main.js"></script>
+  
+
+<script src="/js/main.min.js"></script>
 
     
 
