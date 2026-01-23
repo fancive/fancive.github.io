@@ -8,7 +8,7 @@ categories:
 tags:
   - 成长
   - 反思
-draft: false
+draft: true
 ---
 
 昨晚睡前，在冥想期间，我开始从近到远回顾自己的成长历程，回忆起大学、高中、初中和小学阶段。
