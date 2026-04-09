@@ -1,7 +1,8 @@
 ---
 title: "慎用 Preload：深入理解 GORM 的预加载"
 date: 2024-11-12T14:44:19+08:00
-cover: "/images/illustrations/patterns.jpg"
+cover:
+  image: "/images/illustrations/patterns.jpg"
 description: "深入剖析 GORM Preload 的性能陷阱，提供预加载的最佳实践和优化建议。"
 categories:
   - Go语言

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>工具设计 on 我的博客</title>
+    <link>https://fancive.github.io/tags/%E5%B7%A5%E5%85%B7%E8%AE%BE%E8%AE%A1/</link>
+    <description>Recent content in 工具设计 on 我的博客</description>
+    <generator>Hugo</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 09 Apr 2026 12:00:00 +0800</lastBuildDate>
+    <atom:link href="https://fancive.github.io/tags/%E5%B7%A5%E5%85%B7%E8%AE%BE%E8%AE%A1/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>你的 CLI 该为 AI Agent 重写了</title>
+      <link>https://fancive.github.io/posts/rewrite-cli-for-ai-agents/</link>
+      <pubDate>Thu, 09 Apr 2026 12:00:00 +0800</pubDate>
+      <guid>https://fancive.github.io/posts/rewrite-cli-for-ai-agents/</guid>
+      <description>给人用的命令行和给 Agent 用的命令行，是两种东西。七个设计原则，用真实内部工具和知名开源 CLI 逐条拆解。</description>
+    </item>
+  </channel>
+</rss>

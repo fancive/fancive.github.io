@@ -1,7 +1,8 @@
 ---
 title: "[paper reading]AIOps: Real-World Challenges and Research Innovations"
 date: 2023-03-18T13:35:19+08:00
-cover: "/images/covers/aiops-challenges.jpg"
+cover:
+  image: "/images/covers/aiops-challenges.jpg"
 description: "AIOps 领域论文阅读笔记：探讨智能运维在现实世界中面临的挑战以及最新的研究创新。"
 categories:
   - AIOps

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>监控 on home</title>
+    <title>监控 on 我的博客</title>
     <link>https://fancive.github.io/tags/%E7%9B%91%E6%8E%A7/</link>
-    <description>Recent content in 监控 on home</description>
+    <description>Recent content in 监控 on 我的博客</description>
     <generator>Hugo</generator>
-    <language>en</language>
+    <language>zh-cn</language>
     <lastBuildDate>Fri, 23 Jan 2026 12:00:00 +0800</lastBuildDate>
     <atom:link href="https://fancive.github.io/tags/%E7%9B%91%E6%8E%A7/index.xml" rel="self" type="application/rss+xml" />
     <item>
@@ -13,7 +13,7 @@
       <link>https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/</link>
       <pubDate>Fri, 23 Jan 2026 12:00:00 +0800</pubDate>
       <guid>https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/</guid>
-      <description>&lt;h2 id=&#34;背景&#34;&gt;背景&lt;/h2&gt;&#xA;&lt;p&gt;在微服务架构中，一个服务通常包含数十甚至上百个 API 接口。当我们需要优化 CPU 资源消耗时，往往面临一个问题：&lt;strong&gt;哪些接口消耗了最多的 CPU？&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;传统方法是通过 profiling 工具（如 pprof）分析，但这种方法：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;只能看到函数级别的消耗，难以直接关联到接口&lt;/li&gt;&#xA;&lt;li&gt;需要在生产环境开启采样，有一定性能开销&lt;/li&gt;&#xA;&lt;li&gt;难以持续监控和量化&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;本文介绍一种&lt;strong&gt;基于线性回归&lt;/strong&gt;的方法，利用现有的监控数据（QPS 和 CPU 使用率），估算每个接口的 CPU 贡献。&lt;/p&gt;</description>
+      <description>利用线性回归和现有监控数据（QPS、CPU 使用率），量化微服务中各 API 接口的 CPU 资源消耗，指导性能优化。</description>
     </item>
   </channel>
 </rss>

@@ -1,7 +1,8 @@
 ---
 title: "Llm Driven Alert Diagnosis Engine Design(设计新一代LLM驱动的告警诊断引擎)"
 date: 2024-08-31T09:42:01+08:00
-cover: "/images/covers/llm-diagnosis.jpg"
+cover:
+  image: "/images/covers/llm-diagnosis.jpg"
 description: "探讨如何设计基于大语言模型的智能告警诊断引擎，实现系统问题的自动化检测、诊断和解决。"
 tags: ["LLM", "告警系统", "诊断引擎", "软件架构", "自动定位系统"]
 categories:

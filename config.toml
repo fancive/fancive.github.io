@@ -1,16 +1,10 @@
-DefaultContentLanguage = "en"
-
-SectionPagesMenu = "main" 
-baseURL = 'https://fancive.github.io/' 
-disqusShortname = "fancive-github-com" 
-enableRobotsTXT = true # generate robots.txt
-googleAnalytics = "G-7N49ZFJ61J" 
-languageCode = "zh-cn" 
-preserveTaxonomyNames = true 
-publishDir = "docs" 
-show_reading_time = true 
-theme = 'dream' 
-title = '我的博客' 
+baseURL = 'https://fancive.github.io/'
+languageCode = "zh-cn"
+title = '我的博客'
+theme = 'PaperMod'
+publishDir = "docs"
+enableRobotsTXT = true
+googleAnalytics = "G-7N49ZFJ61J"
 
 [pagination]
 pagerSize = 10
@@ -20,88 +14,67 @@ category = "categories"
 series = "series"
 tag = "tags"
 
-[languages]
-[languages.en]
-title = "home"
-weight = 1
-
-[sitemap]
-changefreq = "monthly"
-filename = "sitemap.xml"
-priority = 0.5
-
 [menu]
 [[menu.main]]
+identifier = "posts"
+name = "Posts"
+url = "/posts/"
+weight = 5
+[[menu.main]]
 identifier = "categories"
-name = "categories"
+name = "Categories"
 url = "/categories/"
-weight = 10
-[[menu.main]]
-identifier = "about"
-name = "About"
-url = "/about/"
-weight = 10
-[[menu.main]]
-identifier = "contact"
-name = "Contact"
-url = "/contact/"
 weight = 10
 [[menu.main]]
 identifier = "tags"
 name = "Tags"
 url = "/tags/"
-weight = 10
+weight = 15
+[[menu.main]]
+identifier = "about"
+name = "About"
+url = "/about/"
+weight = 20
+[[menu.main]]
+identifier = "search"
+name = "Search"
+url = "/search/"
+weight = 25
 
 [params]
-# Dream theme 基本配置
-background = "#f7f7f7"
-backgroundImage = ""
-color = 'linen'
-linkColor = "seagreen"
-
-# 个人信息配置
 author = "fancive"
-avatar = "/images/profile.jpg"
-bio = 'golang fan'
-motto = "欢迎来到荷兰"
-name = 'fancivez'
-
-# 社交链接
-email = "fancivez@email.com"
-github = "fancive"
-
-# 文章配置
-dateFormatToUse = "2006-01-02"
 description = "欢迎来到荷兰"
-showSummaryCoverInPost = true
-summaryLength = 100
-truncate = true
+env = "production"
+defaultTheme = "auto"
+ShowReadingTime = true
+ShowShareButtons = true
+ShowPostNavLinks = true
+ShowBreadCrumbs = true
+ShowCodeCopyButtons = true
+ShowWordCount = false
+ShowToc = true
+TocOpen = false
 
-# 暗色模式
-dark404 = true
-darkNav = true
+  [params.homeInfoParams]
+  Title = "Hi there"
+  Content = "golang fan | 欢迎来到荷兰"
 
-# 其他功能开关
-background_color_class = "bg-black"
-env = 'production'
-headerBottomText = ""
-headerImage = "images/background.jpg"
-logoTitle = "home"
-siteLogoImage = "images/globe.svg"
+  [[params.socialIcons]]
+  name = "github"
+  url = "https://github.com/fancive"
 
-# i18n
-contentType = "posts"
-defaultTheme = "light"
+  [[params.socialIcons]]
+  name = "email"
+  url = "mailto:fancivez@email.com"
 
-# Giscus 评论系统配置
-[params.giscus]
-crossorigin = "anonymous"
-data_category = "Announcements"
-data_category_id = "DIC_kwDOIwDUDc4CTgRN"
-data_emit_metadata = "0"
-data_lang = "zh-CN"
-data_mapping = "pathname"
-data_reactions_enabled = "1"
-data_repo = "fancive/blog_discussion"
-data_repo_id = "R_kgDOIwDUDQ"
-data_theme = "preferred_color_scheme"
+[outputs]
+home = ["HTML", "RSS", "JSON"]
+
+[markup]
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = true
+    lineNos = false
+    style = "monokai"
+  [markup.goldmark.renderer]
+    unsafe = true

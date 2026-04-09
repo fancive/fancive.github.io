@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Paper Reading on home</title>
+    <title>Paper Reading on 我的博客</title>
     <link>https://fancive.github.io/tags/paper-reading/</link>
-    <description>Recent content in Paper Reading on home</description>
+    <description>Recent content in Paper Reading on 我的博客</description>
     <generator>Hugo</generator>
-    <language>en</language>
+    <language>zh-cn</language>
     <lastBuildDate>Sat, 25 Mar 2023 13:43:03 +0800</lastBuildDate>
     <atom:link href="https://fancive.github.io/tags/paper-reading/index.xml" rel="self" type="application/rss+xml" />
     <item>
@@ -13,14 +13,14 @@
       <link>https://fancive.github.io/posts/paper_reading_a_survey_on_log_research_of_aiops/</link>
       <pubDate>Sat, 25 Mar 2023 13:43:03 +0800</pubDate>
       <guid>https://fancive.github.io/posts/paper_reading_a_survey_on_log_research_of_aiops/</guid>
-      <description>&lt;h1 id=&#34;first-pass&#34;&gt;first pass&lt;/h1&gt;&#xA;&lt;p&gt;5-10 mins&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;title, abstract, and introduction&lt;/li&gt;&#xA;&lt;li&gt;section and sub-section headings&lt;/li&gt;&#xA;&lt;li&gt;conclusions&lt;/li&gt;&#xA;&lt;li&gt;references&lt;/li&gt;&#xA;&lt;/ol&gt;</description>
+      <description>AIOps 日志研究综述：系统梳理日志分析的方法、趋势以及在智能运维中的应用。</description>
     </item>
     <item>
       <title>[paper reading]AIOps: Real-World Challenges and Research Innovations</title>
       <link>https://fancive.github.io/posts/paper_reading_aiops_real-world_challenges_and_research_innovations/</link>
       <pubDate>Sat, 18 Mar 2023 13:35:19 +0800</pubDate>
       <guid>https://fancive.github.io/posts/paper_reading_aiops_real-world_challenges_and_research_innovations/</guid>
-      <description>&lt;h2 id=&#34;first-pass&#34;&gt;first pass&lt;/h2&gt;&#xA;&lt;p&gt;5-10 mins&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;title, abstract, and introduction&lt;/li&gt;&#xA;&lt;li&gt;section and sub-section headings&lt;/li&gt;&#xA;&lt;li&gt;conclusions&lt;/li&gt;&#xA;&lt;li&gt;references&lt;/li&gt;&#xA;&lt;/ol&gt;</description>
+      <description>AIOps 领域论文阅读笔记：探讨智能运维在现实世界中面临的挑战以及最新的研究创新。</description>
     </item>
   </channel>
 </rss>

@@ -1,333 +1,282 @@
 <!DOCTYPE html>
-<html lang="en"
-  x-data
-  :class="$store.darkMode.class()"
-  :data-theme="$store.darkMode.theme()">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>深入理解 Go String 转 []byte 的容量分配机制 | home</title>
+<html lang="en" dir="auto" data-theme="auto">
 
-    
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>深入理解 Go String 转 []byte 的容量分配机制 | 我的博客</title>
+<meta name="keywords" content="go runtime, 翻译">
+<meta name="description" content="探究 Go 语言中 string 转 []byte 时容量变化的底层原理，通过汇编代码分析内存分配机制。">
+<meta name="author" content="fancive">
+<link rel="canonical" href="https://fancive.github.io/posts/go_string_byte/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.199042e659bc7245f5609d333d6c044eb554a0640849bb874e1dff8eb0f57209.css" integrity="sha256-GZBC5lm8ckX1YJ0zPWwETrVUoGQISbuHTh3/jrD1cgk=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://fancive.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://fancive.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://fancive.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://fancive.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://fancive.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://fancive.github.io/posts/go_string_byte/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
 
-<link rel="canonical" href="https://fancive.github.io/posts/go_string_byte/" />
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
 
+            .list {
+                background: var(--theme);
+            }
 
+            .toc {
+                background: var(--entry);
+            }
+        }
 
-<meta name="author" content="fancive" />
-<meta name="description" content="探究 Go 语言中 string 转 []byte 时容量变化的底层原理，通过汇编代码分析内存分配机制。" />
+        @media (prefers-color-scheme: light) {
+            .list::-webkit-scrollbar-thumb {
+                border-color: var(--code-bg);
+            }
+        }
 
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
 
-<meta name="keywords" content="Go Runtime,翻译">
-
-
-
-<meta name="generator" content="Hugo 0.138.0">
-
-
-<meta property="og:url" content="https://fancive.github.io/posts/go_string_byte/">
-  <meta property="og:site_name" content="home">
+</script>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
+      <script>
+        var doNotTrack = false;
+        if ( true ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-7N49ZFJ61J');
+        }
+      </script><meta property="og:url" content="https://fancive.github.io/posts/go_string_byte/">
+  <meta property="og:site_name" content="我的博客">
   <meta property="og:title" content="深入理解 Go String 转 []byte 的容量分配机制">
   <meta property="og:description" content="探究 Go 语言中 string 转 []byte 时容量变化的底层原理，通过汇编代码分析内存分配机制。">
-  <meta property="og:locale" content="en">
+  <meta property="og:locale" content="zh_cn">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2020-05-31T21:30:28+08:00">
     <meta property="article:modified_time" content="2020-05-31T21:30:28+08:00">
     <meta property="article:tag" content="Go Runtime">
     <meta property="article:tag" content="翻译">
-
-
-
-
-  <meta name="twitter:card" content="summary">
+    <meta property="og:image" content="https://fancive.github.io/images/illustrations/interface.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://fancive.github.io/images/illustrations/interface.jpg">
   <meta name="twitter:title" content="深入理解 Go String 转 []byte 的容量分配机制">
   <meta name="twitter:description" content="探究 Go 语言中 string 转 []byte 时容量变化的底层原理，通过汇编代码分析内存分配机制。">
 
 
-
-
-  
-
-<link rel="stylesheet" href="/css/output.min.css" />
-
-
-
-
-    
-
-
-<style>
-  pre {
-    padding: 1em;
-    overflow: auto;
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://fancive.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "深入理解 Go String 转 []byte 的容量分配机制",
+      "item": "https://fancive.github.io/posts/go_string_byte/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "深入理解 Go String 转 []byte 的容量分配机制",
+  "name": "深入理解 Go String 转 []byte 的容量分配机制",
+  "description": "探究 Go 语言中 string 转 []byte 时容量变化的底层原理，通过汇编代码分析内存分配机制。",
+  "keywords": [
+    "go runtime", "翻译"
+  ],
+  "articleBody": "引言 在 Go 语言中，string 和 []byte 之间的转换是非常常见的操作。但你是否注意到，当将一个 3 字节的字符串转为 []byte 时，得到的切片容量却是 32？这背后隐藏着 Go 运行时的内存分配策略。本文将通过汇编代码分析，深入探究这个有趣的现象，帮助你理解 Go 在底层是如何处理类型转换和内存分配的。\n核心问题：\n为什么 []byte(\"abc\") 的容量是 32 而不是 3？ string 转 []byte 的底层实现是什么？ Go 运行时如何进行内存分配？ 问题发现 最近在 code review 时发现，将 string 转 []byte 时，得到的 []byte 的容量会发生变化。比如下面这段代码的输出是 32：\nfunc main() { s1 := \"abc\" fmt.Println(cap([]byte(s1))) // 输出：32 } 为什么长度为 3 的字符串转换后，容量却是 32？\n汇编代码分析 要理解这个问题，我们需要深入到汇编层面。首先编译代码并查看汇编输出：\n-N 禁止优化 -S 输出汇编代码 -l 禁止内联\ngo build -gcflags=\"-N -l -S\" go.go 得到以下代码\n\"\".main STEXT size=293 args=0x0 locals=0xc0 0x0000 00000 (/home/xxx/go.go:5)\tTEXT\t\"\".main(SB), ABIInternal, $192-0 0x0000 00000 (/home/xxx/go.go:5)\tMOVQ\t(TLS), CX 0x0009 00009 (/home/xxx/go.go:5)\tLEAQ\t-64(SP), AX 0x000e 00014 (/home/xxx/go.go:5)\tCMPQ\tAX, 16(CX) 0x0012 00018 (/home/xxx/go.go:5)\tJLS\t283 0x0018 00024 (/home/xxx/go.go:5)\tSUBQ\t$192, SP 0x001f 00031 (/home/xxx/go.go:5)\tMOVQ\tBP, 184(SP) 0x0027 00039 (/home/xxx/go.go:5)\tLEAQ\t184(SP), BP 0x002f 00047 (/home/xxx/go.go:5)\tFUNCDATA\t$0, gclocals·7d2d5fca80364273fb07d5820a76fef4(SB) 0x002f 00047 (/home/xxx/go.go:5)\tFUNCDATA\t$1, gclocals·4dc9e0f0c3406fbbbbd2ec99068e8282(SB) 0x002f 00047 (/home/xxx/go.go:5)\tFUNCDATA\t$2, gclocals·8dcadbff7c52509cfe2d26e4d7d24689(SB) 0x002f 00047 (/home/xxx/go.go:5)\tFUNCDATA\t$3, \"\".main.stkobj(SB) 0x002f 00047 (/home/xxx/go.go:6)\tPCDATA\t$0, $1 0x002f 00047 (/home/xxx/go.go:6)\tPCDATA\t$1, $0 0x002f 00047 (/home/xxx/go.go:6)\tLEAQ\tgo.string.\"abc\"(SB), AX 0x0036 00054 (/home/xxx/go.go:6)\tMOVQ\tAX, \"\".s1+104(SP) 0x003b 00059 (/home/xxx/go.go:6)\tMOVQ\t$3, \"\".s1+112(SP) 0x0044 00068 (/home/xxx/go.go:7)\tPCDATA\t$0, $2 0x0044 00068 (/home/xxx/go.go:7)\tLEAQ\t\"\"..autotmp_4+56(SP), CX 0x0049 00073 (/home/xxx/go.go:7)\tPCDATA\t$0, $1 0x0049 00073 (/home/xxx/go.go:7)\tMOVQ\tCX, (SP) 0x004d 00077 (/home/xxx/go.go:7)\tPCDATA\t$0, $0 0x004d 00077 (/home/xxx/go.go:7)\tMOVQ\tAX, 8(SP) 0x0052 00082 (/home/xxx/go.go:7)\tMOVQ\t$3, 16(SP) 0x005b 00091 (/home/xxx/go.go:7)\tCALL\truntime.stringtoslicebyte(SB) 0x0060 00096 (/home/xxx/go.go:7)\tMOVQ\t40(SP), AX 0x0065 00101 (/home/xxx/go.go:7)\tMOVQ\t32(SP), CX 0x006a 00106 (/home/xxx/go.go:7)\tPCDATA\t$0, $3 0x006a 00106 (/home/xxx/go.go:7)\tMOVQ\t24(SP), DX 0x006f 00111 (/home/xxx/go.go:7)\tPCDATA\t$0, $0 0x006f 00111 (/home/xxx/go.go:7)\tMOVQ\tDX, \"\"..autotmp_2+160(SP) 0x0077 00119 (/home/xxx/go.go:7)\tMOVQ\tCX, \"\"..autotmp_2+168(SP) 0x007f 00127 (/home/xxx/go.go:7)\tMOVQ\tAX, \"\"..autotmp_2+176(SP) 0x0087 00135 (/home/xxx/go.go:7)\tMOVQ\tAX, \"\"..autotmp_3+48(SP) 0x008c 00140 (/home/xxx/go.go:7)\tMOVQ\tAX, (SP) 0x0090 00144 (/home/xxx/go.go:7)\tCALL\truntime.convT64(SB) 0x0095 00149 (/home/xxx/go.go:7)\tPCDATA\t$0, $1 0x0095 00149 (/home/xxx/go.go:7)\tMOVQ\t8(SP), AX 0x009a 00154 (/home/xxx/go.go:7)\tPCDATA\t$0, $0 0x009a 00154 (/home/xxx/go.go:7)\tPCDATA\t$1, $1 0x009a 00154 (/home/xxx/go.go:7)\tMOVQ\tAX, \"\"..autotmp_5+96(SP) 0x009f 00159 (/home/xxx/go.go:7)\tPCDATA\t$1, $2 0x009f 00159 (/home/xxx/go.go:7)\tXORPS\tX0, X0 0x00a2 00162 (/home/xxx/go.go:7)\tMOVUPS\tX0, \"\"..autotmp_1+120(SP) 0x00a7 00167 (/home/xxx/go.go:7)\tPCDATA\t$0, $1 0x00a7 00167 (/home/xxx/go.go:7)\tPCDATA\t$1, $1 0x00a7 00167 (/home/xxx/go.go:7)\tLEAQ\t\"\"..autotmp_1+120(SP), AX 0x00ac 00172 (/home/xxx/go.go:7)\tMOVQ\tAX, \"\"..autotmp_7+88(SP) 0x00b1 00177 (/home/xxx/go.go:7)\tTESTB\tAL, (AX) 0x00b3 00179 (/home/xxx/go.go:7)\tPCDATA\t$0, $2 0x00b3 00179 (/home/xxx/go.go:7)\tPCDATA\t$1, $0 0x00b3 00179 (/home/xxx/go.go:7)\tMOVQ\t\"\"..autotmp_5+96(SP), CX 0x00b8 00184 (/home/xxx/go.go:7)\tPCDATA\t$0, $4 0x00b8 00184 (/home/xxx/go.go:7)\tLEAQ\ttype.int(SB), DX 0x00bf 00191 (/home/xxx/go.go:7)\tPCDATA\t$0, $2 0x00bf 00191 (/home/xxx/go.go:7)\tMOVQ\tDX, \"\"..autotmp_1+120(SP) 0x00c4 00196 (/home/xxx/go.go:7)\tPCDATA\t$0, $1 0x00c4 00196 (/home/xxx/go.go:7)\tMOVQ\tCX, \"\"..autotmp_1+128(SP) 0x00cc 00204 (/home/xxx/go.go:7)\tTESTB\tAL, (AX) 0x00ce 00206 (/home/xxx/go.go:7)\tJMP\t208 0x00d0 00208 (/home/xxx/go.go:7)\tMOVQ\tAX, \"\"..autotmp_6+136(SP) 0x00d8 00216 (/home/xxx/go.go:7)\tMOVQ\t$1, \"\"..autotmp_6+144(SP) 0x00e4 00228 (/home/xxx/go.go:7)\tMOVQ\t$1, \"\"..autotmp_6+152(SP) 0x00f0 00240 (/home/xxx/go.go:7)\tPCDATA\t$0, $0 0x00f0 00240 (/home/xxx/go.go:7)\tMOVQ\tAX, (SP) 0x00f4 00244 (/home/xxx/go.go:7)\tMOVQ\t$1, 8(SP) 0x00fd 00253 (/home/xxx/go.go:7)\tMOVQ\t$1, 16(SP) 0x0106 00262 (/home/xxx/go.go:7)\tCALL\tfmt.Println(SB) 0x010b 00267 (/home/xxx/go.go:9)\tMOVQ\t184(SP), BP 0x0113 00275 (/home/xxx/go.go:9)\tADDQ\t$192, SP 0x011a 00282 (/home/xxx/go.go:9)\tRET 0x011b 00283 (/home/xxx/go.go:9)\tNOP 0x011b 00283 (/home/xxx/go.go:5)\tPCDATA\t$1, $-1 0x011b 00283 (/home/xxx/go.go:5)\tPCDATA\t$0, $-1 0x011b 00283 (/home/xxx/go.go:5)\tCALL\truntime.morestack_noctxt(SB) 0x0120 00288 (/home/xxx/go.go:5)\tJMP\t0 声明部分\n\"\".main STEXT size=293 args=0x0 locals=0xc0 0x0000 00000 (/home/xxx/go.go:5)\tTEXT\t\"\".main(SB), ABIInternal, $192-0 0x0000 00000 (/home/xxx/go.go:5)\tMOVQ\t(TLS), CX 0x0009 00009 (/home/xxx/go.go:5)\tLEAQ\t-64(SP), AX 0x000e 00014 (/home/xxx/go.go:5)\tCMPQ\tAX, 16(CX) 0x0012 00018 (/home/xxx/go.go:5)\tJLS\t283 0x0018 00024 (/home/xxx/go.go:5)\tSUBQ\t$192, SP 0x001f 00031 (/home/xxx/go.go:5)\tMOVQ\tBP, 184(SP) 0x0027 00039 (/home/xxx/go.go:5)\tLEAQ\t184(SP), BP main函数声明\n0x0000 00000 (/home/xxx/go.go:3)\tTEXT\t\"\".main(SB), ABIInternal, $192-0 “”.main(被链接之后名字会变成main.main) 是一个全局的函数符号，存储在.text` 段中，该函数的地址是相对于整个地址空间起始位置的一个固定的偏移量。 $192-0 它分配了 192 字节的栈帧，且不接收参数，不返回值。$192-0 中的 192 代表局部变量字节数总和，-0 代表在 192 的地址基础上空出0的长度作为传入和返回对象, 即没有参数和返回值 0x0000 00000 (/home/xxx/go.go:3)\tMOVQ\t(TLS), CX TLS 是一个由 runtime 维护的虚拟寄存器，保存了指向当前 g 的指针，这个 g 的数据结构会跟踪 goroutine 运行时的所有状态值 将当前 *g 保存到 CX 0x0009 00009 (/home/xxx/go.go:3)\tCMPQ\tSP, 16(CX) 看一看 runtime 源代码中对于 g 的定义:\ntype g struct { stack stack // 16 bytes // stackguard0 is the stack pointer compared in the Go stack growth prologue. // It is stack.lo+StackGuard normally, but can be StackPreempt to trigger a preemption. stackguard0 uintptr stackguard1 uintptr 我们可以看到 16(CX) 对应的是 g.stackguard0，是 runtime 维护的一个阈值，该值会被拿来与栈指针(stack-pointer)进行比较以判断一个 goroutine 是否马上要用完当前的栈空间。\n0x0012 00018 (/home/xxx/go.go:5)\tJLS\t283 jumps to 283 if SP \u003c= g.stackguard0 0x0018 00024 (/home/xxx/go.go:5)\tSUBQ\t$192, SP main 作为调用者，通过对虚拟栈指针(stack-pointer)寄存器做减法，将其栈帧大小增加了 192 个字节(回忆一下栈是向低地址方向增长，所以这里的 SUBQ 指令是将栈帧的大小调整得更大了)。\n0x001f 00031 (/home/xxx/go.go:5)\tMOVQ\tBP, 184(SP) 8 个字节(183(SP)-192(SP)) 用来存储当前帧指针 BP (这是一个实际存在的寄存器)的值，以支持栈的展开和方便调试\n0x0027 00039 (/home/xxx/go.go:5)\tLEAQ\t184(SP), BP 跟着栈的增长，LEAQ 指令计算出帧指针的新地址，并将其存储到 BP 寄存器中。\n看下字符串处理部分 0x002f 00047 (/Users/fancivez/tmp/go.go:6)\tLEAQ\tgo.string.\"abc\"(SB), AX 0x0036 00054 (/Users/fancivez/tmp/go.go:6)\tMOVQ\tAX, \"\".s1+104(SP) 0x003b 00059 (/Users/fancivez/tmp/go.go:6)\tMOVQ\t$3, \"\".s1+112(SP) 0x0044 00068 (/Users/fancivez/tmp/go.go:7)\tPCDATA\t$0, $2 0x0044 00068 (/Users/fancivez/tmp/go.go:7)\tLEAQ\t\"\"..autotmp_4+56(SP), CX 0x0049 00073 (/Users/fancivez/tmp/go.go:7)\tPCDATA\t$0, $1 0x0049 00073 (/Users/fancivez/tmp/go.go:7)\tMOVQ\tCX, (SP) 0x004d 00077 (/Users/fancivez/tmp/go.go:7)\tPCDATA\t$0, $0 0x004d 00077 (/Users/fancivez/tmp/go.go:7)\tMOVQ\tAX, 8(SP) 0x0052 00082 (/Users/fancivez/tmp/go.go:7)\tMOVQ\t$3, 16(SP) 0x005b 00091 (/Users/fancivez/tmp/go.go:7)\tCALL\truntime.stringtoslicebyte(SB) 0x002f 00047 (/Users/fancivez/tmp/go.go:6)\tLEAQ\tgo.string.\"abc\"(SB), AX 取字面值的地址,(字面值的数据在.data区域分配)\n0x0036 00054 (/Users/fancivez/tmp/go.go:6)\tMOVQ\tAX, \"\".s1+104(SP) 将数据地址移动到栈指针104字节位置\n0x003b 00059 (/Users/fancivez/tmp/go.go:6)\tMOVQ\t$3, \"\".s1+112(SP) 把字符串长度(3)移动到112字节位置\n0x005b 00091 (/Users/fancivez/tmp/go.go:7)\tCALL\truntime.stringtoslicebyte(SB) 这个函数调用就是关键！runtime.stringtoslicebyte 负责执行 string 到 []byte 的转换，它会分配内存并复制数据。\n内存分配策略 Go 运行时的内存分配器采用了预分配策略来优化性能。当分配小对象时，不会精确分配所需的字节数，而是按照预定义的 size class 进行分配。\nSize Class 机制 Go 运行时定义了多个内存块大小等级（size class），常见的包括：\n8 bytes 16 bytes 32 bytes 48 bytes 64 bytes … 当我们需要分配 3 字节时，运行时会选择最接近且大于等于 3 的 size class，也就是 32 bytes。这就解释了为什么容量是 32 而不是 3。\n为什么这样设计？ 减少内存碎片：统一的 size class 可以更好地复用内存块 提升分配效率：预定义的大小等级简化了内存管理逻辑 降低开销：避免为每个微小的分配请求都进行精确的内存管理 总结 核心发现 string 转 []byte 会发生内存分配和数据复制\n通过 runtime.stringtoslicebyte 函数实现 不是简单的类型转换，涉及实际的内存操作 容量由内存分配器的 size class 决定\n小对象按预定义的 size class 分配 3 字节的需求会分配到 32 字节的 size class 这是性能优化的结果，不是 bug 汇编代码揭示了底层实现\n字符串字面值存储在 .data 段 栈帧分配遵循特定的布局规则 函数调用约定包括参数传递和寄存器使用 性能影响 这个发现对实际编程有重要意义：\n场景 建议 频繁转换 尽量避免重复的 string ↔ []byte 转换 大字符串 考虑使用 unsafe 包进行零拷贝转换（需注意安全性） 性能敏感 复用 []byte 切片，避免频繁分配 小字符串 容量\"浪费\"可以接受，因为分配器本来就会这样做 实践建议 理解转换成本\n// 低效：每次循环都分配新内存 for _, s := range strings { b := []byte(s) process(b) } // 高效：复用缓冲区 buf := make([]byte, 0, 1024) for _, s := range strings { buf = append(buf[:0], s...) process(buf) } 零拷贝转换（仅在确保安全的情况下使用）\nimport \"unsafe\" // 危险！仅当你确定不会修改返回的 []byte 时使用 func stringToByteSliceUnsafe(s string) []byte { return *(*[]byte)(unsafe.Pointer(\u0026s)) } 选择合适的类型\n如果数据不需要修改，保持 string 类型 如果需要频繁修改，使用 []byte 避免两者之间的频繁转换 扩展阅读 通过本文的分析方法，你也可以探究其他 Go 语言特性的底层实现：\ninterface 的内存布局 map 的扩容机制 channel 的通信原理 goroutine 的调度过程 掌握汇编级别的理解能力，可以帮助你：\n写出更高性能的代码 深入理解语言特性 定位复杂的性能问题 做出更明智的技术决策 参考资源 Go and Plan9 Assembly A Quick Guide to Go’s Assembler Go Assembly by Example Go 汇编入门知识 Go 内存分配器设计 ",
+  "wordCount" : "1006",
+  "inLanguage": "en",
+  "image":"https://fancive.github.io/images/illustrations/interface.jpg","datePublished": "2020-05-31T21:30:28+08:00",
+  "dateModified": "2020-05-31T21:30:28+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "fancive"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://fancive.github.io/posts/go_string_byte/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "我的博客",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://fancive.github.io/favicon.ico"
+    }
   }
-</style>
-
-
-
-
-
-
-
-
-
-    
-
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  </head>
-
-  <body x-data="{
-    flip: false,
-  }">
-    
-    <div id="dream-global-bg"></div>
-
-    
-<nav class="mt-4 lg:mt-8 py-4">
-
-  
-  <div class="container flex justify-between px-4">
-  
-    <section class="flex items-center gap-4">
-      <div class="avatar cursor-pointer hover:online" @click="flip = !flip" title="Flip it!">
-        <div class="h-10 rounded-full">
-          <img src="/images/profile.jpg" alt="" />
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://fancive.github.io/" accesskey="h" title="我的博客 (Alt + H)">我的博客</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
         </div>
-      </div>
+        <ul id="menu">
+            <li>
+                <a href="https://fancive.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://fancive.github.io/categories/" title="Categories">
+                    <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://fancive.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://fancive.github.io/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://fancive.github.io/search/" title="Search (Alt &#43; /)" accesskey=/>
+                    <span>Search</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
 
-      
-      <div>
-        
-        
-        <div class="text-base-content/60 text-sm">欢迎来到荷兰</div>
-        
-      </div>
-      
-    </section>
-
-    <div class="dropdown dropdown-end sm:hidden">
-      <div tabindex="0" role="button" class="btn btn-ghost btn-square" aria-label="Select an option">
-        <ion-icon name="menu" class="text-2xl"></ion-icon>
-      </div>
-      <ul tabindex="0" class="dropdown-content menu w-36 bg-base-100 rounded-box z-[1] shadow-md">
-        
-
-
-<li>
-  <div role="link" tabindex="0" class="inline-flex items-center p-2 cursor-pointer" @click="flip = !flip" title="About">
-    <ion-icon name="information-circle"></ion-icon>About</div>
-</li>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<li>
-  <a class="inline-flex items-center p-2 cursor-pointer" href="/posts" title="Archives">
-    <ion-icon name="archive"></ion-icon>
-    Archives
-  </a>
-</li>
-
-
-
-
-<li>
-  <a class="inline-flex items-center p-2 cursor-pointer" href="/categories" title="All Categories">
-    <ion-icon name="grid"></ion-icon>
-    All Categories
-  </a>
-</li>
-
-
-
-
-<li>
-  <a class="inline-flex items-center p-2 cursor-pointer" href="/tags" title="All Tags">
-    <ion-icon name="pricetags"></ion-icon>
-    All Tags
-  </a>
-</li>
-
-
-
-
-
-
-      </ul>
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://fancive.github.io/">Home</a>&nbsp;»&nbsp;<a href="https://fancive.github.io/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      深入理解 Go String 转 []byte 的容量分配机制
+    </h1>
+    <div class="post-description">
+      探究 Go 语言中 string 转 []byte 时容量变化的底层原理，通过汇编代码分析内存分配机制。
     </div>
-    <section class="hidden sm:flex sm:items-center sm:gap-2 md:gap-4">
-      
-      
-      
-      <div role="link" tabindex="0"
-        class="text-sm font-semibold cursor-pointer hover:underline"
-        @click="flip = !flip"
-        title="About"
-      >About</div>
-      
-      
+    <div class="post-meta"><span title='2020-05-31 21:30:28 +0800 CST'>May 31, 2020</span>&nbsp;·&nbsp;<span>5 min</span>&nbsp;·&nbsp;<span>fancive</span>
 
-      
-      
-
-      
-
-      
-      
-
-
-
-
-
-      
-      
-
-
-
-
-
-      
-      
-<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/posts" title="Archives">
-  <ion-icon class="group-hover:text-primary-content" name="archive"></ion-icon>
-</a>
-
-
-      
-      
-<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/categories" title="All Categories">
-  <ion-icon class="group-hover:text-primary-content" name="grid"></ion-icon>
-</a>
-
-
-      
-      
-<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/tags" title="All Tags">
-  <ion-icon class="group-hover:text-primary-content" name="pricetags"></ion-icon>
-</a>
-
-
-      
-
-      
-
-      
-    </section>
-  </div>
-</nav>
-
-
-    <div class="flip-container" :class="{ 'flip-it': flip }">
-      <div class="flipper">
-        <div class="front">
-          <div class="container">
-            
-<div class="lg:grid lg:grid-cols-4 gap-4 mt-4 px-4">
-  <div class="hidden lg:block"></div>
-
-  <div class="lg:col-span-2">
-    <article class="mx-auto prose prose-quoteless dark:prose-invert" id="dream-single-post-main" itemscope itemtype="http://schema.org/Article">
-      
-  <meta itemprop="name" content="深入理解 Go String 转 []byte 的容量分配机制">
-  <meta itemprop="description" content="探究 Go 语言中 string 转 []byte 时容量变化的底层原理，通过汇编代码分析内存分配机制。">
-  <meta itemprop="datePublished" content="2020-05-31T21:30:28+08:00">
-  <meta itemprop="dateModified" content="2020-05-31T21:30:28+08:00">
-  <meta itemprop="wordCount" content="1006">
-  <meta itemprop="keywords" content="Go Runtime,翻译">
-
-      <header>
-        <h1 itemprop="headline">深入理解 Go String 转 []byte 的容量分配机制</h1>
-        <p class="text-sm">
-          
-            Sunday, May 31, 2020
-          
-
-          | <span>5 minute read</span>
-
-          
-          | <span>Updated at
-            
-              Sunday, May 31, 2020
-            </span>
-          
-        </p>
-
+</div>
+  </header> 
+<figure class="entry-cover">
+        <img loading="eager" src="https://fancive.github.io/images/illustrations/interface.jpg" alt="">
         
-        <div class="flex justify-between">
-          
-            <div class="flex items-center">
-  
-  <span>@</span>
-  
+</figure><div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
 
-  <span itemprop="author" itemscope itemtype="https://schema.org/Person">
-  
-    <span itemprop="name">fancive</span>
-  
-  </span>
-</div>
-
-          
-
-          <div class="flex items-center gap-2">
-  
-  
-
-  
-  
-  
-  
-  
-    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
-      href="https://x.com/intent/post?text=%e6%b7%b1%e5%85%a5%e7%90%86%e8%a7%a3%20Go%20String%20%e8%bd%ac%20[]byte%20%e7%9a%84%e5%ae%b9%e9%87%8f%e5%88%86%e9%85%8d%e6%9c%ba%e5%88%b6&amp;url=https://fancive.github.io/posts/go_string_byte/" target="_blank" rel="noopener noreferrer"
-      title="Share on X">
-      <ion-icon class="group-hover:text-primary-content" name="logo-x"></ion-icon>
-    </a>
-  
-    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
-      href="https://facebook.com/sharer/sharer.php?u=https://fancive.github.io/posts/go_string_byte/" target="_blank" rel="noopener noreferrer"
-      title="Share on Facebook">
-      <ion-icon class="group-hover:text-primary-content" name="logo-facebook"></ion-icon>
-    </a>
-  
-    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
-      href="https://wa.me/?text=%e6%b7%b1%e5%85%a5%e7%90%86%e8%a7%a3%20Go%20String%20%e8%bd%ac%20[]byte%20%e7%9a%84%e5%ae%b9%e9%87%8f%e5%88%86%e9%85%8d%e6%9c%ba%e5%88%b6%20https://fancive.github.io/posts/go_string_byte/" target="_blank" rel="noopener noreferrer"
-      title="Share on WhatsApp">
-      <ion-icon class="group-hover:text-primary-content" name="logo-whatsapp"></ion-icon>
-    </a>
-  
-
-  
-  
-</div>
-
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e5%bc%95%e8%a8%80" aria-label="引言">引言</a></li>
+                <li>
+                    <a href="#%e9%97%ae%e9%a2%98%e5%8f%91%e7%8e%b0" aria-label="问题发现">问题发现</a></li>
+                <li>
+                    <a href="#%e6%b1%87%e7%bc%96%e4%bb%a3%e7%a0%81%e5%88%86%e6%9e%90" aria-label="汇编代码分析">汇编代码分析</a><ul>
+                        
+                <li>
+                    <a href="#%e7%9c%8b%e4%b8%8b%e5%ad%97%e7%ac%a6%e4%b8%b2%e5%a4%84%e7%90%86%e9%83%a8%e5%88%86" aria-label="看下字符串处理部分">看下字符串处理部分</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%86%85%e5%ad%98%e5%88%86%e9%85%8d%e7%ad%96%e7%95%a5" aria-label="内存分配策略">内存分配策略</a><ul>
+                        
+                <li>
+                    <a href="#size-class-%e6%9c%ba%e5%88%b6" aria-label="Size Class 机制">Size Class 机制</a></li>
+                <li>
+                    <a href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e8%bf%99%e6%a0%b7%e8%ae%be%e8%ae%a1" aria-label="为什么这样设计？">为什么这样设计？</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e6%80%bb%e7%bb%93" aria-label="总结">总结</a><ul>
+                        
+                <li>
+                    <a href="#%e6%a0%b8%e5%bf%83%e5%8f%91%e7%8e%b0" aria-label="核心发现">核心发现</a></li>
+                <li>
+                    <a href="#%e6%80%a7%e8%83%bd%e5%bd%b1%e5%93%8d" aria-label="性能影响">性能影响</a></li>
+                <li>
+                    <a href="#%e5%ae%9e%e8%b7%b5%e5%bb%ba%e8%ae%ae" aria-label="实践建议">实践建议</a></li>
+                <li>
+                    <a href="#%e6%89%a9%e5%b1%95%e9%98%85%e8%af%bb" aria-label="扩展阅读">扩展阅读</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%8f%82%e8%80%83%e8%b5%84%e6%ba%90" aria-label="参考资源">参考资源</a>
+                </li>
+            </ul>
         </div>
-      </header>
+    </details>
+</div>
 
-      <section id="dream-single-post-content" itemprop="articleBody">
-        
-        <img src="/images/illustrations/interface.jpg" alt="深入理解 Go String 转 []byte 的容量分配机制" />
-        
-
-        <h2 id="引言">引言</h2>
+  <div class="post-content"><h2 id="引言">引言<a hidden class="anchor" aria-hidden="true" href="#引言">#</a></h2>
 <p>在 Go 语言中，string 和 []byte 之间的转换是非常常见的操作。但你是否注意到，当将一个 3 字节的字符串转为 []byte 时，得到的切片容量却是 32？这背后隐藏着 Go 运行时的内存分配策略。本文将通过汇编代码分析，深入探究这个有趣的现象，帮助你理解 Go 在底层是如何处理类型转换和内存分配的。</p>
 <p><strong>核心问题</strong>：</p>
 <ul>
@@ -335,166 +284,161 @@
 <li>string 转 []byte 的底层实现是什么？</li>
 <li>Go 运行时如何进行内存分配？</li>
 </ul>
-<h2 id="问题发现">问题发现</h2>
+<h2 id="问题发现">问题发现<a hidden class="anchor" aria-hidden="true" href="#问题发现">#</a></h2>
 <p>最近在 code review 时发现，将 string 转 []byte 时，得到的 []byte 的容量会发生变化。比如下面这段代码的输出是 32：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
 </span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">s1</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;abc&#34;</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(cap([]byte(<span style="color:#a6e22e">s1</span>)))  <span style="color:#75715e">// 输出：32
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(cap([]byte(<span style="color:#a6e22e">s1</span>)))  <span style="color:#75715e">// 输出：32</span>
+</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>为什么长度为 3 的字符串转换后，容量却是 32？</p>
-<h2 id="汇编代码分析">汇编代码分析</h2>
+<h2 id="汇编代码分析">汇编代码分析<a hidden class="anchor" aria-hidden="true" href="#汇编代码分析">#</a></h2>
 <p>要理解这个问题，我们需要深入到汇编层面。首先编译代码并查看汇编输出：</p>
-
-
-
-  <blockquote>
-    <p>-N 禁止优化
+<blockquote>
+<p>-N 禁止优化
 -S 输出汇编代码
 -l 禁止内联</p>
-
-  </blockquote>
-
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">build</span> <span style="color:#f92672">-</span><span style="color:#a6e22e">gcflags</span>=<span style="color:#e6db74">&#34;-N -l -S&#34;</span> <span style="color:#66d9ef">go</span>.<span style="color:#66d9ef">go</span>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">build</span> <span style="color:#f92672">-</span><span style="color:#a6e22e">gcflags</span>=<span style="color:#e6db74">&#34;-N -l -S&#34;</span> <span style="color:#66d9ef">go</span>.<span style="color:#66d9ef">go</span>
 </span></span></code></pre></div><p>得到以下代码</p>
-<pre tabindex="0"><code>&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc0
-	0x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0
-	0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX
-	0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX
-	0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX)
-	0x0012 00018 (/home/xxx/go.go:5)	JLS	283
-	0x0018 00024 (/home/xxx/go.go:5)	SUBQ	$192, SP
-	0x001f 00031 (/home/xxx/go.go:5)	MOVQ	BP, 184(SP)
-	0x0027 00039 (/home/xxx/go.go:5)	LEAQ	184(SP), BP
-	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$0, gclocals·7d2d5fca80364273fb07d5820a76fef4(SB)
-	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$1, gclocals·4dc9e0f0c3406fbbbbd2ec99068e8282(SB)
-	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$2, gclocals·8dcadbff7c52509cfe2d26e4d7d24689(SB)
-	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$3, &#34;&#34;.main.stkobj(SB)
-	0x002f 00047 (/home/xxx/go.go:6)	PCDATA	$0, $1
-	0x002f 00047 (/home/xxx/go.go:6)	PCDATA	$1, $0
-	0x002f 00047 (/home/xxx/go.go:6)	LEAQ	go.string.&#34;abc&#34;(SB), AX
-	0x0036 00054 (/home/xxx/go.go:6)	MOVQ	AX, &#34;&#34;.s1+104(SP)
-	0x003b 00059 (/home/xxx/go.go:6)	MOVQ	$3, &#34;&#34;.s1+112(SP)
-	0x0044 00068 (/home/xxx/go.go:7)	PCDATA	$0, $2
-	0x0044 00068 (/home/xxx/go.go:7)	LEAQ	&#34;&#34;..autotmp_4+56(SP), CX
-	0x0049 00073 (/home/xxx/go.go:7)	PCDATA	$0, $1
-	0x0049 00073 (/home/xxx/go.go:7)	MOVQ	CX, (SP)
-	0x004d 00077 (/home/xxx/go.go:7)	PCDATA	$0, $0
-	0x004d 00077 (/home/xxx/go.go:7)	MOVQ	AX, 8(SP)
-	0x0052 00082 (/home/xxx/go.go:7)	MOVQ	$3, 16(SP)
-	0x005b 00091 (/home/xxx/go.go:7)	CALL	runtime.stringtoslicebyte(SB)
-	0x0060 00096 (/home/xxx/go.go:7)	MOVQ	40(SP), AX
-	0x0065 00101 (/home/xxx/go.go:7)	MOVQ	32(SP), CX
-	0x006a 00106 (/home/xxx/go.go:7)	PCDATA	$0, $3
-	0x006a 00106 (/home/xxx/go.go:7)	MOVQ	24(SP), DX
-	0x006f 00111 (/home/xxx/go.go:7)	PCDATA	$0, $0
-	0x006f 00111 (/home/xxx/go.go:7)	MOVQ	DX, &#34;&#34;..autotmp_2+160(SP)
-	0x0077 00119 (/home/xxx/go.go:7)	MOVQ	CX, &#34;&#34;..autotmp_2+168(SP)
-	0x007f 00127 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_2+176(SP)
-	0x0087 00135 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_3+48(SP)
-	0x008c 00140 (/home/xxx/go.go:7)	MOVQ	AX, (SP)
-	0x0090 00144 (/home/xxx/go.go:7)	CALL	runtime.convT64(SB)
-	0x0095 00149 (/home/xxx/go.go:7)	PCDATA	$0, $1
-	0x0095 00149 (/home/xxx/go.go:7)	MOVQ	8(SP), AX
-	0x009a 00154 (/home/xxx/go.go:7)	PCDATA	$0, $0
-	0x009a 00154 (/home/xxx/go.go:7)	PCDATA	$1, $1
-	0x009a 00154 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_5+96(SP)
-	0x009f 00159 (/home/xxx/go.go:7)	PCDATA	$1, $2
-	0x009f 00159 (/home/xxx/go.go:7)	XORPS	X0, X0
-	0x00a2 00162 (/home/xxx/go.go:7)	MOVUPS	X0, &#34;&#34;..autotmp_1+120(SP)
-	0x00a7 00167 (/home/xxx/go.go:7)	PCDATA	$0, $1
-	0x00a7 00167 (/home/xxx/go.go:7)	PCDATA	$1, $1
-	0x00a7 00167 (/home/xxx/go.go:7)	LEAQ	&#34;&#34;..autotmp_1+120(SP), AX
-	0x00ac 00172 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_7+88(SP)
-	0x00b1 00177 (/home/xxx/go.go:7)	TESTB	AL, (AX)
-	0x00b3 00179 (/home/xxx/go.go:7)	PCDATA	$0, $2
-	0x00b3 00179 (/home/xxx/go.go:7)	PCDATA	$1, $0
-	0x00b3 00179 (/home/xxx/go.go:7)	MOVQ	&#34;&#34;..autotmp_5+96(SP), CX
-	0x00b8 00184 (/home/xxx/go.go:7)	PCDATA	$0, $4
-	0x00b8 00184 (/home/xxx/go.go:7)	LEAQ	type.int(SB), DX
-	0x00bf 00191 (/home/xxx/go.go:7)	PCDATA	$0, $2
-	0x00bf 00191 (/home/xxx/go.go:7)	MOVQ	DX, &#34;&#34;..autotmp_1+120(SP)
-	0x00c4 00196 (/home/xxx/go.go:7)	PCDATA	$0, $1
-	0x00c4 00196 (/home/xxx/go.go:7)	MOVQ	CX, &#34;&#34;..autotmp_1+128(SP)
-	0x00cc 00204 (/home/xxx/go.go:7)	TESTB	AL, (AX)
-	0x00ce 00206 (/home/xxx/go.go:7)	JMP	208
-	0x00d0 00208 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_6+136(SP)
-	0x00d8 00216 (/home/xxx/go.go:7)	MOVQ	$1, &#34;&#34;..autotmp_6+144(SP)
-	0x00e4 00228 (/home/xxx/go.go:7)	MOVQ	$1, &#34;&#34;..autotmp_6+152(SP)
-	0x00f0 00240 (/home/xxx/go.go:7)	PCDATA	$0, $0
-	0x00f0 00240 (/home/xxx/go.go:7)	MOVQ	AX, (SP)
-	0x00f4 00244 (/home/xxx/go.go:7)	MOVQ	$1, 8(SP)
-	0x00fd 00253 (/home/xxx/go.go:7)	MOVQ	$1, 16(SP)
-	0x0106 00262 (/home/xxx/go.go:7)	CALL	fmt.Println(SB)
-	0x010b 00267 (/home/xxx/go.go:9)	MOVQ	184(SP), BP
-	0x0113 00275 (/home/xxx/go.go:9)	ADDQ	$192, SP
-	0x011a 00282 (/home/xxx/go.go:9)	RET
-	0x011b 00283 (/home/xxx/go.go:9)	NOP
-	0x011b 00283 (/home/xxx/go.go:5)	PCDATA	$1, $-1
-	0x011b 00283 (/home/xxx/go.go:5)	PCDATA	$0, $-1
-	0x011b 00283 (/home/xxx/go.go:5)	CALL	runtime.morestack_noctxt(SB)
-	0x0120 00288 (/home/xxx/go.go:5)	JMP	0
-</code></pre><p>声明部分</p>
-<pre tabindex="0"><code>&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc0
-	0x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0
-	0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX
-	0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX
-	0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX)
-	0x0012 00018 (/home/xxx/go.go:5)	JLS	283
-	0x0018 00024 (/home/xxx/go.go:5)	SUBQ	$192, SP
-	0x001f 00031 (/home/xxx/go.go:5)	MOVQ	BP, 184(SP)
-	0x0027 00039 (/home/xxx/go.go:5)	LEAQ	184(SP), BP
-</code></pre><p>main函数声明</p>
-<pre tabindex="0"><code>0x0000 00000 (/home/xxx/go.go:3)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0
-</code></pre><ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc0
+</span></span><span style="display:flex;"><span>	0x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0
+</span></span><span style="display:flex;"><span>	0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX
+</span></span><span style="display:flex;"><span>	0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX
+</span></span><span style="display:flex;"><span>	0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX)
+</span></span><span style="display:flex;"><span>	0x0012 00018 (/home/xxx/go.go:5)	JLS	283
+</span></span><span style="display:flex;"><span>	0x0018 00024 (/home/xxx/go.go:5)	SUBQ	$192, SP
+</span></span><span style="display:flex;"><span>	0x001f 00031 (/home/xxx/go.go:5)	MOVQ	BP, 184(SP)
+</span></span><span style="display:flex;"><span>	0x0027 00039 (/home/xxx/go.go:5)	LEAQ	184(SP), BP
+</span></span><span style="display:flex;"><span>	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$0, gclocals·7d2d5fca80364273fb07d5820a76fef4(SB)
+</span></span><span style="display:flex;"><span>	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$1, gclocals·4dc9e0f0c3406fbbbbd2ec99068e8282(SB)
+</span></span><span style="display:flex;"><span>	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$2, gclocals·8dcadbff7c52509cfe2d26e4d7d24689(SB)
+</span></span><span style="display:flex;"><span>	0x002f 00047 (/home/xxx/go.go:5)	FUNCDATA	$3, &#34;&#34;.main.stkobj(SB)
+</span></span><span style="display:flex;"><span>	0x002f 00047 (/home/xxx/go.go:6)	PCDATA	$0, $1
+</span></span><span style="display:flex;"><span>	0x002f 00047 (/home/xxx/go.go:6)	PCDATA	$1, $0
+</span></span><span style="display:flex;"><span>	0x002f 00047 (/home/xxx/go.go:6)	LEAQ	go.string.&#34;abc&#34;(SB), AX
+</span></span><span style="display:flex;"><span>	0x0036 00054 (/home/xxx/go.go:6)	MOVQ	AX, &#34;&#34;.s1+104(SP)
+</span></span><span style="display:flex;"><span>	0x003b 00059 (/home/xxx/go.go:6)	MOVQ	$3, &#34;&#34;.s1+112(SP)
+</span></span><span style="display:flex;"><span>	0x0044 00068 (/home/xxx/go.go:7)	PCDATA	$0, $2
+</span></span><span style="display:flex;"><span>	0x0044 00068 (/home/xxx/go.go:7)	LEAQ	&#34;&#34;..autotmp_4+56(SP), CX
+</span></span><span style="display:flex;"><span>	0x0049 00073 (/home/xxx/go.go:7)	PCDATA	$0, $1
+</span></span><span style="display:flex;"><span>	0x0049 00073 (/home/xxx/go.go:7)	MOVQ	CX, (SP)
+</span></span><span style="display:flex;"><span>	0x004d 00077 (/home/xxx/go.go:7)	PCDATA	$0, $0
+</span></span><span style="display:flex;"><span>	0x004d 00077 (/home/xxx/go.go:7)	MOVQ	AX, 8(SP)
+</span></span><span style="display:flex;"><span>	0x0052 00082 (/home/xxx/go.go:7)	MOVQ	$3, 16(SP)
+</span></span><span style="display:flex;"><span>	0x005b 00091 (/home/xxx/go.go:7)	CALL	runtime.stringtoslicebyte(SB)
+</span></span><span style="display:flex;"><span>	0x0060 00096 (/home/xxx/go.go:7)	MOVQ	40(SP), AX
+</span></span><span style="display:flex;"><span>	0x0065 00101 (/home/xxx/go.go:7)	MOVQ	32(SP), CX
+</span></span><span style="display:flex;"><span>	0x006a 00106 (/home/xxx/go.go:7)	PCDATA	$0, $3
+</span></span><span style="display:flex;"><span>	0x006a 00106 (/home/xxx/go.go:7)	MOVQ	24(SP), DX
+</span></span><span style="display:flex;"><span>	0x006f 00111 (/home/xxx/go.go:7)	PCDATA	$0, $0
+</span></span><span style="display:flex;"><span>	0x006f 00111 (/home/xxx/go.go:7)	MOVQ	DX, &#34;&#34;..autotmp_2+160(SP)
+</span></span><span style="display:flex;"><span>	0x0077 00119 (/home/xxx/go.go:7)	MOVQ	CX, &#34;&#34;..autotmp_2+168(SP)
+</span></span><span style="display:flex;"><span>	0x007f 00127 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_2+176(SP)
+</span></span><span style="display:flex;"><span>	0x0087 00135 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_3+48(SP)
+</span></span><span style="display:flex;"><span>	0x008c 00140 (/home/xxx/go.go:7)	MOVQ	AX, (SP)
+</span></span><span style="display:flex;"><span>	0x0090 00144 (/home/xxx/go.go:7)	CALL	runtime.convT64(SB)
+</span></span><span style="display:flex;"><span>	0x0095 00149 (/home/xxx/go.go:7)	PCDATA	$0, $1
+</span></span><span style="display:flex;"><span>	0x0095 00149 (/home/xxx/go.go:7)	MOVQ	8(SP), AX
+</span></span><span style="display:flex;"><span>	0x009a 00154 (/home/xxx/go.go:7)	PCDATA	$0, $0
+</span></span><span style="display:flex;"><span>	0x009a 00154 (/home/xxx/go.go:7)	PCDATA	$1, $1
+</span></span><span style="display:flex;"><span>	0x009a 00154 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_5+96(SP)
+</span></span><span style="display:flex;"><span>	0x009f 00159 (/home/xxx/go.go:7)	PCDATA	$1, $2
+</span></span><span style="display:flex;"><span>	0x009f 00159 (/home/xxx/go.go:7)	XORPS	X0, X0
+</span></span><span style="display:flex;"><span>	0x00a2 00162 (/home/xxx/go.go:7)	MOVUPS	X0, &#34;&#34;..autotmp_1+120(SP)
+</span></span><span style="display:flex;"><span>	0x00a7 00167 (/home/xxx/go.go:7)	PCDATA	$0, $1
+</span></span><span style="display:flex;"><span>	0x00a7 00167 (/home/xxx/go.go:7)	PCDATA	$1, $1
+</span></span><span style="display:flex;"><span>	0x00a7 00167 (/home/xxx/go.go:7)	LEAQ	&#34;&#34;..autotmp_1+120(SP), AX
+</span></span><span style="display:flex;"><span>	0x00ac 00172 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_7+88(SP)
+</span></span><span style="display:flex;"><span>	0x00b1 00177 (/home/xxx/go.go:7)	TESTB	AL, (AX)
+</span></span><span style="display:flex;"><span>	0x00b3 00179 (/home/xxx/go.go:7)	PCDATA	$0, $2
+</span></span><span style="display:flex;"><span>	0x00b3 00179 (/home/xxx/go.go:7)	PCDATA	$1, $0
+</span></span><span style="display:flex;"><span>	0x00b3 00179 (/home/xxx/go.go:7)	MOVQ	&#34;&#34;..autotmp_5+96(SP), CX
+</span></span><span style="display:flex;"><span>	0x00b8 00184 (/home/xxx/go.go:7)	PCDATA	$0, $4
+</span></span><span style="display:flex;"><span>	0x00b8 00184 (/home/xxx/go.go:7)	LEAQ	type.int(SB), DX
+</span></span><span style="display:flex;"><span>	0x00bf 00191 (/home/xxx/go.go:7)	PCDATA	$0, $2
+</span></span><span style="display:flex;"><span>	0x00bf 00191 (/home/xxx/go.go:7)	MOVQ	DX, &#34;&#34;..autotmp_1+120(SP)
+</span></span><span style="display:flex;"><span>	0x00c4 00196 (/home/xxx/go.go:7)	PCDATA	$0, $1
+</span></span><span style="display:flex;"><span>	0x00c4 00196 (/home/xxx/go.go:7)	MOVQ	CX, &#34;&#34;..autotmp_1+128(SP)
+</span></span><span style="display:flex;"><span>	0x00cc 00204 (/home/xxx/go.go:7)	TESTB	AL, (AX)
+</span></span><span style="display:flex;"><span>	0x00ce 00206 (/home/xxx/go.go:7)	JMP	208
+</span></span><span style="display:flex;"><span>	0x00d0 00208 (/home/xxx/go.go:7)	MOVQ	AX, &#34;&#34;..autotmp_6+136(SP)
+</span></span><span style="display:flex;"><span>	0x00d8 00216 (/home/xxx/go.go:7)	MOVQ	$1, &#34;&#34;..autotmp_6+144(SP)
+</span></span><span style="display:flex;"><span>	0x00e4 00228 (/home/xxx/go.go:7)	MOVQ	$1, &#34;&#34;..autotmp_6+152(SP)
+</span></span><span style="display:flex;"><span>	0x00f0 00240 (/home/xxx/go.go:7)	PCDATA	$0, $0
+</span></span><span style="display:flex;"><span>	0x00f0 00240 (/home/xxx/go.go:7)	MOVQ	AX, (SP)
+</span></span><span style="display:flex;"><span>	0x00f4 00244 (/home/xxx/go.go:7)	MOVQ	$1, 8(SP)
+</span></span><span style="display:flex;"><span>	0x00fd 00253 (/home/xxx/go.go:7)	MOVQ	$1, 16(SP)
+</span></span><span style="display:flex;"><span>	0x0106 00262 (/home/xxx/go.go:7)	CALL	fmt.Println(SB)
+</span></span><span style="display:flex;"><span>	0x010b 00267 (/home/xxx/go.go:9)	MOVQ	184(SP), BP
+</span></span><span style="display:flex;"><span>	0x0113 00275 (/home/xxx/go.go:9)	ADDQ	$192, SP
+</span></span><span style="display:flex;"><span>	0x011a 00282 (/home/xxx/go.go:9)	RET
+</span></span><span style="display:flex;"><span>	0x011b 00283 (/home/xxx/go.go:9)	NOP
+</span></span><span style="display:flex;"><span>	0x011b 00283 (/home/xxx/go.go:5)	PCDATA	$1, $-1
+</span></span><span style="display:flex;"><span>	0x011b 00283 (/home/xxx/go.go:5)	PCDATA	$0, $-1
+</span></span><span style="display:flex;"><span>	0x011b 00283 (/home/xxx/go.go:5)	CALL	runtime.morestack_noctxt(SB)
+</span></span><span style="display:flex;"><span>	0x0120 00288 (/home/xxx/go.go:5)	JMP	0
+</span></span></code></pre></div><p>声明部分</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>&#34;&#34;.main STEXT size=293 args=0x0 locals=0xc0
+</span></span><span style="display:flex;"><span>	0x0000 00000 (/home/xxx/go.go:5)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0
+</span></span><span style="display:flex;"><span>	0x0000 00000 (/home/xxx/go.go:5)	MOVQ	(TLS), CX
+</span></span><span style="display:flex;"><span>	0x0009 00009 (/home/xxx/go.go:5)	LEAQ	-64(SP), AX
+</span></span><span style="display:flex;"><span>	0x000e 00014 (/home/xxx/go.go:5)	CMPQ	AX, 16(CX)
+</span></span><span style="display:flex;"><span>	0x0012 00018 (/home/xxx/go.go:5)	JLS	283
+</span></span><span style="display:flex;"><span>	0x0018 00024 (/home/xxx/go.go:5)	SUBQ	$192, SP
+</span></span><span style="display:flex;"><span>	0x001f 00031 (/home/xxx/go.go:5)	MOVQ	BP, 184(SP)
+</span></span><span style="display:flex;"><span>	0x0027 00039 (/home/xxx/go.go:5)	LEAQ	184(SP), BP
+</span></span></code></pre></div><p>main函数声明</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>0x0000 00000 (/home/xxx/go.go:3)	TEXT	&#34;&#34;.main(SB), ABIInternal, $192-0
+</span></span></code></pre></div><ol>
 <li>“”.main(被链接之后名字会变成main.main) 是一个全局的函数符号，存储在.text` 段中，该函数的地址是相对于整个地址空间起始位置的一个固定的偏移量。</li>
 <li>$192-0 它分配了 192 字节的栈帧，且不接收参数，不返回值。$192-0 中的 192 代表局部变量字节数总和，-0 代表在 192 的地址基础上空出0的长度作为传入和返回对象, 即没有参数和返回值</li>
 </ol>
-<pre tabindex="0"><code>0x0000 00000 (/home/xxx/go.go:3)	MOVQ	(TLS), CX
-</code></pre><ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>0x0000 00000 (/home/xxx/go.go:3)	MOVQ	(TLS), CX
+</span></span></code></pre></div><ol>
 <li>TLS 是一个由 runtime 维护的虚拟寄存器，保存了指向当前 g 的指针，这个 g 的数据结构会跟踪 goroutine 运行时的所有状态值</li>
 <li>将当前 *g 保存到 CX</li>
 </ol>
-<pre tabindex="0"><code>0x0009 00009 (/home/xxx/go.go:3)	CMPQ	SP, 16(CX)
-</code></pre><p>看一看 runtime 源代码中对于 g 的定义:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">g</span> <span style="color:#66d9ef">struct</span> {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">stack</span>       <span style="color:#a6e22e">stack</span>   <span style="color:#75715e">// 16 bytes
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// stackguard0 is the stack pointer compared in the Go stack growth prologue.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// It is stack.lo+StackGuard normally, but can be StackPreempt to trigger a preemption.
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">stackguard0</span> <span style="color:#66d9ef">uintptr</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>0x0009 00009 (/home/xxx/go.go:3)	CMPQ	SP, 16(CX)
+</span></span></code></pre></div><p>看一看 runtime 源代码中对于 g 的定义:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">g</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">stack</span>       <span style="color:#a6e22e">stack</span>   <span style="color:#75715e">// 16 bytes</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// stackguard0 is the stack pointer compared in the Go stack growth prologue.</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// It is stack.lo+StackGuard normally, but can be StackPreempt to trigger a preemption.</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">stackguard0</span> <span style="color:#66d9ef">uintptr</span>
 </span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">stackguard1</span> <span style="color:#66d9ef">uintptr</span>
 </span></span></code></pre></div><p>我们可以看到 16(CX) 对应的是 g.stackguard0，是 runtime 维护的一个阈值，该值会被拿来与栈指针(stack-pointer)进行比较以判断一个 goroutine 是否马上要用完当前的栈空间。</p>
-<pre tabindex="0"><code>0x0012 00018 (/home/xxx/go.go:5)	JLS	283
-jumps to 283 if SP &lt;= g.stackguard0
-
-0x0018 00024 (/home/xxx/go.go:5)	SUBQ	$192, SP
-</code></pre><p>main 作为调用者，通过对虚拟栈指针(stack-pointer)寄存器做减法，将其栈帧大小增加了 192 个字节(回忆一下栈是向低地址方向增长，所以这里的 SUBQ 指令是将栈帧的大小调整得更大了)。</p>
-<pre tabindex="0"><code>0x001f 00031 (/home/xxx/go.go:5)	MOVQ	BP, 184(SP)
-</code></pre><p>8 个字节(183(SP)-192(SP)) 用来存储当前帧指针 BP (这是一个实际存在的寄存器)的值，以支持栈的展开和方便调试</p>
-<pre tabindex="0"><code>0x0027 00039 (/home/xxx/go.go:5)	LEAQ	184(SP), BP
-</code></pre><p>跟着栈的增长，LEAQ 指令计算出帧指针的新地址，并将其存储到 BP 寄存器中。</p>
-<h3 id="看下字符串处理部分">看下字符串处理部分</h3>
-<pre tabindex="0"><code>0x002f 00047 (/Users/fancivez/tmp/go.go:6)	LEAQ	go.string.&#34;abc&#34;(SB), AX
-0x0036 00054 (/Users/fancivez/tmp/go.go:6)	MOVQ	AX, &#34;&#34;.s1+104(SP)
-0x003b 00059 (/Users/fancivez/tmp/go.go:6)	MOVQ	$3, &#34;&#34;.s1+112(SP)
-0x0044 00068 (/Users/fancivez/tmp/go.go:7)	PCDATA	$0, $2
-0x0044 00068 (/Users/fancivez/tmp/go.go:7)	LEAQ	&#34;&#34;..autotmp_4+56(SP), CX
-0x0049 00073 (/Users/fancivez/tmp/go.go:7)	PCDATA	$0, $1
-0x0049 00073 (/Users/fancivez/tmp/go.go:7)	MOVQ	CX, (SP)
-0x004d 00077 (/Users/fancivez/tmp/go.go:7)	PCDATA	$0, $0
-0x004d 00077 (/Users/fancivez/tmp/go.go:7)	MOVQ	AX, 8(SP)
-0x0052 00082 (/Users/fancivez/tmp/go.go:7)	MOVQ	$3, 16(SP)
-0x005b 00091 (/Users/fancivez/tmp/go.go:7)	CALL	runtime.stringtoslicebyte(SB)
-0x002f 00047 (/Users/fancivez/tmp/go.go:6)	LEAQ	go.string.&#34;abc&#34;(SB), AX
-</code></pre><p>取字面值的地址,(字面值的数据在.data区域分配)</p>
-<pre tabindex="0"><code>0x0036 00054 (/Users/fancivez/tmp/go.go:6)	MOVQ	AX, &#34;&#34;.s1+104(SP)
-</code></pre><p>将数据地址移动到栈指针104字节位置</p>
-<pre tabindex="0"><code>0x003b 00059 (/Users/fancivez/tmp/go.go:6)	MOVQ	$3, &#34;&#34;.s1+112(SP)
-</code></pre><p>把字符串长度(3)移动到112字节位置</p>
-<pre tabindex="0"><code>0x005b 00091 (/Users/fancivez/tmp/go.go:7)	CALL	runtime.stringtoslicebyte(SB)
-</code></pre><p>这个函数调用就是关键！<code>runtime.stringtoslicebyte</code> 负责执行 string 到 []byte 的转换，它会分配内存并复制数据。</p>
-<h2 id="内存分配策略">内存分配策略</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>0x0012 00018 (/home/xxx/go.go:5)	JLS	283
+</span></span><span style="display:flex;"><span>jumps to 283 if SP &lt;= g.stackguard0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>0x0018 00024 (/home/xxx/go.go:5)	SUBQ	$192, SP
+</span></span></code></pre></div><p>main 作为调用者，通过对虚拟栈指针(stack-pointer)寄存器做减法，将其栈帧大小增加了 192 个字节(回忆一下栈是向低地址方向增长，所以这里的 SUBQ 指令是将栈帧的大小调整得更大了)。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>0x001f 00031 (/home/xxx/go.go:5)	MOVQ	BP, 184(SP)
+</span></span></code></pre></div><p>8 个字节(183(SP)-192(SP)) 用来存储当前帧指针 BP (这是一个实际存在的寄存器)的值，以支持栈的展开和方便调试</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>0x0027 00039 (/home/xxx/go.go:5)	LEAQ	184(SP), BP
+</span></span></code></pre></div><p>跟着栈的增长，LEAQ 指令计算出帧指针的新地址，并将其存储到 BP 寄存器中。</p>
+<h3 id="看下字符串处理部分">看下字符串处理部分<a hidden class="anchor" aria-hidden="true" href="#看下字符串处理部分">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>0x002f 00047 (/Users/fancivez/tmp/go.go:6)	LEAQ	go.string.&#34;abc&#34;(SB), AX
+</span></span><span style="display:flex;"><span>0x0036 00054 (/Users/fancivez/tmp/go.go:6)	MOVQ	AX, &#34;&#34;.s1+104(SP)
+</span></span><span style="display:flex;"><span>0x003b 00059 (/Users/fancivez/tmp/go.go:6)	MOVQ	$3, &#34;&#34;.s1+112(SP)
+</span></span><span style="display:flex;"><span>0x0044 00068 (/Users/fancivez/tmp/go.go:7)	PCDATA	$0, $2
+</span></span><span style="display:flex;"><span>0x0044 00068 (/Users/fancivez/tmp/go.go:7)	LEAQ	&#34;&#34;..autotmp_4+56(SP), CX
+</span></span><span style="display:flex;"><span>0x0049 00073 (/Users/fancivez/tmp/go.go:7)	PCDATA	$0, $1
+</span></span><span style="display:flex;"><span>0x0049 00073 (/Users/fancivez/tmp/go.go:7)	MOVQ	CX, (SP)
+</span></span><span style="display:flex;"><span>0x004d 00077 (/Users/fancivez/tmp/go.go:7)	PCDATA	$0, $0
+</span></span><span style="display:flex;"><span>0x004d 00077 (/Users/fancivez/tmp/go.go:7)	MOVQ	AX, 8(SP)
+</span></span><span style="display:flex;"><span>0x0052 00082 (/Users/fancivez/tmp/go.go:7)	MOVQ	$3, 16(SP)
+</span></span><span style="display:flex;"><span>0x005b 00091 (/Users/fancivez/tmp/go.go:7)	CALL	runtime.stringtoslicebyte(SB)
+</span></span><span style="display:flex;"><span>0x002f 00047 (/Users/fancivez/tmp/go.go:6)	LEAQ	go.string.&#34;abc&#34;(SB), AX
+</span></span></code></pre></div><p>取字面值的地址,(字面值的数据在.data区域分配)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>0x0036 00054 (/Users/fancivez/tmp/go.go:6)	MOVQ	AX, &#34;&#34;.s1+104(SP)
+</span></span></code></pre></div><p>将数据地址移动到栈指针104字节位置</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>0x003b 00059 (/Users/fancivez/tmp/go.go:6)	MOVQ	$3, &#34;&#34;.s1+112(SP)
+</span></span></code></pre></div><p>把字符串长度(3)移动到112字节位置</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>0x005b 00091 (/Users/fancivez/tmp/go.go:7)	CALL	runtime.stringtoslicebyte(SB)
+</span></span></code></pre></div><p>这个函数调用就是关键！<code>runtime.stringtoslicebyte</code> 负责执行 string 到 []byte 的转换，它会分配内存并复制数据。</p>
+<h2 id="内存分配策略">内存分配策略<a hidden class="anchor" aria-hidden="true" href="#内存分配策略">#</a></h2>
 <p>Go 运行时的内存分配器采用了<strong>预分配策略</strong>来优化性能。当分配小对象时，不会精确分配所需的字节数，而是按照预定义的 size class 进行分配。</p>
-<h3 id="size-class-机制">Size Class 机制</h3>
+<h3 id="size-class-机制">Size Class 机制<a hidden class="anchor" aria-hidden="true" href="#size-class-机制">#</a></h3>
 <p>Go 运行时定义了多个内存块大小等级（size class），常见的包括：</p>
 <ul>
 <li>8 bytes</li>
@@ -505,14 +449,14 @@ jumps to 283 if SP &lt;= g.stackguard0
 <li>&hellip;</li>
 </ul>
 <p>当我们需要分配 3 字节时，运行时会选择最接近且大于等于 3 的 size class，也就是 <strong>32 bytes</strong>。这就解释了为什么容量是 32 而不是 3。</p>
-<h3 id="为什么这样设计">为什么这样设计？</h3>
+<h3 id="为什么这样设计">为什么这样设计？<a hidden class="anchor" aria-hidden="true" href="#为什么这样设计">#</a></h3>
 <ol>
 <li><strong>减少内存碎片</strong>：统一的 size class 可以更好地复用内存块</li>
 <li><strong>提升分配效率</strong>：预定义的大小等级简化了内存管理逻辑</li>
 <li><strong>降低开销</strong>：避免为每个微小的分配请求都进行精确的内存管理</li>
 </ol>
-<h2 id="总结">总结</h2>
-<h3 id="核心发现">核心发现</h3>
+<h2 id="总结">总结<a hidden class="anchor" aria-hidden="true" href="#总结">#</a></h2>
+<h3 id="核心发现">核心发现<a hidden class="anchor" aria-hidden="true" href="#核心发现">#</a></h3>
 <ol>
 <li>
 <p><strong>string 转 []byte 会发生内存分配和数据复制</strong></p>
@@ -538,7 +482,7 @@ jumps to 283 if SP &lt;= g.stackguard0
 </ul>
 </li>
 </ol>
-<h3 id="性能影响">性能影响</h3>
+<h3 id="性能影响">性能影响<a hidden class="anchor" aria-hidden="true" href="#性能影响">#</a></h3>
 <p>这个发现对实际编程有重要意义：</p>
 <table>
   <thead>
@@ -566,18 +510,18 @@ jumps to 283 if SP &lt;= g.stackguard0
       </tr>
   </tbody>
 </table>
-<h3 id="实践建议">实践建议</h3>
+<h3 id="实践建议">实践建议<a hidden class="anchor" aria-hidden="true" href="#实践建议">#</a></h3>
 <ol>
 <li>
 <p><strong>理解转换成本</strong></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// 低效：每次循环都分配新内存
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">s</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">strings</span> {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// 低效：每次循环都分配新内存</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">s</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">strings</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">b</span> <span style="color:#f92672">:=</span> []byte(<span style="color:#a6e22e">s</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">process</span>(<span style="color:#a6e22e">b</span>)
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 高效：复用缓冲区
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">buf</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">byte</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1024</span>)
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 高效：复用缓冲区</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">buf</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">byte</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1024</span>)
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">s</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">strings</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">buf</span> = append(<span style="color:#a6e22e">buf</span>[:<span style="color:#ae81ff">0</span>], <span style="color:#a6e22e">s</span><span style="color:#f92672">...</span>)
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">process</span>(<span style="color:#a6e22e">buf</span>)
@@ -585,10 +529,10 @@ jumps to 283 if SP &lt;= g.stackguard0
 </span></span></code></pre></div></li>
 <li>
 <p><strong>零拷贝转换</strong>（仅在确保安全的情况下使用）</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;unsafe&#34;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;unsafe&#34;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 危险！仅当你确定不会修改返回的 []byte 时使用
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">stringToByteSliceUnsafe</span>(<span style="color:#a6e22e">s</span> <span style="color:#66d9ef">string</span>) []<span style="color:#66d9ef">byte</span> {
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 危险！仅当你确定不会修改返回的 []byte 时使用</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">stringToByteSliceUnsafe</span>(<span style="color:#a6e22e">s</span> <span style="color:#66d9ef">string</span>) []<span style="color:#66d9ef">byte</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">*</span>(<span style="color:#f92672">*</span>[]<span style="color:#66d9ef">byte</span>)(<span style="color:#a6e22e">unsafe</span>.<span style="color:#a6e22e">Pointer</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">s</span>))
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div></li>
@@ -601,7 +545,7 @@ jumps to 283 if SP &lt;= g.stackguard0
 </ul>
 </li>
 </ol>
-<h3 id="扩展阅读">扩展阅读</h3>
+<h3 id="扩展阅读">扩展阅读<a hidden class="anchor" aria-hidden="true" href="#扩展阅读">#</a></h3>
 <p>通过本文的分析方法，你也可以探究其他 Go 语言特性的底层实现：</p>
 <ul>
 <li>interface 的内存布局</li>
@@ -616,297 +560,229 @@ jumps to 283 if SP &lt;= g.stackguard0
 <li>定位复杂的性能问题</li>
 <li>做出更明智的技术决策</li>
 </ul>
-<h2 id="参考资源">参考资源</h2>
+<h2 id="参考资源">参考资源<a hidden class="anchor" aria-hidden="true" href="#参考资源">#</a></h2>
 <ol>
-<li><a href="https://xargin.com/go-and-plan9-asm/" target="_blank">Go and Plan9 Assembly</a>
-</li>
-<li><a href="https://golang.org/doc/asm" target="_blank">A Quick Guide to Go&rsquo;s Assembler</a>
-</li>
-<li><a href="https://www.youtube.com/watch?v=KINIAgRpkDA" target="_blank">Go Assembly by Example</a>
-</li>
-<li><a href="https://www.cnblogs.com/yjf512/p/6132868.html" target="_blank">Go 汇编入门知识</a>
-</li>
-<li><a href="https://go.dev/blog/ismmkeynote" target="_blank">Go 内存分配器设计</a>
-</li>
+<li><a href="https://xargin.com/go-and-plan9-asm/">Go and Plan9 Assembly</a></li>
+<li><a href="https://golang.org/doc/asm">A Quick Guide to Go&rsquo;s Assembler</a></li>
+<li><a href="https://www.youtube.com/watch?v=KINIAgRpkDA">Go Assembly by Example</a></li>
+<li><a href="https://www.cnblogs.com/yjf512/p/6132868.html">Go 汇编入门知识</a></li>
+<li><a href="https://go.dev/blog/ismmkeynote">Go 内存分配器设计</a></li>
 </ol>
-      </section>
 
-      
+  </div>
 
-      
-      <div class="divider"></div>
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://fancive.github.io/tags/go-runtime/">Go Runtime</a></li>
+      <li><a href="https://fancive.github.io/tags/%E7%BF%BB%E8%AF%91/">翻译</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://fancive.github.io/posts/design_pattern_used_in_filebeat/">
+    <span class="title">« Prev</span>
+    <br>
+    <span>Filebeat 中使用的设计模式</span>
+  </a>
+  <a class="next" href="https://fancive.github.io/posts/go_interface/">
+    <span class="title">Next »</span>
+    <br>
+    <span>[翻译] Go Interface 深度解析</span>
+  </a>
+</nav>
 
-      <section class="space-y-4">
-        
-<article>
-  <div id="disqus_thread"></div>
-<script>
-    window.disqus_config = function () {
-        this.page.identifier = '\/posts\/go_string_byte\/';
-        this.page.title = '深入理解 Go String 转 []byte 的容量分配机制';
-        this.page.url = 'https:\/\/fancive.github.io\/posts\/go_string_byte\/';
 
-        
-    };
-    function initDisqus() {
-        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
-            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
-            return;
-        }
-        var d = document, s = d.createElement('script'); s.async = true;
-        s.src = '//' + "fancive-github-com" + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    };
-    setTimeout(() => {
-        initDisqus();
-    }, 3000);
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+<ul class="share-buttons">
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 深入理解 Go String 转 []byte 的容量分配机制 on x"
+            href="https://x.com/intent/tweet/?text=%e6%b7%b1%e5%85%a5%e7%90%86%e8%a7%a3%20Go%20String%20%e8%bd%ac%20%5b%5dbyte%20%e7%9a%84%e5%ae%b9%e9%87%8f%e5%88%86%e9%85%8d%e6%9c%ba%e5%88%b6&amp;url=https%3a%2f%2ffancive.github.io%2fposts%2fgo_string_byte%2f&amp;hashtags=goruntime%2c%e7%bf%bb%e8%af%91">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M512 62.554 L 512 449.446 C 512 483.97 483.97 512 449.446 512 L 62.554 512 C 28.03 512 0 483.97 0 449.446 L 0 62.554 C 0 28.03 28.029 0 62.554 0 L 449.446 0 C 483.971 0 512 28.03 512 62.554 Z M 269.951 190.75 L 182.567 75.216 L 56 75.216 L 207.216 272.95 L 63.9 436.783 L 125.266 436.783 L 235.9 310.383 L 332.567 436.783 L 456 436.783 L 298.367 228.367 L 432.367 75.216 L 371.033 75.216 Z M 127.633 110 L 164.101 110 L 383.481 400.065 L 349.5 400.065 Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 深入理解 Go String 转 []byte 的容量分配机制 on linkedin"
+            href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2ffancive.github.io%2fposts%2fgo_string_byte%2f&amp;title=%e6%b7%b1%e5%85%a5%e7%90%86%e8%a7%a3%20Go%20String%20%e8%bd%ac%20%5b%5dbyte%20%e7%9a%84%e5%ae%b9%e9%87%8f%e5%88%86%e9%85%8d%e6%9c%ba%e5%88%b6&amp;summary=%e6%b7%b1%e5%85%a5%e7%90%86%e8%a7%a3%20Go%20String%20%e8%bd%ac%20%5b%5dbyte%20%e7%9a%84%e5%ae%b9%e9%87%8f%e5%88%86%e9%85%8d%e6%9c%ba%e5%88%b6&amp;source=https%3a%2f%2ffancive.github.io%2fposts%2fgo_string_byte%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 深入理解 Go String 转 []byte 的容量分配机制 on reddit"
+            href="https://reddit.com/submit?url=https%3a%2f%2ffancive.github.io%2fposts%2fgo_string_byte%2f&title=%e6%b7%b1%e5%85%a5%e7%90%86%e8%a7%a3%20Go%20String%20%e8%bd%ac%20%5b%5dbyte%20%e7%9a%84%e5%ae%b9%e9%87%8f%e5%88%86%e9%85%8d%e6%9c%ba%e5%88%b6">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 深入理解 Go String 转 []byte 的容量分配机制 on facebook"
+            href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2ffancive.github.io%2fposts%2fgo_string_byte%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 深入理解 Go String 转 []byte 的容量分配机制 on whatsapp"
+            href="https://api.whatsapp.com/send?text=%e6%b7%b1%e5%85%a5%e7%90%86%e8%a7%a3%20Go%20String%20%e8%bd%ac%20%5b%5dbyte%20%e7%9a%84%e5%ae%b9%e9%87%8f%e5%88%86%e9%85%8d%e6%9c%ba%e5%88%b6%20-%20https%3a%2f%2ffancive.github.io%2fposts%2fgo_string_byte%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 深入理解 Go String 转 []byte 的容量分配机制 on telegram"
+            href="https://telegram.me/share/url?text=%e6%b7%b1%e5%85%a5%e7%90%86%e8%a7%a3%20Go%20String%20%e8%bd%ac%20%5b%5dbyte%20%e7%9a%84%e5%ae%b9%e9%87%8f%e5%88%86%e9%85%8d%e6%9c%ba%e5%88%b6&amp;url=https%3a%2f%2ffancive.github.io%2fposts%2fgo_string_byte%2f">
+            <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 深入理解 Go String 转 []byte 的容量分配机制 on ycombinator"
+            href="https://news.ycombinator.com/submitlink?t=%e6%b7%b1%e5%85%a5%e7%90%86%e8%a7%a3%20Go%20String%20%e8%bd%ac%20%5b%5dbyte%20%e7%9a%84%e5%ae%b9%e9%87%8f%e5%88%86%e9%85%8d%e6%9c%ba%e5%88%b6&u=https%3a%2f%2ffancive.github.io%2fposts%2fgo_string_byte%2f">
+            <svg version="1.1" xml:space="preserve" width="30px" height="30px" viewBox="0 0 512 512" fill="currentColor"
+                xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape">
+                <path
+                    d="M449.446 0C483.971 0 512 28.03 512 62.554L512 449.446C512 483.97 483.97 512 449.446 512L62.554 512C28.03 512 0 483.97 0 449.446L0 62.554C0 28.03 28.029 0 62.554 0L449.446 0ZM183.8767 87.9921H121.8427L230.6673 292.4508V424.0079H281.3328V292.4508L390.1575 87.9921H328.1233L256 238.2489z" />
+            </svg>
+        </a>
+    </li>
+</ul>
+
+  </footer>
 </article>
-
-
-
-
-
-
-
-
-      </section>
-      
-    </article>
-  </div>
-
-  <div class="hidden lg:flex lg:flex-col lg:items-end">
+    </main>
     
+<footer class="footer">
+        <span>&copy; 2026 <a href="https://fancive.github.io/">我的博客</a></span> · 
 
-    
-  </div>
-</div>
-
-
-            
-<footer class="flex justify-between items-center gap-2 px-4 py-12">
-
-  <div>
-  
-  <p>© 2026 home</p>
-  
-
-  
-  <p class="text-sm">
-    🌱
-    <span class="text-base-content/60">
-      Powered by <a class="hover:underline" href="https://gohugo.io/" target="_blank">Hugo</a> with theme
-      <a class="hover:underline" href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</span
-    >
-  </p>
-  
-</div>
-
-  <div
-  x-data="{ icons: [
-    { name: 'moon', status: 'y' },
-    { name: 'sunny', status: 'n' },
-    { name: 'desktop', status: 'auto' }
-  ] }"
-  class="flex items-center gap-2 h-[32px] px-2 bg-base-100 border border-base-content/30 rounded-full"
->
-  <template x-for="icon in icons">
-    <div
-      role="button"
-      tabindex="0"
-      :aria-label="'Select ' + icon.name + ' mode'"
-      class="group inline-flex justify-center items-center p-1 rounded-full cursor-pointer hover:bg-primary"
-      :class="$store.darkMode.icon() === icon.name && 'bg-primary'"
-      @click="$store.darkMode.toggle(icon.status)"
-    >
-      <ion-icon
-        :name="`${icon.name}-outline`"
-        class="group-hover:text-primary-content"
-        :class="$store.darkMode.icon() === icon.name && 'text-primary-content'"
-      >
-      </ion-icon>
-    </div>
-  </template>
-</div>
-
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
 </footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
 
-          </div>
-        </div>
-        <div class="back">
-          <div class="container">
-            
-            <div class="dream-grid dream-grid-about">
-  
-  
-  
-  <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-4 dream-column">
-    <article
-      class="card card-compact bg-base-100 hover:bg-base-content/10 shadow-xl dark:border dark:border-base-content/30"
-    >
-      <div class="card-body">
-        <div class="card-title">About</div>
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
 
-        <div class="prose dark:prose-invert">
-          <h2 id="-关于我">👋 关于我</h2>
-<p>我是 fancivez，一名 Golang 后端工程师，目前就职于百度。</p>
-<h2 id="-技术栈">💻 技术栈</h2>
-<ul>
-<li><strong>主要语言</strong>: Go (Golang)</li>
-<li><strong>专长领域</strong>:
-<ul>
-<li>后端服务开发</li>
-<li>AIOps (智能运维)</li>
-<li>系统架构设计</li>
-<li>自动化工具开发</li>
-</ul>
-</li>
-</ul>
-<h2 id="-博客主题">📝 博客主题</h2>
-<p>这个博客主要分享：</p>
-<ul>
-<li>Go 语言深度技术文章和源码分析</li>
-<li>软件架构设计与最佳实践</li>
-<li>AIOps 领域的研究与实践</li>
-<li>个人成长与思考</li>
-</ul>
-<h2 id="-联系方式">📫 联系方式</h2>
-<ul>
-<li><strong>Email</strong>: <a href="mailto:fancivez@gmail.com" target="_blank">fancivez@gmail.com</a>
-</li>
-<li><strong>GitHub</strong>: <a href="https://github.com/fancive" target="_blank">github.com/fancive</a>
-</li>
-<li><strong>WeChat</strong>: fancivez</li>
-</ul>
-<p>欢迎交流技术，分享想法！</p>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
 
-        </div>
-      </div>
-    </article>
-  </div>
-  
-  
-
-  
-
-  
-</div>
-
-            
-
-            
-<footer class="flex justify-between items-center gap-2 px-4 py-12">
-
-  <div>
-  
-  <p>© 2026 home</p>
-  
-
-  
-  <p class="text-sm">
-    🌱
-    <span class="text-base-content/60">
-      Powered by <a class="hover:underline" href="https://gohugo.io/" target="_blank">Hugo</a> with theme
-      <a class="hover:underline" href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</span
-    >
-  </p>
-  
-</div>
-
-  <div
-  x-data="{ icons: [
-    { name: 'moon', status: 'y' },
-    { name: 'sunny', status: 'n' },
-    { name: 'desktop', status: 'auto' }
-  ] }"
-  class="flex items-center gap-2 h-[32px] px-2 bg-base-100 border border-base-content/30 rounded-full"
->
-  <template x-for="icon in icons">
-    <div
-      role="button"
-      tabindex="0"
-      :aria-label="'Select ' + icon.name + ' mode'"
-      class="group inline-flex justify-center items-center p-1 rounded-full cursor-pointer hover:bg-primary"
-      :class="$store.darkMode.icon() === icon.name && 'bg-primary'"
-      @click="$store.darkMode.toggle(icon.status)"
-    >
-      <ion-icon
-        :name="`${icon.name}-outline`"
-        class="group-hover:text-primary-content"
-        :class="$store.darkMode.icon() === icon.name && 'text-primary-content'"
-      >
-      </ion-icon>
-    </div>
-  </template>
-</div>
-
-</footer>
-
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script>
-  window.lightTheme =  null 
-  window.darkTheme =  null 
 </script>
-
-
-  <script src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script>
-
-  
-  
-    
-  
-  <script src="/js/grid.min.js"></script>
-
-
-
-
-  
-
-<script src="/js/main.min.js"></script>
-
-    
-
-
-
-
-
-
-
-
-
-    
-
-    
-
-    
-
-    
-    
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
-      <script>
-        var doNotTrack = false;
-        if ( false ) {
-          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
-          var doNotTrack = (dnt == "1" || dnt == "yes");
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
         }
-        if (!doNotTrack) {
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-7N49ZFJ61J');
-        }
-      </script>
-    
+    };
 
-    <script type="module" src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.js"></script>
-  </body>
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
 </html>

@@ -1,82 +1,89 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Posts on home</title>
+    <title>Posts on 我的博客</title>
     <link>https://fancive.github.io/posts/</link>
-    <description>Recent content in Posts on home</description>
+    <description>Recent content in Posts on 我的博客</description>
     <generator>Hugo</generator>
-    <language>en</language>
-    <lastBuildDate>Fri, 23 Jan 2026 12:00:00 +0800</lastBuildDate>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 09 Apr 2026 12:00:00 +0800</lastBuildDate>
     <atom:link href="https://fancive.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>你的 CLI 该为 AI Agent 重写了</title>
+      <link>https://fancive.github.io/posts/rewrite-cli-for-ai-agents/</link>
+      <pubDate>Thu, 09 Apr 2026 12:00:00 +0800</pubDate>
+      <guid>https://fancive.github.io/posts/rewrite-cli-for-ai-agents/</guid>
+      <description>给人用的命令行和给 Agent 用的命令行，是两种东西。七个设计原则，用真实内部工具和知名开源 CLI 逐条拆解。</description>
+    </item>
     <item>
       <title>如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法</title>
       <link>https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/</link>
       <pubDate>Fri, 23 Jan 2026 12:00:00 +0800</pubDate>
       <guid>https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/</guid>
-      <description>&lt;h2 id=&#34;背景&#34;&gt;背景&lt;/h2&gt;&#xA;&lt;p&gt;在微服务架构中，一个服务通常包含数十甚至上百个 API 接口。当我们需要优化 CPU 资源消耗时，往往面临一个问题：&lt;strong&gt;哪些接口消耗了最多的 CPU？&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;传统方法是通过 profiling 工具（如 pprof）分析，但这种方法：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;只能看到函数级别的消耗，难以直接关联到接口&lt;/li&gt;&#xA;&lt;li&gt;需要在生产环境开启采样，有一定性能开销&lt;/li&gt;&#xA;&lt;li&gt;难以持续监控和量化&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;本文介绍一种&lt;strong&gt;基于线性回归&lt;/strong&gt;的方法，利用现有的监控数据（QPS 和 CPU 使用率），估算每个接口的 CPU 贡献。&lt;/p&gt;</description>
+      <description>利用线性回归和现有监控数据（QPS、CPU 使用率），量化微服务中各 API 接口的 CPU 资源消耗，指导性能优化。</description>
     </item>
     <item>
       <title>从代码评审到生产部署：自动化流水线实践</title>
       <link>https://fancive.github.io/posts/automating-deployment-pipeline-from-code-review-to-production/</link>
       <pubDate>Thu, 30 Jan 2025 14:07:06 +0800</pubDate>
       <guid>https://fancive.github.io/posts/automating-deployment-pipeline-from-code-review-to-production/</guid>
-      <description>&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;&#xA;&lt;p&gt;在现代软件开发中，部署效率直接影响团队的整体生产力。本文分享了我们团队从手动部署到全自动化部署的实践经验，通过自动化工具将部署时间从 15 分钟缩短到 5 分钟，并完全消除了人工操作带来的错误。&lt;/p&gt;</description>
+      <description>从代码评审到生产环境的自动化部署实践：解决传统部署流程痛点，实现智能化的一站式部署工具，提升开发效率。</description>
     </item>
     <item>
       <title>Wheel of Life 2024</title>
       <link>https://fancive.github.io/posts/wheel-of-life-2024/</link>
       <pubDate>Sat, 11 Jan 2025 16:26:38 +0800</pubDate>
       <guid>https://fancive.github.io/posts/wheel-of-life-2024/</guid>
-      <description>&lt;blockquote&gt;&#xA;    &lt;p&gt;我让大模型读取了我的2024年每个月的月报(从周报和日记中总结)，得到了以下的生命之轮得分&lt;/p&gt;&#xA;&#xA;  &lt;/blockquote&gt;&#xA;&#xA;&lt;h1 id=&#34;生命之轮-2024&#34;&gt;生命之轮 2024&lt;/h1&gt;&#xA;&lt;p&gt;&lt;img alt=&#34;wheel_of_life_2024&#34; src=&#34;https://fancive.github.io/images/img/wheel_of_life_2024.jpg&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;基于对全年12个月的完整回顾分析，我现在重新为生命之轮的八个维度进行评分：&lt;/p&gt;</description>
+      <description>2024 年度生命之轮回顾：从事业、学习、健康、家庭等八个维度全面反思这一年的成长与不足。</description>
     </item>
     <item>
       <title>Llm Driven Alert Diagnosis Engine Design(设计新一代LLM驱动的告警诊断引擎)</title>
       <link>https://fancive.github.io/posts/llm-driven-alert-diagnosis-engine-design/</link>
       <pubDate>Sat, 31 Aug 2024 09:42:01 +0800</pubDate>
       <guid>https://fancive.github.io/posts/llm-driven-alert-diagnosis-engine-design/</guid>
-      <description>&lt;p&gt;在当今复杂的IT环境中，快速准确地诊断和解决系统问题变得越来越具有挑战性。本文将探讨如何设计一个由大语言模型（LLM）驱动的诊断引擎，作为自动定位系统的核心组件，以智能化方式处理系统告警。&lt;/p&gt;</description>
+      <description>探讨如何设计基于大语言模型的智能告警诊断引擎，实现系统问题的自动化检测、诊断和解决。</description>
     </item>
     <item>
       <title>[Paper reading] A Survey On Log Research Of AIOps: Methods and Trends</title>
       <link>https://fancive.github.io/posts/paper_reading_a_survey_on_log_research_of_aiops/</link>
       <pubDate>Sat, 25 Mar 2023 13:43:03 +0800</pubDate>
       <guid>https://fancive.github.io/posts/paper_reading_a_survey_on_log_research_of_aiops/</guid>
-      <description>&lt;h1 id=&#34;first-pass&#34;&gt;first pass&lt;/h1&gt;&#xA;&lt;p&gt;5-10 mins&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;title, abstract, and introduction&lt;/li&gt;&#xA;&lt;li&gt;section and sub-section headings&lt;/li&gt;&#xA;&lt;li&gt;conclusions&lt;/li&gt;&#xA;&lt;li&gt;references&lt;/li&gt;&#xA;&lt;/ol&gt;</description>
+      <description>AIOps 日志研究综述：系统梳理日志分析的方法、趋势以及在智能运维中的应用。</description>
     </item>
     <item>
       <title>[paper reading]AIOps: Real-World Challenges and Research Innovations</title>
       <link>https://fancive.github.io/posts/paper_reading_aiops_real-world_challenges_and_research_innovations/</link>
       <pubDate>Sat, 18 Mar 2023 13:35:19 +0800</pubDate>
       <guid>https://fancive.github.io/posts/paper_reading_aiops_real-world_challenges_and_research_innovations/</guid>
-      <description>&lt;h2 id=&#34;first-pass&#34;&gt;first pass&lt;/h2&gt;&#xA;&lt;p&gt;5-10 mins&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;title, abstract, and introduction&lt;/li&gt;&#xA;&lt;li&gt;section and sub-section headings&lt;/li&gt;&#xA;&lt;li&gt;conclusions&lt;/li&gt;&#xA;&lt;li&gt;references&lt;/li&gt;&#xA;&lt;/ol&gt;</description>
+      <description>AIOps 领域论文阅读笔记：探讨智能运维在现实世界中面临的挑战以及最新的研究创新。</description>
     </item>
     <item>
       <title>我从filebeat-harvester中学到什么</title>
       <link>https://fancive.github.io/posts/what_i_learned_from_filebeat_harvester/</link>
       <pubDate>Mon, 28 Nov 2022 14:13:14 +0800</pubDate>
       <guid>https://fancive.github.io/posts/what_i_learned_from_filebeat_harvester/</guid>
-      <description>&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;&#xA;&lt;p&gt;在学习优秀开源项目的源码时，我们不仅能学到具体的技术实现，更能领悟到工程实践中的设计智慧。Filebeat 作为 Elastic Stack 中的日志采集器，其 Harvester 模块的设计就是一个典范。本文通过深入分析 Harvester 的协程管理机制，总结了四个核心问题的解决方案，这些经验可以直接应用到我们日常的 Go 项目开发中。&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;核心问题&lt;/strong&gt;：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;如何为主协程添加超时控制？&lt;/li&gt;&#xA;&lt;li&gt;主协程结束时如何优雅关闭其他协程？&lt;/li&gt;&#xA;&lt;li&gt;如何控制多个协程的关闭顺序？&lt;/li&gt;&#xA;&lt;li&gt;如何从外部安全地关闭任务并等待清理完成？&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
+      <description>通过分析 Filebeat Harvester 模块的实现，学习文件采集、状态管理和并发控制的最佳实践。</description>
     </item>
     <item>
       <title>Filebeat 中使用的设计模式</title>
       <link>https://fancive.github.io/posts/design_pattern_used_in_filebeat/</link>
       <pubDate>Wed, 16 Sep 2020 22:15:59 +0800</pubDate>
       <guid>https://fancive.github.io/posts/design_pattern_used_in_filebeat/</guid>
-      <description>&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;&#xA;&lt;p&gt;Filebeat 是 Elastic Stack 中用于收集和转发日志数据的轻量级采集器。通过深入阅读 Filebeat 的源码，我们可以学习到许多优秀的设计模式应用。本文将介绍 Filebeat 中使用的四种核心设计模式：Registry + LazyInit、Observer、Strategy 和 Object Pool，并分析它们如何帮助 Filebeat 实现高性能和良好的可扩展性。&lt;/p&gt;</description>
+      <description>分析 Filebeat 源码中使用的设计模式，包括 Registry 模式、Observer 模式、Strategy 模式和 Object Pool 模式等优秀的工程实践。</description>
     </item>
     <item>
       <title>深入理解 Go String 转 []byte 的容量分配机制</title>
       <link>https://fancive.github.io/posts/go_string_byte/</link>
       <pubDate>Sun, 31 May 2020 21:30:28 +0800</pubDate>
       <guid>https://fancive.github.io/posts/go_string_byte/</guid>
-      <description>&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;&#xA;&lt;p&gt;在 Go 语言中，string 和 []byte 之间的转换是非常常见的操作。但你是否注意到，当将一个 3 字节的字符串转为 []byte 时，得到的切片容量却是 32？这背后隐藏着 Go 运行时的内存分配策略。本文将通过汇编代码分析，深入探究这个有趣的现象，帮助你理解 Go 在底层是如何处理类型转换和内存分配的。&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;核心问题&lt;/strong&gt;：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;为什么 &lt;code&gt;[]byte(&amp;quot;abc&amp;quot;)&lt;/code&gt; 的容量是 32 而不是 3？&lt;/li&gt;&#xA;&lt;li&gt;string 转 []byte 的底层实现是什么？&lt;/li&gt;&#xA;&lt;li&gt;Go 运行时如何进行内存分配？&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
+      <description>探究 Go 语言中 string 转 []byte 时容量变化的底层原理，通过汇编代码分析内存分配机制。</description>
     </item>
     <item>
       <title>[翻译] Go Interface 深度解析</title>
       <link>https://fancive.github.io/posts/go_interface/</link>
       <pubDate>Wed, 06 May 2020 22:20:18 +0800</pubDate>
       <guid>https://fancive.github.io/posts/go_interface/</guid>
-      <description>&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;&#xA;&lt;p&gt;Interface 是 Go 语言最强大的特性之一，但同时也是最容易让人困惑的部分。本文翻译自 Ian Lance Taylor 的博客文章，深入探讨了 Go interface 的内部实现机制，帮助你理解 interface 的静态类型、动态类型以及值拷贝的工作原理。&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;核心要点&lt;/strong&gt;：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Interface 同时具有静态类型和动态类型&lt;/li&gt;&#xA;&lt;li&gt;Interface 的值拷贝行为&lt;/li&gt;&#xA;&lt;li&gt;Interface 的内部数据结构（itable）&lt;/li&gt;&#xA;&lt;li&gt;指针接收者与值接收者的区别&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&#xA;&#xA;&#xA;  &lt;blockquote&gt;&#xA;    &lt;p&gt;原文链接：https://www.airs.com/blog/archives/281&lt;/p&gt;&#xA;&#xA;  &lt;/blockquote&gt;</description>
+      <description>深入理解 Go 语言 interface 的内部实现机制，包括静态类型、动态类型以及值拷贝的工作原理。</description>
     </item>
   </channel>
 </rss>

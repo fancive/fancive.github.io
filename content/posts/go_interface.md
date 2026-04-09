@@ -1,7 +1,8 @@
 ---
 title: "[翻译] Go Interface 深度解析"
 date: 2020-05-06T22:20:18+08:00
-cover: "/images/illustrations/interface.jpg"
+cover:
+  image: "/images/illustrations/interface.jpg"
 description: "深入理解 Go 语言 interface 的内部实现机制，包括静态类型、动态类型以及值拷贝的工作原理。"
 categories:
   - Go语言

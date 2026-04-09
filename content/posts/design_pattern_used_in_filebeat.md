@@ -1,7 +1,8 @@
 ---
 title: "Filebeat 中使用的设计模式"
 date: 2020-09-16T22:15:59+08:00
-cover: "/images/illustrations/patterns.jpg"
+cover:
+  image: "/images/illustrations/patterns.jpg"
 description: "分析 Filebeat 源码中使用的设计模式，包括 Registry 模式、Observer 模式、Strategy 模式和 Object Pool 模式等优秀的工程实践。"
 categories:
   - Go语言

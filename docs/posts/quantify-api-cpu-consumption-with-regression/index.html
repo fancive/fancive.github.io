@@ -1,35 +1,94 @@
 <!DOCTYPE html>
-<html lang="en"
-  x-data
-  :class="$store.darkMode.class()"
-  :data-theme="$store.darkMode.theme()">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法 | home</title>
+<html lang="en" dir="auto" data-theme="auto">
 
-    
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法 | 我的博客</title>
+<meta name="keywords" content="机器学习, 微服务, 监控, Python">
+<meta name="description" content="利用线性回归和现有监控数据（QPS、CPU 使用率），量化微服务中各 API 接口的 CPU 资源消耗，指导性能优化。">
+<meta name="author" content="fancivez">
+<link rel="canonical" href="https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.199042e659bc7245f5609d333d6c044eb554a0640849bb874e1dff8eb0f57209.css" integrity="sha256-GZBC5lm8ckX1YJ0zPWwETrVUoGQISbuHTh3/jrD1cgk=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://fancive.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://fancive.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://fancive.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://fancive.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://fancive.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
 
-<link rel="canonical" href="https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/" />
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
 
+            .list {
+                background: var(--theme);
+            }
 
+            .toc {
+                background: var(--entry);
+            }
+        }
 
-<meta name="author" content="fancivez" />
-<meta name="description" content="利用线性回归和现有监控数据（QPS、CPU 使用率），量化微服务中各 API 接口的 CPU 资源消耗，指导性能优化。" />
+        @media (prefers-color-scheme: light) {
+            .list::-webkit-scrollbar-thumb {
+                border-color: var(--code-bg);
+            }
+        }
 
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
 
-<meta name="keywords" content="机器学习,微服务,监控,Python">
-
-
-
-<meta name="generator" content="Hugo 0.138.0">
-
-
-<meta property="og:url" content="https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/">
-  <meta property="og:site_name" content="home">
+</script>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
+      <script>
+        var doNotTrack = false;
+        if ( true ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-7N49ZFJ61J');
+        }
+      </script><meta property="og:url" content="https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/">
+  <meta property="og:site_name" content="我的博客">
   <meta property="og:title" content="如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法">
   <meta property="og:description" content="利用线性回归和现有监控数据（QPS、CPU 使用率），量化微服务中各 API 接口的 CPU 资源消耗，指导性能优化。">
-  <meta property="og:locale" content="en">
+  <meta property="og:locale" content="zh_cn">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2026-01-23T12:00:00+08:00">
@@ -39,302 +98,215 @@
     <meta property="article:tag" content="监控">
     <meta property="article:tag" content="Python">
     <meta property="og:image" content="https://fancive.github.io/images/img/cpu-analysis.jpg">
-
-
-
-
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://fancive.github.io/images/img/cpu-analysis.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://fancive.github.io/images/img/cpu-analysis.jpg">
   <meta name="twitter:title" content="如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法">
   <meta name="twitter:description" content="利用线性回归和现有监控数据（QPS、CPU 使用率），量化微服务中各 API 接口的 CPU 资源消耗，指导性能优化。">
 
 
-
-
-  
-
-<link rel="stylesheet" href="/css/output.min.css" />
-
-
-
-
-    
-
-
-<style>
-  pre {
-    padding: 1em;
-    overflow: auto;
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://fancive.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法",
+      "item": "https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法",
+  "name": "如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法",
+  "description": "利用线性回归和现有监控数据（QPS、CPU 使用率），量化微服务中各 API 接口的 CPU 资源消耗，指导性能优化。",
+  "keywords": [
+    "机器学习", "微服务", "监控", "Python"
+  ],
+  "articleBody": "背景 在微服务架构中，一个服务通常包含数十甚至上百个 API 接口。当我们需要优化 CPU 资源消耗时，往往面临一个问题：哪些接口消耗了最多的 CPU？\n传统方法是通过 profiling 工具（如 pprof）分析，但这种方法：\n只能看到函数级别的消耗，难以直接关联到接口 需要在生产环境开启采样，有一定性能开销 难以持续监控和量化 本文介绍一种基于线性回归的方法，利用现有的监控数据（QPS 和 CPU 使用率），估算每个接口的 CPU 贡献。\n核心思路 基本假设 假设服务的 CPU 使用率可以表示为各接口 QPS 的线性组合：\nCPU% = β₀ + β₁×QPS₁ + β₂×QPS₂ + ... + βₙ×QPSₙ + ε 其中：\nβᵢ 是接口 i 的单请求 CPU 成本（每处理一个请求消耗的 CPU 百分比，例如 β=0.001 表示每个请求消耗 0.001% CPU） β₀ 是截距，表示基础 CPU 消耗（与请求无关的开销，如 GC、定时任务等） ε 是误差项 单位说明：本文中 CPU% 范围为 0-100，表示单核 CPU 的使用百分比。如果服务运行在多核机器上，需要先将监控数据归一化到单核。\n为什么可行？ 线性可加性：在高并发场景下，CPU 消耗近似与请求量成正比 数据可得：QPS 和 CPU 使用率是最常见的监控指标 可解释性：回归系数直接表示\"单请求成本\"，业务含义清晰 注意：相关性 ≠ 因果性 回归分析只能揭示相关关系，不能证明因果。如果有外部因素同时影响 QPS 和 CPU（如流量高峰时段），系数可能存在偏差。因此，分析结果应作为优化方向的参考，具体接口仍需结合代码审查确认。\n实现步骤 Step 1: 数据采集 从监控系统获取时序数据：\nimport pandas as pd import numpy as np # 伪代码：从 Prometheus 获取数据 qps_data = prometheus.query( 'sum(rate(http_requests_total[5m])) by (api)', start_time, end_time, step='5m' ) cpu_data = prometheus.query( 'avg(cpu_usage_percent)', start_time, end_time, step='5m' ) # 转换为 DataFrame # X: 特征矩阵，每列是一个接口的 QPS，每行是一个时间点 # y: 目标向量，CPU 使用率 X = pd.DataFrame(qps_data).pivot(index='timestamp', columns='api', values='qps') y = pd.Series(cpu_data['cpu_percent'], index=X.index) 关键点：\n时间对齐：QPS 和 CPU 数据的时间戳必须一致 采样间隔：建议 5-10 分钟，太短噪声大，太长样本少 数据量：至少 500+ 个时间点，保证回归的稳定性 多实例聚合：如果服务有多个实例，需将 QPS 和 CPU 分别求和/平均后再分析 Step 2: 数据预处理 # 处理缺失值 X = X.fillna(0) y = y.fillna(y.mean()) # 过滤零值过多的接口（\u003e90% 为零的接口剔除） non_zero_ratio = (X \u003e 0).mean() valid_cols = X.columns[non_zero_ratio \u003e 0.1] X = X[valid_cols] print(f\"保留 {len(valid_cols)} 个接口，剔除 {len(non_zero_ratio) - len(valid_cols)} 个低频接口\") 为什么要过滤零值过多的接口？\n低频接口的数据稀疏，回归系数不稳定，置信区间很宽，结论不可靠。\nStep 3: 回归建模 使用 Ridge 回归（L2 正则化）而非普通最小二乘：\nfrom sklearn.linear_model import RidgeCV from sklearn.model_selection import train_test_split, TimeSeriesSplit # 划分训练集和测试集，用于验证模型泛化能力 X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2, shuffle=False # 时序数据不打乱 ) # Ridge 回归，自动选择最优正则化参数 # 注意：使用 TimeSeriesSplit 保持时序顺序，避免数据泄漏 model = RidgeCV( alphas=[0.001, 0.01, 0.1, 1.0, 10.0], cv=TimeSeriesSplit(n_splits=5) ) model.fit(X_train, y_train) # 评估模型 train_r2 = model.score(X_train, y_train) test_r2 = model.score(X_test, y_test) print(f\"训练集 R²: {train_r2:.4f}, 测试集 R²: {test_r2:.4f}\") print(f\"最优 alpha: {model.alpha_}\") # 系数即为各接口的单请求 CPU 成本 coefficients = dict(zip(X.columns, model.coef_)) 为什么用 Ridge？\n共线性缓解：当接口 QPS 存在相关性时，Ridge 能给出更稳定的系数估计 过拟合风险：接口数量多时，普通回归容易过拟合 系数稳定性：正则化使系数更稳定 处理负系数：\n理论上，单请求 CPU 成本不应为负。如果出现负系数，可能原因：\n共线性：与其他接口高度相关，系数被\"分摊\" 数据噪声：低频接口数据不足 遗漏变量：存在未建模的因素 建议将负系数视为 0（无显著贡献），或使用非负最小二乘（scipy.optimize.nnls）。\nStep 4: 置信区间估计（Block Bootstrap） 由于时序数据存在自相关，传统的 Bootstrap 会低估方差。使用 Block Bootstrap：\nfrom sklearn.linear_model import Ridge def block_bootstrap_ci(X, y, alpha, block_size=10, n_iterations=100, random_state=42): \"\"\" 使用 Block Bootstrap 计算回归系数的置信区间 参数: X: 特征矩阵 (DataFrame) y: 目标向量 (Series) alpha: Ridge 正则化参数 block_size: 块大小，建议为自相关衰减长度 n_iterations: Bootstrap 迭代次数 random_state: 随机种子，保证结果可复现 返回: lower, upper: 95% 置信区间的下界和上界 \"\"\" rng = np.random.default_rng(random_state) n_samples = len(y) # 使用 ceiling division 确保覆盖所有样本 n_blocks = (n_samples + block_size - 1) // block_size coefficients_list = [] for _ in range(n_iterations): # 随机选择块（有放回） block_indices = rng.choice(n_blocks, n_blocks, replace=True) sample_indices = [] for idx in block_indices: start = idx * block_size end = min((idx + 1) * block_size, n_samples) sample_indices.extend(range(start, end)) # 每次迭代创建新的模型实例 boot_model = Ridge(alpha=alpha) X_boot = X.iloc[sample_indices].values y_boot = y.iloc[sample_indices].values boot_model.fit(X_boot, y_boot) coefficients_list.append(boot_model.coef_) # 计算 95% 置信区间 coefficients_array = np.array(coefficients_list) lower = np.percentile(coefficients_array, 2.5, axis=0) upper = np.percentile(coefficients_array, 97.5, axis=0) return lower, upper # 使用示例 lower, upper = block_bootstrap_ci(X_train, y_train, alpha=model.alpha_) ci = {col: (lower[i], upper[i]) for i, col in enumerate(X_train.columns)} 置信区间下界 \u003e 0 的接口，我们认为其系数是统计显著的。\nStep 5: 计算 CPU 贡献 # 计算各接口的平均 QPS avg_qps = X.mean() # 计算 CPU 贡献 = 系数 × 平均 QPS contribution = { api: max(0, coefficients[api]) * avg_qps[api] # 负系数视为 0 for api in X.columns } # 按贡献排序 top_consumers = sorted(contribution.items(), key=lambda x: x[1], reverse=True) # 输出 Top 10 print(\"CPU 贡献 Top 10:\") for api, contrib in top_consumers[:10]: coef = coefficients[api] qps = avg_qps[api] is_significant = ci[api][0] \u003e 0 print(f\" {api}: 系数={coef:.6f}, QPS={qps:.1f}, 贡献={contrib:.2f}%, 显著={'✓' if is_significant else '✗'}\") 结果解读 输出示例 接口 单请求成本 平均 QPS 总贡献(%) 显著性 /api/user/info 0.00107 4,250 4.55 ✓ /api/feed/list 0.00023 12,676 2.92 ✓ /api/search 0.25000 5 1.25 ✓ 注：总贡献 = 单请求成本 × 平均 QPS（如 0.00107 × 4250 ≈ 4.55）\n两种优化方向 高 QPS × 低成本：如 /api/feed/list\n特点：单次请求成本低，但调用量大，积少成多 优化思路：客户端缓存、请求合并、限流 低 QPS × 高成本：如 /api/search\n特点：单次请求成本高，是\"重\"接口 优化思路：算法优化、减少数据库查询、增加服务端缓存 方法局限性 1. 线性假设的局限 真实场景中，CPU 消耗可能是非线性的：\n当 QPS 超过阈值时，GC 压力陡增 某些接口有批处理逻辑，边际成本递减 应对：检查残差图，如有明显模式，考虑分段回归或非线性模型。\n2. 共线性问题 如果两个接口的 QPS 高度相关（如总是被一起调用），系数会相互\"分摊\"，单独解读不准确。\n应对：\n检查 VIF（方差膨胀因子），VIF \u003e 10 需警惕 检查条件数（condition number \u003e 1000 说明共线性严重） 对于轻度共线性，Ridge 已能缓解；重度共线性建议合并分析 # VIF 计算示例 from statsmodels.stats.outliers_influence import variance_inflation_factor vif = pd.DataFrame({ 'api': X.columns, 'VIF': [variance_inflation_factor(X.values, i) for i in range(X.shape[1])] }) print(vif[vif['VIF'] \u003e 10]) # 显示 VIF \u003e 10 的高共线性特征 注意：如果接口间存在强依赖（A 调用 B），共线性会很严重。此时可考虑：\n将强相关接口合并为一组分析 使用 Elastic Net（L1+L2）自动筛选特征 结合调用链路分析，单独评估 3. 遗漏变量偏差 如果有重要因素未纳入模型（如定时任务、后台 GC），系数估计会有偏。\n应对：检查截距项，如果截距很大（\u003e10%）或为负，说明模型可能遗漏了重要因素。\n模型诊断 必查指标 指标 健康范围 说明 测试集 R² \u003e 0.85 模型泛化能力，低于训练集 R² 是正常的 训练集 R² \u003e 0.9 模型拟合能力 Durbin-Watson 1.5-2.5 残差自相关检验，\u003c1.5 说明正自相关 Condition Number \u003c 1000 共线性检验，\u003e1000 说明严重共线性 截距 \u003e 0 且 \u003c 10% 基础开销合理性 诊断代码 from statsmodels.stats.stattools import durbin_watson # 计算诊断指标 train_residuals = y_train - model.predict(X_train) test_residuals = y_test - model.predict(X_test) cond_number = np.linalg.cond(X_train.values) print(f\"Durbin-Watson (训练): {durbin_watson(train_residuals):.2f}\") print(f\"Durbin-Watson (测试): {durbin_watson(test_residuals):.2f}\") print(f\"Condition Number: {cond_number:.0f}\") print(f\"截距: {model.intercept_:.2f}%\") 异常处理 测试集 R² 远低于训练集：过拟合，增大正则化参数或减少特征 DW \u003c 1.5：残差有正自相关，增大 Bootstrap 块大小 截距为负：模型存在问题，检查数据质量或遗漏变量 系数大面积为负：共线性严重，考虑特征筛选或使用 Elastic Net 总结 这种方法的优势：\n成本低：利用现有监控数据，无需额外埋点 可持续：可自动化运行，持续追踪 可解释：系数有明确的业务含义 适用场景：\n服务接口数量多（\u003e20 个） 有稳定的监控数据（\u003e500 个采样点） 需要量化各接口的资源消耗占比 接口间依赖关系不太复杂 不适用场景：\n接口之间有强依赖关系（共线性严重） CPU 消耗主要来自异步任务/定时任务 服务处于非稳态（如大促期间流量模式剧变） 完整代码示例 import pandas as pd import numpy as np from sklearn.linear_model import RidgeCV, Ridge from sklearn.model_selection import train_test_split, TimeSeriesSplit from statsmodels.stats.stattools import durbin_watson # 注意：需要先定义 Step 4 中的 block_bootstrap_ci 函数 def analyze_api_cpu_contribution(X, y, test_size=0.2, bootstrap_iterations=100): \"\"\" 分析各 API 接口的 CPU 贡献 参数: X: 特征矩阵，每列是一个接口的 QPS (DataFrame) y: CPU 使用率 (Series) test_size: 测试集比例 bootstrap_iterations: Bootstrap 迭代次数 返回: results: 包含系数、置信区间、贡献的 DataFrame \"\"\" # 1. 数据预处理 X = X.fillna(0) y = y.fillna(y.mean()) non_zero_ratio = (X \u003e 0).mean() valid_cols = X.columns[non_zero_ratio \u003e 0.1] X = X[valid_cols] # 2. 计算平均 QPS（在划分数据集之前，使用全量数据） avg_qps = X.mean() # 3. 划分数据集 X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=test_size, shuffle=False ) # 4. 训练模型（使用 TimeSeriesSplit 保持时序） model = RidgeCV( alphas=[0.001, 0.01, 0.1, 1.0, 10.0], cv=TimeSeriesSplit(n_splits=5) ) model.fit(X_train, y_train) # 5. 计算置信区间 lower, upper = block_bootstrap_ci( X_train, y_train, model.alpha_, n_iterations=bootstrap_iterations ) # 6. 整理结果 results = pd.DataFrame({ 'api': X.columns, 'coefficient': model.coef_, 'ci_lower': lower, 'ci_upper': upper, 'avg_qps': avg_qps.values, 'contribution': [max(0, c) * q for c, q in zip(model.coef_, avg_qps)], 'significant': lower \u003e 0 }) results = results.sort_values('contribution', ascending=False) # 7. 诊断信息 train_residuals = y_train - model.predict(X_train) test_residuals = y_test - model.predict(X_test) print(f\"训练集 R²: {model.score(X_train, y_train):.4f}\") print(f\"测试集 R²: {model.score(X_test, y_test):.4f}\") print(f\"Durbin-Watson (训练): {durbin_watson(train_residuals):.2f}\") print(f\"Durbin-Watson (测试): {durbin_watson(test_residuals):.2f}\") print(f\"Condition Number: {np.linalg.cond(X_train.values):.0f}\") print(f\"截距: {model.intercept_:.2f}%\") return results 参考资料 Ridge Regression - scikit-learn Block Bootstrap for Time Series Variance Inflation Factor Non-negative Least Squares - scipy 本文方法已在生产环境验证，模型 R² 达到 94%-99%，成功定位多个高消耗接口并指导优化。\n",
+  "wordCount" : "960",
+  "inLanguage": "en",
+  "image":"https://fancive.github.io/images/img/cpu-analysis.jpg","datePublished": "2026-01-23T12:00:00+08:00",
+  "dateModified": "2026-01-23T12:00:00+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "fancivez"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "我的博客",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://fancive.github.io/favicon.ico"
+    }
   }
-</style>
-
-
-
-
-
-
-
-
-
-    
-
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  </head>
-
-  <body x-data="{
-    flip: false,
-  }">
-    
-    <div id="dream-global-bg"></div>
-
-    
-<nav class="mt-4 lg:mt-8 py-4">
-
-  
-  <div class="container flex justify-between px-4">
-  
-    <section class="flex items-center gap-4">
-      <div class="avatar cursor-pointer hover:online" @click="flip = !flip" title="Flip it!">
-        <div class="h-10 rounded-full">
-          <img src="/images/profile.jpg" alt="" />
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://fancive.github.io/" accesskey="h" title="我的博客 (Alt + H)">我的博客</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
         </div>
-      </div>
+        <ul id="menu">
+            <li>
+                <a href="https://fancive.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://fancive.github.io/categories/" title="Categories">
+                    <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://fancive.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://fancive.github.io/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://fancive.github.io/search/" title="Search (Alt &#43; /)" accesskey=/>
+                    <span>Search</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
 
-      
-      <div>
-        
-        
-        <div class="text-base-content/60 text-sm">欢迎来到荷兰</div>
-        
-      </div>
-      
-    </section>
-
-    <div class="dropdown dropdown-end sm:hidden">
-      <div tabindex="0" role="button" class="btn btn-ghost btn-square" aria-label="Select an option">
-        <ion-icon name="menu" class="text-2xl"></ion-icon>
-      </div>
-      <ul tabindex="0" class="dropdown-content menu w-36 bg-base-100 rounded-box z-[1] shadow-md">
-        
-
-
-<li>
-  <div role="link" tabindex="0" class="inline-flex items-center p-2 cursor-pointer" @click="flip = !flip" title="About">
-    <ion-icon name="information-circle"></ion-icon>About</div>
-</li>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<li>
-  <a class="inline-flex items-center p-2 cursor-pointer" href="/posts" title="Archives">
-    <ion-icon name="archive"></ion-icon>
-    Archives
-  </a>
-</li>
-
-
-
-
-<li>
-  <a class="inline-flex items-center p-2 cursor-pointer" href="/categories" title="All Categories">
-    <ion-icon name="grid"></ion-icon>
-    All Categories
-  </a>
-</li>
-
-
-
-
-<li>
-  <a class="inline-flex items-center p-2 cursor-pointer" href="/tags" title="All Tags">
-    <ion-icon name="pricetags"></ion-icon>
-    All Tags
-  </a>
-</li>
-
-
-
-
-
-
-      </ul>
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://fancive.github.io/">Home</a>&nbsp;»&nbsp;<a href="https://fancive.github.io/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法
+    </h1>
+    <div class="post-description">
+      利用线性回归和现有监控数据（QPS、CPU 使用率），量化微服务中各 API 接口的 CPU 资源消耗，指导性能优化。
     </div>
-    <section class="hidden sm:flex sm:items-center sm:gap-2 md:gap-4">
-      
-      
-      
-      <div role="link" tabindex="0"
-        class="text-sm font-semibold cursor-pointer hover:underline"
-        @click="flip = !flip"
-        title="About"
-      >About</div>
-      
-      
+    <div class="post-meta"><span title='2026-01-23 12:00:00 +0800 CST'>January 23, 2026</span>&nbsp;·&nbsp;<span>5 min</span>&nbsp;·&nbsp;<span>fancivez</span>
 
-      
-      
-
-      
-
-      
-      
-
-
-
-
-
-      
-      
-
-
-
-
-
-      
-      
-<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/posts" title="Archives">
-  <ion-icon class="group-hover:text-primary-content" name="archive"></ion-icon>
-</a>
-
-
-      
-      
-<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/categories" title="All Categories">
-  <ion-icon class="group-hover:text-primary-content" name="grid"></ion-icon>
-</a>
-
-
-      
-      
-<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/tags" title="All Tags">
-  <ion-icon class="group-hover:text-primary-content" name="pricetags"></ion-icon>
-</a>
-
-
-      
-
-      
-
-      
-    </section>
-  </div>
-</nav>
-
-
-    <div class="flip-container" :class="{ 'flip-it': flip }">
-      <div class="flipper">
-        <div class="front">
-          <div class="container">
-            
-<div class="lg:grid lg:grid-cols-4 gap-4 mt-4 px-4">
-  <div class="hidden lg:block"></div>
-
-  <div class="lg:col-span-2">
-    <article class="mx-auto prose prose-quoteless dark:prose-invert" id="dream-single-post-main" itemscope itemtype="http://schema.org/Article">
-      
-  <meta itemprop="name" content="如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法">
-  <meta itemprop="description" content="利用线性回归和现有监控数据（QPS、CPU 使用率），量化微服务中各 API 接口的 CPU 资源消耗，指导性能优化。">
-  <meta itemprop="datePublished" content="2026-01-23T12:00:00+08:00">
-  <meta itemprop="dateModified" content="2026-01-23T12:00:00+08:00">
-  <meta itemprop="wordCount" content="960">
-  <meta itemprop="image" content="https://fancive.github.io/images/img/cpu-analysis.jpg">
-  <meta itemprop="keywords" content="机器学习,微服务,监控,Python">
-
-      <header>
-        <h1 itemprop="headline">如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法</h1>
-        <p class="text-sm">
-          
-            Friday, Jan 23, 2026
-          
-
-          | <span>5 minute read</span>
-
-          
-          | <span>Updated at
-            
-              Friday, Jan 23, 2026
-            </span>
-          
-        </p>
-
+</div>
+  </header> 
+<figure class="entry-cover">
+        <img loading="eager" src="https://fancive.github.io/images/img/cpu-analysis.jpg" alt="">
         
-        <div class="flex justify-between">
-          
-            <div class="flex items-center">
-  
-  <span>@</span>
-  
+</figure><div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
 
-  <span itemprop="author" itemscope itemtype="https://schema.org/Person">
-  
-    
-      <span itemprop="name">fancivez</span>
-    
-  
-  </span>
-</div>
-
-          
-
-          <div class="flex items-center gap-2">
-  
-  
-
-  
-  
-  
-  
-  
-    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
-      href="https://x.com/intent/post?text=%e5%a6%82%e4%bd%95%e9%87%8f%e5%8c%96%20API%20%e6%8e%a5%e5%8f%a3%e7%9a%84%20CPU%20%e8%b5%84%e6%ba%90%e6%b6%88%e8%80%97%ef%bc%9a%e4%b8%80%e7%a7%8d%e5%9f%ba%e4%ba%8e%e5%9b%9e%e5%bd%92%e5%88%86%e6%9e%90%e7%9a%84%e6%96%b9%e6%b3%95&amp;url=https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/" target="_blank" rel="noopener noreferrer"
-      title="Share on X">
-      <ion-icon class="group-hover:text-primary-content" name="logo-x"></ion-icon>
-    </a>
-  
-    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
-      href="https://facebook.com/sharer/sharer.php?u=https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/" target="_blank" rel="noopener noreferrer"
-      title="Share on Facebook">
-      <ion-icon class="group-hover:text-primary-content" name="logo-facebook"></ion-icon>
-    </a>
-  
-    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
-      href="https://wa.me/?text=%e5%a6%82%e4%bd%95%e9%87%8f%e5%8c%96%20API%20%e6%8e%a5%e5%8f%a3%e7%9a%84%20CPU%20%e8%b5%84%e6%ba%90%e6%b6%88%e8%80%97%ef%bc%9a%e4%b8%80%e7%a7%8d%e5%9f%ba%e4%ba%8e%e5%9b%9e%e5%bd%92%e5%88%86%e6%9e%90%e7%9a%84%e6%96%b9%e6%b3%95%20https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/" target="_blank" rel="noopener noreferrer"
-      title="Share on WhatsApp">
-      <ion-icon class="group-hover:text-primary-content" name="logo-whatsapp"></ion-icon>
-    </a>
-  
-
-  
-  
-</div>
-
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e8%83%8c%e6%99%af" aria-label="背景">背景</a></li>
+                <li>
+                    <a href="#%e6%a0%b8%e5%bf%83%e6%80%9d%e8%b7%af" aria-label="核心思路">核心思路</a><ul>
+                        
+                <li>
+                    <a href="#%e5%9f%ba%e6%9c%ac%e5%81%87%e8%ae%be" aria-label="基本假设">基本假设</a></li>
+                <li>
+                    <a href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e5%8f%af%e8%a1%8c" aria-label="为什么可行？">为什么可行？</a></li>
+                <li>
+                    <a href="#%e6%b3%a8%e6%84%8f%e7%9b%b8%e5%85%b3%e6%80%a7--%e5%9b%a0%e6%9e%9c%e6%80%a7" aria-label="注意：相关性 ≠ 因果性">注意：相关性 ≠ 因果性</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%ae%9e%e7%8e%b0%e6%ad%a5%e9%aa%a4" aria-label="实现步骤">实现步骤</a><ul>
+                        
+                <li>
+                    <a href="#step-1-%e6%95%b0%e6%8d%ae%e9%87%87%e9%9b%86" aria-label="Step 1: 数据采集">Step 1: 数据采集</a></li>
+                <li>
+                    <a href="#step-2-%e6%95%b0%e6%8d%ae%e9%a2%84%e5%a4%84%e7%90%86" aria-label="Step 2: 数据预处理">Step 2: 数据预处理</a></li>
+                <li>
+                    <a href="#step-3-%e5%9b%9e%e5%bd%92%e5%bb%ba%e6%a8%a1" aria-label="Step 3: 回归建模">Step 3: 回归建模</a></li>
+                <li>
+                    <a href="#step-4-%e7%bd%ae%e4%bf%a1%e5%8c%ba%e9%97%b4%e4%bc%b0%e8%ae%a1block-bootstrap" aria-label="Step 4: 置信区间估计（Block Bootstrap）">Step 4: 置信区间估计（Block Bootstrap）</a></li>
+                <li>
+                    <a href="#step-5-%e8%ae%a1%e7%ae%97-cpu-%e8%b4%a1%e7%8c%ae" aria-label="Step 5: 计算 CPU 贡献">Step 5: 计算 CPU 贡献</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e7%bb%93%e6%9e%9c%e8%a7%a3%e8%af%bb" aria-label="结果解读">结果解读</a><ul>
+                        
+                <li>
+                    <a href="#%e8%be%93%e5%87%ba%e7%a4%ba%e4%be%8b" aria-label="输出示例">输出示例</a></li>
+                <li>
+                    <a href="#%e4%b8%a4%e7%a7%8d%e4%bc%98%e5%8c%96%e6%96%b9%e5%90%91" aria-label="两种优化方向">两种优化方向</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e6%96%b9%e6%b3%95%e5%b1%80%e9%99%90%e6%80%a7" aria-label="方法局限性">方法局限性</a><ul>
+                        
+                <li>
+                    <a href="#1-%e7%ba%bf%e6%80%a7%e5%81%87%e8%ae%be%e7%9a%84%e5%b1%80%e9%99%90" aria-label="1. 线性假设的局限">1. 线性假设的局限</a></li>
+                <li>
+                    <a href="#2-%e5%85%b1%e7%ba%bf%e6%80%a7%e9%97%ae%e9%a2%98" aria-label="2. 共线性问题">2. 共线性问题</a></li>
+                <li>
+                    <a href="#3-%e9%81%97%e6%bc%8f%e5%8f%98%e9%87%8f%e5%81%8f%e5%b7%ae" aria-label="3. 遗漏变量偏差">3. 遗漏变量偏差</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e6%a8%a1%e5%9e%8b%e8%af%8a%e6%96%ad" aria-label="模型诊断">模型诊断</a><ul>
+                        
+                <li>
+                    <a href="#%e5%bf%85%e6%9f%a5%e6%8c%87%e6%a0%87" aria-label="必查指标">必查指标</a></li>
+                <li>
+                    <a href="#%e8%af%8a%e6%96%ad%e4%bb%a3%e7%a0%81" aria-label="诊断代码">诊断代码</a></li>
+                <li>
+                    <a href="#%e5%bc%82%e5%b8%b8%e5%a4%84%e7%90%86" aria-label="异常处理">异常处理</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e6%80%bb%e7%bb%93" aria-label="总结">总结</a></li>
+                <li>
+                    <a href="#%e5%ae%8c%e6%95%b4%e4%bb%a3%e7%a0%81%e7%a4%ba%e4%be%8b" aria-label="完整代码示例">完整代码示例</a></li>
+                <li>
+                    <a href="#%e5%8f%82%e8%80%83%e8%b5%84%e6%96%99" aria-label="参考资料">参考资料</a>
+                </li>
+            </ul>
         </div>
-      </header>
+    </details>
+</div>
 
-      <section id="dream-single-post-content" itemprop="articleBody">
-        
-        <img src="/images/img/cpu-analysis.jpg" alt="如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法" />
-        
-
-        <h2 id="背景">背景</h2>
+  <div class="post-content"><h2 id="背景">背景<a hidden class="anchor" aria-hidden="true" href="#背景">#</a></h2>
 <p>在微服务架构中，一个服务通常包含数十甚至上百个 API 接口。当我们需要优化 CPU 资源消耗时，往往面临一个问题：<strong>哪些接口消耗了最多的 CPU？</strong></p>
 <p>传统方法是通过 profiling 工具（如 pprof）分析，但这种方法：</p>
 <ul>
@@ -343,29 +315,29 @@
 <li>难以持续监控和量化</li>
 </ul>
 <p>本文介绍一种<strong>基于线性回归</strong>的方法，利用现有的监控数据（QPS 和 CPU 使用率），估算每个接口的 CPU 贡献。</p>
-<h2 id="核心思路">核心思路</h2>
-<h3 id="基本假设">基本假设</h3>
+<h2 id="核心思路">核心思路<a hidden class="anchor" aria-hidden="true" href="#核心思路">#</a></h2>
+<h3 id="基本假设">基本假设<a hidden class="anchor" aria-hidden="true" href="#基本假设">#</a></h3>
 <p>假设服务的 CPU 使用率可以表示为各接口 QPS 的线性组合：</p>
-<pre tabindex="0"><code>CPU% = β₀ + β₁×QPS₁ + β₂×QPS₂ + ... + βₙ×QPSₙ + ε
-</code></pre><p>其中：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-fallback" data-lang="fallback"><span style="display:flex;"><span>CPU% = β₀ + β₁×QPS₁ + β₂×QPS₂ + ... + βₙ×QPSₙ + ε
+</span></span></code></pre></div><p>其中：</p>
 <ul>
 <li><code>βᵢ</code> 是接口 i 的<strong>单请求 CPU 成本</strong>（每处理一个请求消耗的 CPU 百分比，例如 β=0.001 表示每个请求消耗 0.001% CPU）</li>
 <li><code>β₀</code> 是截距，表示基础 CPU 消耗（与请求无关的开销，如 GC、定时任务等）</li>
 <li><code>ε</code> 是误差项</li>
 </ul>
 <p><strong>单位说明</strong>：本文中 CPU% 范围为 0-100，表示单核 CPU 的使用百分比。如果服务运行在多核机器上，需要先将监控数据归一化到单核。</p>
-<h3 id="为什么可行">为什么可行？</h3>
+<h3 id="为什么可行">为什么可行？<a hidden class="anchor" aria-hidden="true" href="#为什么可行">#</a></h3>
 <ol>
 <li><strong>线性可加性</strong>：在高并发场景下，CPU 消耗近似与请求量成正比</li>
 <li><strong>数据可得</strong>：QPS 和 CPU 使用率是最常见的监控指标</li>
 <li><strong>可解释性</strong>：回归系数直接表示&quot;单请求成本&quot;，业务含义清晰</li>
 </ol>
-<h3 id="注意相关性--因果性">注意：相关性 ≠ 因果性</h3>
+<h3 id="注意相关性--因果性">注意：相关性 ≠ 因果性<a hidden class="anchor" aria-hidden="true" href="#注意相关性--因果性">#</a></h3>
 <p>回归分析只能揭示相关关系，不能证明因果。如果有外部因素同时影响 QPS 和 CPU（如流量高峰时段），系数可能存在偏差。因此，分析结果应作为优化方向的参考，具体接口仍需结合代码审查确认。</p>
-<h2 id="实现步骤">实现步骤</h2>
-<h3 id="step-1-数据采集">Step 1: 数据采集</h3>
+<h2 id="实现步骤">实现步骤<a hidden class="anchor" aria-hidden="true" href="#实现步骤">#</a></h2>
+<h3 id="step-1-数据采集">Step 1: 数据采集<a hidden class="anchor" aria-hidden="true" href="#step-1-数据采集">#</a></h3>
 <p>从监控系统获取时序数据：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> pandas <span style="color:#66d9ef">as</span> pd
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> pandas <span style="color:#66d9ef">as</span> pd
 </span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 伪代码：从 Prometheus 获取数据</span>
@@ -391,8 +363,8 @@
 <li>数据量：至少 500+ 个时间点，保证回归的稳定性</li>
 <li>多实例聚合：如果服务有多个实例，需将 QPS 和 CPU 分别求和/平均后再分析</li>
 </ul>
-<h3 id="step-2-数据预处理">Step 2: 数据预处理</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># 处理缺失值</span>
+<h3 id="step-2-数据预处理">Step 2: 数据预处理<a hidden class="anchor" aria-hidden="true" href="#step-2-数据预处理">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># 处理缺失值</span>
 </span></span><span style="display:flex;"><span>X <span style="color:#f92672">=</span> X<span style="color:#f92672">.</span>fillna(<span style="color:#ae81ff">0</span>)
 </span></span><span style="display:flex;"><span>y <span style="color:#f92672">=</span> y<span style="color:#f92672">.</span>fillna(y<span style="color:#f92672">.</span>mean())
 </span></span><span style="display:flex;"><span>
@@ -404,9 +376,9 @@
 </span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;保留 </span><span style="color:#e6db74">{</span>len(valid_cols)<span style="color:#e6db74">}</span><span style="color:#e6db74"> 个接口，剔除 </span><span style="color:#e6db74">{</span>len(non_zero_ratio) <span style="color:#f92672">-</span> len(valid_cols)<span style="color:#e6db74">}</span><span style="color:#e6db74"> 个低频接口&#34;</span>)
 </span></span></code></pre></div><p><strong>为什么要过滤零值过多的接口？</strong></p>
 <p>低频接口的数据稀疏，回归系数不稳定，置信区间很宽，结论不可靠。</p>
-<h3 id="step-3-回归建模">Step 3: 回归建模</h3>
+<h3 id="step-3-回归建模">Step 3: 回归建模<a hidden class="anchor" aria-hidden="true" href="#step-3-回归建模">#</a></h3>
 <p>使用 <strong>Ridge 回归</strong>（L2 正则化）而非普通最小二乘：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> sklearn.linear_model <span style="color:#f92672">import</span> RidgeCV
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> sklearn.linear_model <span style="color:#f92672">import</span> RidgeCV
 </span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> sklearn.model_selection <span style="color:#f92672">import</span> train_test_split, TimeSeriesSplit
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 划分训练集和测试集，用于验证模型泛化能力</span>
@@ -444,9 +416,9 @@
 <li>遗漏变量：存在未建模的因素</li>
 </ul>
 <p>建议将负系数视为 0（无显著贡献），或使用非负最小二乘（<code>scipy.optimize.nnls</code>）。</p>
-<h3 id="step-4-置信区间估计block-bootstrap">Step 4: 置信区间估计（Block Bootstrap）</h3>
+<h3 id="step-4-置信区间估计block-bootstrap">Step 4: 置信区间估计（Block Bootstrap）<a hidden class="anchor" aria-hidden="true" href="#step-4-置信区间估计block-bootstrap">#</a></h3>
 <p>由于时序数据存在自相关，传统的 Bootstrap 会低估方差。使用 <strong>Block Bootstrap</strong>：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> sklearn.linear_model <span style="color:#f92672">import</span> Ridge
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> sklearn.linear_model <span style="color:#f92672">import</span> Ridge
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">block_bootstrap_ci</span>(X, y, alpha, block_size<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>, n_iterations<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span>, random_state<span style="color:#f92672">=</span><span style="color:#ae81ff">42</span>):
 </span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;
@@ -496,8 +468,8 @@
 </span></span><span style="display:flex;"><span>lower, upper <span style="color:#f92672">=</span> block_bootstrap_ci(X_train, y_train, alpha<span style="color:#f92672">=</span>model<span style="color:#f92672">.</span>alpha_)
 </span></span><span style="display:flex;"><span>ci <span style="color:#f92672">=</span> {col: (lower[i], upper[i]) <span style="color:#66d9ef">for</span> i, col <span style="color:#f92672">in</span> enumerate(X_train<span style="color:#f92672">.</span>columns)}
 </span></span></code></pre></div><p><strong>置信区间下界 &gt; 0</strong> 的接口，我们认为其系数是<strong>统计显著</strong>的。</p>
-<h3 id="step-5-计算-cpu-贡献">Step 5: 计算 CPU 贡献</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># 计算各接口的平均 QPS</span>
+<h3 id="step-5-计算-cpu-贡献">Step 5: 计算 CPU 贡献<a hidden class="anchor" aria-hidden="true" href="#step-5-计算-cpu-贡献">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># 计算各接口的平均 QPS</span>
 </span></span><span style="display:flex;"><span>avg_qps <span style="color:#f92672">=</span> X<span style="color:#f92672">.</span>mean()
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 计算 CPU 贡献 = 系数 × 平均 QPS</span>
@@ -516,8 +488,8 @@
 </span></span><span style="display:flex;"><span>    qps <span style="color:#f92672">=</span> avg_qps[api]
 </span></span><span style="display:flex;"><span>    is_significant <span style="color:#f92672">=</span> ci[api][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>
 </span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;  </span><span style="color:#e6db74">{</span>api<span style="color:#e6db74">}</span><span style="color:#e6db74">: 系数=</span><span style="color:#e6db74">{</span>coef<span style="color:#e6db74">:</span><span style="color:#e6db74">.6f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">, QPS=</span><span style="color:#e6db74">{</span>qps<span style="color:#e6db74">:</span><span style="color:#e6db74">.1f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">, 贡献=</span><span style="color:#e6db74">{</span>contrib<span style="color:#e6db74">:</span><span style="color:#e6db74">.2f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">%, 显著=</span><span style="color:#e6db74">{</span><span style="color:#e6db74">&#39;✓&#39;</span> <span style="color:#66d9ef">if</span> is_significant <span style="color:#66d9ef">else</span> <span style="color:#e6db74">&#39;✗&#39;</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
-</span></span></code></pre></div><h2 id="结果解读">结果解读</h2>
-<h3 id="输出示例">输出示例</h3>
+</span></span></code></pre></div><h2 id="结果解读">结果解读<a hidden class="anchor" aria-hidden="true" href="#结果解读">#</a></h2>
+<h3 id="输出示例">输出示例<a hidden class="anchor" aria-hidden="true" href="#输出示例">#</a></h3>
 <table>
   <thead>
       <tr>
@@ -552,15 +524,10 @@
       </tr>
   </tbody>
 </table>
-
-
-
-  <blockquote>
-    <p>注：总贡献 = 单请求成本 × 平均 QPS（如 0.00107 × 4250 ≈ 4.55）</p>
-
-  </blockquote>
-
-<h3 id="两种优化方向">两种优化方向</h3>
+<blockquote>
+<p>注：总贡献 = 单请求成本 × 平均 QPS（如 0.00107 × 4250 ≈ 4.55）</p>
+</blockquote>
+<h3 id="两种优化方向">两种优化方向<a hidden class="anchor" aria-hidden="true" href="#两种优化方向">#</a></h3>
 <ol>
 <li>
 <p><strong>高 QPS × 低成本</strong>：如 <code>/api/feed/list</code></p>
@@ -577,15 +544,15 @@
 </ul>
 </li>
 </ol>
-<h2 id="方法局限性">方法局限性</h2>
-<h3 id="1-线性假设的局限">1. 线性假设的局限</h3>
+<h2 id="方法局限性">方法局限性<a hidden class="anchor" aria-hidden="true" href="#方法局限性">#</a></h2>
+<h3 id="1-线性假设的局限">1. 线性假设的局限<a hidden class="anchor" aria-hidden="true" href="#1-线性假设的局限">#</a></h3>
 <p>真实场景中，CPU 消耗可能是非线性的：</p>
 <ul>
 <li>当 QPS 超过阈值时，GC 压力陡增</li>
 <li>某些接口有批处理逻辑，边际成本递减</li>
 </ul>
 <p><strong>应对</strong>：检查残差图，如有明显模式，考虑分段回归或非线性模型。</p>
-<h3 id="2-共线性问题">2. 共线性问题</h3>
+<h3 id="2-共线性问题">2. 共线性问题<a hidden class="anchor" aria-hidden="true" href="#2-共线性问题">#</a></h3>
 <p>如果两个接口的 QPS 高度相关（如总是被一起调用），系数会相互&quot;分摊&quot;，单独解读不准确。</p>
 <p><strong>应对</strong>：</p>
 <ul>
@@ -593,7 +560,7 @@
 <li>检查条件数（condition number &gt; 1000 说明共线性严重）</li>
 <li>对于轻度共线性，Ridge 已能缓解；重度共线性建议合并分析</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># VIF 计算示例</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># VIF 计算示例</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> statsmodels.stats.outliers_influence <span style="color:#f92672">import</span> variance_inflation_factor
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>vif <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>DataFrame({
@@ -607,11 +574,11 @@
 <li>使用 Elastic Net（L1+L2）自动筛选特征</li>
 <li>结合调用链路分析，单独评估</li>
 </ul>
-<h3 id="3-遗漏变量偏差">3. 遗漏变量偏差</h3>
+<h3 id="3-遗漏变量偏差">3. 遗漏变量偏差<a hidden class="anchor" aria-hidden="true" href="#3-遗漏变量偏差">#</a></h3>
 <p>如果有重要因素未纳入模型（如定时任务、后台 GC），系数估计会有偏。</p>
 <p><strong>应对</strong>：检查截距项，如果截距很大（&gt;10%）或为负，说明模型可能遗漏了重要因素。</p>
-<h2 id="模型诊断">模型诊断</h2>
-<h3 id="必查指标">必查指标</h3>
+<h2 id="模型诊断">模型诊断<a hidden class="anchor" aria-hidden="true" href="#模型诊断">#</a></h2>
+<h3 id="必查指标">必查指标<a hidden class="anchor" aria-hidden="true" href="#必查指标">#</a></h3>
 <table>
   <thead>
       <tr>
@@ -648,8 +615,8 @@
       </tr>
   </tbody>
 </table>
-<h3 id="诊断代码">诊断代码</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> statsmodels.stats.stattools <span style="color:#f92672">import</span> durbin_watson
+<h3 id="诊断代码">诊断代码<a hidden class="anchor" aria-hidden="true" href="#诊断代码">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> statsmodels.stats.stattools <span style="color:#f92672">import</span> durbin_watson
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 计算诊断指标</span>
 </span></span><span style="display:flex;"><span>train_residuals <span style="color:#f92672">=</span> y_train <span style="color:#f92672">-</span> model<span style="color:#f92672">.</span>predict(X_train)
@@ -660,14 +627,14 @@
 </span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Durbin-Watson (测试): </span><span style="color:#e6db74">{</span>durbin_watson(test_residuals)<span style="color:#e6db74">:</span><span style="color:#e6db74">.2f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
 </span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Condition Number: </span><span style="color:#e6db74">{</span>cond_number<span style="color:#e6db74">:</span><span style="color:#e6db74">.0f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
 </span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;截距: </span><span style="color:#e6db74">{</span>model<span style="color:#f92672">.</span>intercept_<span style="color:#e6db74">:</span><span style="color:#e6db74">.2f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">%&#34;</span>)
-</span></span></code></pre></div><h3 id="异常处理">异常处理</h3>
+</span></span></code></pre></div><h3 id="异常处理">异常处理<a hidden class="anchor" aria-hidden="true" href="#异常处理">#</a></h3>
 <ul>
 <li><strong>测试集 R² 远低于训练集</strong>：过拟合，增大正则化参数或减少特征</li>
 <li><strong>DW &lt; 1.5</strong>：残差有正自相关，增大 Bootstrap 块大小</li>
 <li><strong>截距为负</strong>：模型存在问题，检查数据质量或遗漏变量</li>
 <li><strong>系数大面积为负</strong>：共线性严重，考虑特征筛选或使用 Elastic Net</li>
 </ul>
-<h2 id="总结">总结</h2>
+<h2 id="总结">总结<a hidden class="anchor" aria-hidden="true" href="#总结">#</a></h2>
 <p>这种方法的优势：</p>
 <ol>
 <li><strong>成本低</strong>：利用现有监控数据，无需额外埋点</li>
@@ -687,8 +654,8 @@
 <li>CPU 消耗主要来自异步任务/定时任务</li>
 <li>服务处于非稳态（如大促期间流量模式剧变）</li>
 </ul>
-<h2 id="完整代码示例">完整代码示例</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> pandas <span style="color:#66d9ef">as</span> pd
+<h2 id="完整代码示例">完整代码示例<a hidden class="anchor" aria-hidden="true" href="#完整代码示例">#</a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> pandas <span style="color:#66d9ef">as</span> pd
 </span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
 </span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> sklearn.linear_model <span style="color:#f92672">import</span> RidgeCV, Ridge
 </span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> sklearn.model_selection <span style="color:#f92672">import</span> train_test_split, TimeSeriesSplit
@@ -761,297 +728,232 @@
 </span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;截距: </span><span style="color:#e6db74">{</span>model<span style="color:#f92672">.</span>intercept_<span style="color:#e6db74">:</span><span style="color:#e6db74">.2f</span><span style="color:#e6db74">}</span><span style="color:#e6db74">%&#34;</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> results
-</span></span></code></pre></div><h2 id="参考资料">参考资料</h2>
+</span></span></code></pre></div><h2 id="参考资料">参考资料<a hidden class="anchor" aria-hidden="true" href="#参考资料">#</a></h2>
 <ul>
-<li><a href="https://scikit-learn.org/stable/modules/linear_model.html#ridge-regression" target="_blank">Ridge Regression - scikit-learn</a>
-</li>
-<li><a href="https://en.wikipedia.org/wiki/Bootstrapping_%28statistics%29#Block_bootstrap" target="_blank">Block Bootstrap for Time Series</a>
-</li>
-<li><a href="https://en.wikipedia.org/wiki/Variance_inflation_factor" target="_blank">Variance Inflation Factor</a>
-</li>
-<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.nnls.html" target="_blank">Non-negative Least Squares - scipy</a>
-</li>
+<li><a href="https://scikit-learn.org/stable/modules/linear_model.html#ridge-regression">Ridge Regression - scikit-learn</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Bootstrapping_(statistics)#Block_bootstrap">Block Bootstrap for Time Series</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Variance_inflation_factor">Variance Inflation Factor</a></li>
+<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.nnls.html">Non-negative Least Squares - scipy</a></li>
 </ul>
 <hr>
 <p><em>本文方法已在生产环境验证，模型 R² 达到 94%-99%，成功定位多个高消耗接口并指导优化。</em></p>
-      </section>
 
-      
+  </div>
 
-      
-      <div class="divider"></div>
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://fancive.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a></li>
+      <li><a href="https://fancive.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a></li>
+      <li><a href="https://fancive.github.io/tags/%E7%9B%91%E6%8E%A7/">监控</a></li>
+      <li><a href="https://fancive.github.io/tags/python/">Python</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://fancive.github.io/posts/rewrite-cli-for-ai-agents/">
+    <span class="title">« Prev</span>
+    <br>
+    <span>你的 CLI 该为 AI Agent 重写了</span>
+  </a>
+  <a class="next" href="https://fancive.github.io/posts/automating-deployment-pipeline-from-code-review-to-production/">
+    <span class="title">Next »</span>
+    <br>
+    <span>从代码评审到生产部署：自动化流水线实践</span>
+  </a>
+</nav>
 
-      <section class="space-y-4">
-        
-<article>
-  <div id="disqus_thread"></div>
-<script>
-    window.disqus_config = function () {
-        this.page.identifier = '\/posts\/quantify-api-cpu-consumption-with-regression\/';
-        this.page.title = '如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法';
-        this.page.url = 'https:\/\/fancive.github.io\/posts\/quantify-api-cpu-consumption-with-regression\/';
 
-        
-    };
-    function initDisqus() {
-        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
-            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
-            return;
-        }
-        var d = document, s = d.createElement('script'); s.async = true;
-        s.src = '//' + "fancive-github-com" + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    };
-    setTimeout(() => {
-        initDisqus();
-    }, 3000);
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+<ul class="share-buttons">
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法 on x"
+            href="https://x.com/intent/tweet/?text=%e5%a6%82%e4%bd%95%e9%87%8f%e5%8c%96%20API%20%e6%8e%a5%e5%8f%a3%e7%9a%84%20CPU%20%e8%b5%84%e6%ba%90%e6%b6%88%e8%80%97%ef%bc%9a%e4%b8%80%e7%a7%8d%e5%9f%ba%e4%ba%8e%e5%9b%9e%e5%bd%92%e5%88%86%e6%9e%90%e7%9a%84%e6%96%b9%e6%b3%95&amp;url=https%3a%2f%2ffancive.github.io%2fposts%2fquantify-api-cpu-consumption-with-regression%2f&amp;hashtags=%e6%9c%ba%e5%99%a8%e5%ad%a6%e4%b9%a0%2c%e5%be%ae%e6%9c%8d%e5%8a%a1%2c%e7%9b%91%e6%8e%a7%2cPython">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M512 62.554 L 512 449.446 C 512 483.97 483.97 512 449.446 512 L 62.554 512 C 28.03 512 0 483.97 0 449.446 L 0 62.554 C 0 28.03 28.029 0 62.554 0 L 449.446 0 C 483.971 0 512 28.03 512 62.554 Z M 269.951 190.75 L 182.567 75.216 L 56 75.216 L 207.216 272.95 L 63.9 436.783 L 125.266 436.783 L 235.9 310.383 L 332.567 436.783 L 456 436.783 L 298.367 228.367 L 432.367 75.216 L 371.033 75.216 Z M 127.633 110 L 164.101 110 L 383.481 400.065 L 349.5 400.065 Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法 on linkedin"
+            href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2ffancive.github.io%2fposts%2fquantify-api-cpu-consumption-with-regression%2f&amp;title=%e5%a6%82%e4%bd%95%e9%87%8f%e5%8c%96%20API%20%e6%8e%a5%e5%8f%a3%e7%9a%84%20CPU%20%e8%b5%84%e6%ba%90%e6%b6%88%e8%80%97%ef%bc%9a%e4%b8%80%e7%a7%8d%e5%9f%ba%e4%ba%8e%e5%9b%9e%e5%bd%92%e5%88%86%e6%9e%90%e7%9a%84%e6%96%b9%e6%b3%95&amp;summary=%e5%a6%82%e4%bd%95%e9%87%8f%e5%8c%96%20API%20%e6%8e%a5%e5%8f%a3%e7%9a%84%20CPU%20%e8%b5%84%e6%ba%90%e6%b6%88%e8%80%97%ef%bc%9a%e4%b8%80%e7%a7%8d%e5%9f%ba%e4%ba%8e%e5%9b%9e%e5%bd%92%e5%88%86%e6%9e%90%e7%9a%84%e6%96%b9%e6%b3%95&amp;source=https%3a%2f%2ffancive.github.io%2fposts%2fquantify-api-cpu-consumption-with-regression%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法 on reddit"
+            href="https://reddit.com/submit?url=https%3a%2f%2ffancive.github.io%2fposts%2fquantify-api-cpu-consumption-with-regression%2f&title=%e5%a6%82%e4%bd%95%e9%87%8f%e5%8c%96%20API%20%e6%8e%a5%e5%8f%a3%e7%9a%84%20CPU%20%e8%b5%84%e6%ba%90%e6%b6%88%e8%80%97%ef%bc%9a%e4%b8%80%e7%a7%8d%e5%9f%ba%e4%ba%8e%e5%9b%9e%e5%bd%92%e5%88%86%e6%9e%90%e7%9a%84%e6%96%b9%e6%b3%95">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法 on facebook"
+            href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2ffancive.github.io%2fposts%2fquantify-api-cpu-consumption-with-regression%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法 on whatsapp"
+            href="https://api.whatsapp.com/send?text=%e5%a6%82%e4%bd%95%e9%87%8f%e5%8c%96%20API%20%e6%8e%a5%e5%8f%a3%e7%9a%84%20CPU%20%e8%b5%84%e6%ba%90%e6%b6%88%e8%80%97%ef%bc%9a%e4%b8%80%e7%a7%8d%e5%9f%ba%e4%ba%8e%e5%9b%9e%e5%bd%92%e5%88%86%e6%9e%90%e7%9a%84%e6%96%b9%e6%b3%95%20-%20https%3a%2f%2ffancive.github.io%2fposts%2fquantify-api-cpu-consumption-with-regression%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法 on telegram"
+            href="https://telegram.me/share/url?text=%e5%a6%82%e4%bd%95%e9%87%8f%e5%8c%96%20API%20%e6%8e%a5%e5%8f%a3%e7%9a%84%20CPU%20%e8%b5%84%e6%ba%90%e6%b6%88%e8%80%97%ef%bc%9a%e4%b8%80%e7%a7%8d%e5%9f%ba%e4%ba%8e%e5%9b%9e%e5%bd%92%e5%88%86%e6%9e%90%e7%9a%84%e6%96%b9%e6%b3%95&amp;url=https%3a%2f%2ffancive.github.io%2fposts%2fquantify-api-cpu-consumption-with-regression%2f">
+            <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share 如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法 on ycombinator"
+            href="https://news.ycombinator.com/submitlink?t=%e5%a6%82%e4%bd%95%e9%87%8f%e5%8c%96%20API%20%e6%8e%a5%e5%8f%a3%e7%9a%84%20CPU%20%e8%b5%84%e6%ba%90%e6%b6%88%e8%80%97%ef%bc%9a%e4%b8%80%e7%a7%8d%e5%9f%ba%e4%ba%8e%e5%9b%9e%e5%bd%92%e5%88%86%e6%9e%90%e7%9a%84%e6%96%b9%e6%b3%95&u=https%3a%2f%2ffancive.github.io%2fposts%2fquantify-api-cpu-consumption-with-regression%2f">
+            <svg version="1.1" xml:space="preserve" width="30px" height="30px" viewBox="0 0 512 512" fill="currentColor"
+                xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape">
+                <path
+                    d="M449.446 0C483.971 0 512 28.03 512 62.554L512 449.446C512 483.97 483.97 512 449.446 512L62.554 512C28.03 512 0 483.97 0 449.446L0 62.554C0 28.03 28.029 0 62.554 0L449.446 0ZM183.8767 87.9921H121.8427L230.6673 292.4508V424.0079H281.3328V292.4508L390.1575 87.9921H328.1233L256 238.2489z" />
+            </svg>
+        </a>
+    </li>
+</ul>
+
+  </footer>
 </article>
-
-
-
-
-
-
-
-
-      </section>
-      
-    </article>
-  </div>
-
-  <div class="hidden lg:flex lg:flex-col lg:items-end">
+    </main>
     
+<footer class="footer">
+        <span>&copy; 2026 <a href="https://fancive.github.io/">我的博客</a></span> · 
 
-    
-  </div>
-</div>
-
-
-            
-<footer class="flex justify-between items-center gap-2 px-4 py-12">
-
-  <div>
-  
-  <p>© 2026 home</p>
-  
-
-  
-  <p class="text-sm">
-    🌱
-    <span class="text-base-content/60">
-      Powered by <a class="hover:underline" href="https://gohugo.io/" target="_blank">Hugo</a> with theme
-      <a class="hover:underline" href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</span
-    >
-  </p>
-  
-</div>
-
-  <div
-  x-data="{ icons: [
-    { name: 'moon', status: 'y' },
-    { name: 'sunny', status: 'n' },
-    { name: 'desktop', status: 'auto' }
-  ] }"
-  class="flex items-center gap-2 h-[32px] px-2 bg-base-100 border border-base-content/30 rounded-full"
->
-  <template x-for="icon in icons">
-    <div
-      role="button"
-      tabindex="0"
-      :aria-label="'Select ' + icon.name + ' mode'"
-      class="group inline-flex justify-center items-center p-1 rounded-full cursor-pointer hover:bg-primary"
-      :class="$store.darkMode.icon() === icon.name && 'bg-primary'"
-      @click="$store.darkMode.toggle(icon.status)"
-    >
-      <ion-icon
-        :name="`${icon.name}-outline`"
-        class="group-hover:text-primary-content"
-        :class="$store.darkMode.icon() === icon.name && 'text-primary-content'"
-      >
-      </ion-icon>
-    </div>
-  </template>
-</div>
-
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
 </footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
 
-          </div>
-        </div>
-        <div class="back">
-          <div class="container">
-            
-            <div class="dream-grid dream-grid-about">
-  
-  
-  
-  <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-4 dream-column">
-    <article
-      class="card card-compact bg-base-100 hover:bg-base-content/10 shadow-xl dark:border dark:border-base-content/30"
-    >
-      <div class="card-body">
-        <div class="card-title">About</div>
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
 
-        <div class="prose dark:prose-invert">
-          <h2 id="-关于我">👋 关于我</h2>
-<p>我是 fancivez，一名 Golang 后端工程师，目前就职于百度。</p>
-<h2 id="-技术栈">💻 技术栈</h2>
-<ul>
-<li><strong>主要语言</strong>: Go (Golang)</li>
-<li><strong>专长领域</strong>:
-<ul>
-<li>后端服务开发</li>
-<li>AIOps (智能运维)</li>
-<li>系统架构设计</li>
-<li>自动化工具开发</li>
-</ul>
-</li>
-</ul>
-<h2 id="-博客主题">📝 博客主题</h2>
-<p>这个博客主要分享：</p>
-<ul>
-<li>Go 语言深度技术文章和源码分析</li>
-<li>软件架构设计与最佳实践</li>
-<li>AIOps 领域的研究与实践</li>
-<li>个人成长与思考</li>
-</ul>
-<h2 id="-联系方式">📫 联系方式</h2>
-<ul>
-<li><strong>Email</strong>: <a href="mailto:fancivez@gmail.com" target="_blank">fancivez@gmail.com</a>
-</li>
-<li><strong>GitHub</strong>: <a href="https://github.com/fancive" target="_blank">github.com/fancive</a>
-</li>
-<li><strong>WeChat</strong>: fancivez</li>
-</ul>
-<p>欢迎交流技术，分享想法！</p>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
 
-        </div>
-      </div>
-    </article>
-  </div>
-  
-  
-
-  
-
-  
-</div>
-
-            
-
-            
-<footer class="flex justify-between items-center gap-2 px-4 py-12">
-
-  <div>
-  
-  <p>© 2026 home</p>
-  
-
-  
-  <p class="text-sm">
-    🌱
-    <span class="text-base-content/60">
-      Powered by <a class="hover:underline" href="https://gohugo.io/" target="_blank">Hugo</a> with theme
-      <a class="hover:underline" href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</span
-    >
-  </p>
-  
-</div>
-
-  <div
-  x-data="{ icons: [
-    { name: 'moon', status: 'y' },
-    { name: 'sunny', status: 'n' },
-    { name: 'desktop', status: 'auto' }
-  ] }"
-  class="flex items-center gap-2 h-[32px] px-2 bg-base-100 border border-base-content/30 rounded-full"
->
-  <template x-for="icon in icons">
-    <div
-      role="button"
-      tabindex="0"
-      :aria-label="'Select ' + icon.name + ' mode'"
-      class="group inline-flex justify-center items-center p-1 rounded-full cursor-pointer hover:bg-primary"
-      :class="$store.darkMode.icon() === icon.name && 'bg-primary'"
-      @click="$store.darkMode.toggle(icon.status)"
-    >
-      <ion-icon
-        :name="`${icon.name}-outline`"
-        class="group-hover:text-primary-content"
-        :class="$store.darkMode.icon() === icon.name && 'text-primary-content'"
-      >
-      </ion-icon>
-    </div>
-  </template>
-</div>
-
-</footer>
-
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script>
-  window.lightTheme =  null 
-  window.darkTheme =  null 
 </script>
-
-
-  <script src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script>
-
-  
-  
-    
-  
-  <script src="/js/grid.min.js"></script>
-
-
-
-
-  
-
-<script src="/js/main.min.js"></script>
-
-    
-
-
-
-
-
-
-
-
-
-    
-
-    
-
-    
-
-    
-    
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
-      <script>
-        var doNotTrack = false;
-        if ( false ) {
-          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
-          var doNotTrack = (dnt == "1" || dnt == "yes");
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
         }
-        if (!doNotTrack) {
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-7N49ZFJ61J');
-        }
-      </script>
-    
+    };
 
-    <script type="module" src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.js"></script>
-  </body>
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
 </html>

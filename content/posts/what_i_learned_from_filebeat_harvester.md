@@ -1,7 +1,8 @@
 ---
 title: "我从filebeat-harvester中学到什么"
 date: 2022-11-28T14:13:14+08:00
-cover: "/images/illustrations/harvester.jpg"
+cover:
+  image: "/images/illustrations/harvester.jpg"
 description: "通过分析 Filebeat Harvester 模块的实现，学习文件采集、状态管理和并发控制的最佳实践。"
 categories:
   - Go语言

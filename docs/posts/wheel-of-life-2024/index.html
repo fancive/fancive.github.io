@@ -1,342 +1,282 @@
 <!DOCTYPE html>
-<html lang="en"
-  x-data
-  :class="$store.darkMode.class()"
-  :data-theme="$store.darkMode.theme()">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wheel of Life 2024 | home</title>
+<html lang="en" dir="auto" data-theme="auto">
 
-    
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Wheel of Life 2024 | 我的博客</title>
+<meta name="keywords" content="年度总结, 生活">
+<meta name="description" content="2024 年度生命之轮回顾：从事业、学习、健康、家庭等八个维度全面反思这一年的成长与不足。">
+<meta name="author" content="fancive">
+<link rel="canonical" href="https://fancive.github.io/posts/wheel-of-life-2024/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.199042e659bc7245f5609d333d6c044eb554a0640849bb874e1dff8eb0f57209.css" integrity="sha256-GZBC5lm8ckX1YJ0zPWwETrVUoGQISbuHTh3/jrD1cgk=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://fancive.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://fancive.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://fancive.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://fancive.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://fancive.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://fancive.github.io/posts/wheel-of-life-2024/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
 
-<link rel="canonical" href="https://fancive.github.io/posts/wheel-of-life-2024/" />
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
 
+            .list {
+                background: var(--theme);
+            }
 
+            .toc {
+                background: var(--entry);
+            }
+        }
 
-<meta name="author" content="fancive" />
-<meta name="description" content="2024 年度生命之轮回顾：从事业、学习、健康、家庭等八个维度全面反思这一年的成长与不足。" />
+        @media (prefers-color-scheme: light) {
+            .list::-webkit-scrollbar-thumb {
+                border-color: var(--code-bg);
+            }
+        }
 
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
 
-<meta name="keywords" content="年度总结,生活">
-
-
-
-<meta name="generator" content="Hugo 0.138.0">
-
-
-<meta property="og:url" content="https://fancive.github.io/posts/wheel-of-life-2024/">
-  <meta property="og:site_name" content="home">
+</script>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
+      <script>
+        var doNotTrack = false;
+        if ( true ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-7N49ZFJ61J');
+        }
+      </script><meta property="og:url" content="https://fancive.github.io/posts/wheel-of-life-2024/">
+  <meta property="og:site_name" content="我的博客">
   <meta property="og:title" content="Wheel of Life 2024">
   <meta property="og:description" content="2024 年度生命之轮回顾：从事业、学习、健康、家庭等八个维度全面反思这一年的成长与不足。">
-  <meta property="og:locale" content="en">
+  <meta property="og:locale" content="zh_cn">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2025-01-11T16:26:38+08:00">
     <meta property="article:modified_time" content="2025-01-11T16:26:38+08:00">
     <meta property="article:tag" content="年度总结">
     <meta property="article:tag" content="生活">
-
-
-
-
-  <meta name="twitter:card" content="summary">
+    <meta property="og:image" content="https://fancive.github.io/images/img/wheel_of_life_2024.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://fancive.github.io/images/img/wheel_of_life_2024.jpg">
   <meta name="twitter:title" content="Wheel of Life 2024">
   <meta name="twitter:description" content="2024 年度生命之轮回顾：从事业、学习、健康、家庭等八个维度全面反思这一年的成长与不足。">
 
 
-
-
-  
-
-<link rel="stylesheet" href="/css/output.min.css" />
-
-
-
-
-    
-
-
-<style>
-  pre {
-    padding: 1em;
-    overflow: auto;
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://fancive.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Wheel of Life 2024",
+      "item": "https://fancive.github.io/posts/wheel-of-life-2024/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Wheel of Life 2024",
+  "name": "Wheel of Life 2024",
+  "description": "2024 年度生命之轮回顾：从事业、学习、健康、家庭等八个维度全面反思这一年的成长与不足。",
+  "keywords": [
+    "年度总结", "生活"
+  ],
+  "articleBody": " 我让大模型读取了我的2024年每个月的月报(从周报和日记中总结)，得到了以下的生命之轮得分\n生命之轮 2024 基于对全年12个月的完整回顾分析，我现在重新为生命之轮的八个维度进行评分：\n事业发展：8分 (↑1) 优点：\n全年完成多个重要项目：ES监控系统、自动部署工具、圈子项目等 技术能力持续提升，涉及多个领域（Flutter、Docker、Node.js等） 论文研究有进展，完成开题答辩 下半年在工作中展现出更强的影响力和决策能力 待改进：\n工作压力管理仍需优化 项目时间管理需要提升 人际关系：7.5分 (↑0.5) 优点：\n团队协作能力提升，能够处理复杂的跨部门协作 在工作中学会更好的沟通方式 能够在矛盾中寻找共同点 下半年展现出更强的沟通和影响力 待改进：\n在压力下的沟通方式仍需改善 家庭关系的调解技巧需要提升 教育学习：8.5分 (↑0.5) 优点：\n持续的技术学习和算法训练 广泛的知识积累：技术、心理、生产力等多个领域 建立了固定的学习习惯（自习室） 论文研究有实质性进展 积极学习新技术和工具 待改进：\n娱乐时间管理需要优化 学习计划执行的连续性需要提升 心灵成长：8.5分 (↑0.5) 优点：\n持续的冥想练习和自我觉察 情绪管理能力显著提升 能够在压力下保持平和 建立了有效的压力管理机制 年底开始更注重生活的平衡 待改进：\n在家庭矛盾中的情绪管理仍需提升 健康状况：6.5分 (↓0.5) 优点：\n尝试建立运动习惯（健身、瑜伽） 开始注意饮食健康 有意识地关注身体状况 待改进：\n作息极不规律，经常熬夜 运动频率不稳定，年底明显下降 反复出现身体不适（扁桃体、咽喉等） 家庭关系：7.5分 (↓0.5) 优点：\n保持固定的亲子活动和陪伴时间 积极改善育儿方式 重视家庭活动和出游 关注家人健康 待改进：\n家庭矛盾（特别是婆媳关系）需要更好的处理 夫妻相处时间和质量需要提升 育儿方式仍需改进 金钱财富：7分 (↑1) 优点：\n完成重要的房贷决策 开始关注财富积累和管理 有意识地学习财务知识 工作收入稳定，有额外收入来源 待改进：\n需要更系统的财务规划 投资和理财方面需要加强 休闲娱乐：6分 (持平) 优点：\n有固定的家庭出游活动 尝试瑜伽等新的运动方式 有阅读和学习的乐趣 待改进：\n电子娱乐时间严重过度（视频、游戏） 休闲方式单一 作息不规律严重影响休闲质量 总体评估 相比之前的评分，多个维度有所提升，特别是事业发展（+1）、教育学习（+0.5）、心灵成长（+0.5）和金钱财富（+1）。这反映出你在工作能力、学习成长和财务管理方面都有明显进步。\n然而，健康状况（-0.5）和家庭关系（-0.5）出现了下滑，主要是由于作息不规律、运动习惯不稳定，以及家庭矛盾的持续存在。\n建议重点关注：\n作息管理：这是最急需改善的问题，影响到多个维度的表现 运动习惯：重建稳定的运动频率，避免三天打鱼两天晒网 家庭关系：需要更多耐心和智慧来处理家庭矛盾 时间管理：特别是控制电子娱乐时间，这严重影响了其他维度的发展 生活平衡：在追求事业和学习进步的同时，不要忽视健康和家庭 ",
+  "wordCount" : "95",
+  "inLanguage": "en",
+  "image":"https://fancive.github.io/images/img/wheel_of_life_2024.jpg","datePublished": "2025-01-11T16:26:38+08:00",
+  "dateModified": "2025-01-11T16:26:38+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "fancive"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://fancive.github.io/posts/wheel-of-life-2024/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "我的博客",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://fancive.github.io/favicon.ico"
+    }
   }
-</style>
-
-
-
-
-
-
-
-
-
-    
-
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  </head>
-
-  <body x-data="{
-    flip: false,
-  }">
-    
-    <div id="dream-global-bg"></div>
-
-    
-<nav class="mt-4 lg:mt-8 py-4">
-
-  
-  <div class="container flex justify-between px-4">
-  
-    <section class="flex items-center gap-4">
-      <div class="avatar cursor-pointer hover:online" @click="flip = !flip" title="Flip it!">
-        <div class="h-10 rounded-full">
-          <img src="/images/profile.jpg" alt="" />
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://fancive.github.io/" accesskey="h" title="我的博客 (Alt + H)">我的博客</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
         </div>
-      </div>
+        <ul id="menu">
+            <li>
+                <a href="https://fancive.github.io/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://fancive.github.io/categories/" title="Categories">
+                    <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://fancive.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://fancive.github.io/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://fancive.github.io/search/" title="Search (Alt &#43; /)" accesskey=/>
+                    <span>Search</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
 
-      
-      <div>
-        
-        
-        <div class="text-base-content/60 text-sm">欢迎来到荷兰</div>
-        
-      </div>
-      
-    </section>
-
-    <div class="dropdown dropdown-end sm:hidden">
-      <div tabindex="0" role="button" class="btn btn-ghost btn-square" aria-label="Select an option">
-        <ion-icon name="menu" class="text-2xl"></ion-icon>
-      </div>
-      <ul tabindex="0" class="dropdown-content menu w-36 bg-base-100 rounded-box z-[1] shadow-md">
-        
-
-
-<li>
-  <div role="link" tabindex="0" class="inline-flex items-center p-2 cursor-pointer" @click="flip = !flip" title="About">
-    <ion-icon name="information-circle"></ion-icon>About</div>
-</li>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<li>
-  <a class="inline-flex items-center p-2 cursor-pointer" href="/posts" title="Archives">
-    <ion-icon name="archive"></ion-icon>
-    Archives
-  </a>
-</li>
-
-
-
-
-<li>
-  <a class="inline-flex items-center p-2 cursor-pointer" href="/categories" title="All Categories">
-    <ion-icon name="grid"></ion-icon>
-    All Categories
-  </a>
-</li>
-
-
-
-
-<li>
-  <a class="inline-flex items-center p-2 cursor-pointer" href="/tags" title="All Tags">
-    <ion-icon name="pricetags"></ion-icon>
-    All Tags
-  </a>
-</li>
-
-
-
-
-
-
-      </ul>
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://fancive.github.io/">Home</a>&nbsp;»&nbsp;<a href="https://fancive.github.io/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      Wheel of Life 2024
+    </h1>
+    <div class="post-description">
+      2024 年度生命之轮回顾：从事业、学习、健康、家庭等八个维度全面反思这一年的成长与不足。
     </div>
-    <section class="hidden sm:flex sm:items-center sm:gap-2 md:gap-4">
-      
-      
-      
-      <div role="link" tabindex="0"
-        class="text-sm font-semibold cursor-pointer hover:underline"
-        @click="flip = !flip"
-        title="About"
-      >About</div>
-      
-      
+    <div class="post-meta"><span title='2025-01-11 16:26:38 +0800 CST'>January 11, 2025</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>fancive</span>
 
-      
-      
-
-      
-
-      
-      
-
-
-
-
-
-      
-      
-
-
-
-
-
-      
-      
-<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/posts" title="Archives">
-  <ion-icon class="group-hover:text-primary-content" name="archive"></ion-icon>
-</a>
-
-
-      
-      
-<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/categories" title="All Categories">
-  <ion-icon class="group-hover:text-primary-content" name="grid"></ion-icon>
-</a>
-
-
-      
-      
-<a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary" href="/tags" title="All Tags">
-  <ion-icon class="group-hover:text-primary-content" name="pricetags"></ion-icon>
-</a>
-
-
-      
-
-      
-
-      
-    </section>
-  </div>
-</nav>
-
-
-    <div class="flip-container" :class="{ 'flip-it': flip }">
-      <div class="flipper">
-        <div class="front">
-          <div class="container">
-            
-<div class="lg:grid lg:grid-cols-4 gap-4 mt-4 px-4">
-  <div class="hidden lg:block"></div>
-
-  <div class="lg:col-span-2">
-    <article class="mx-auto prose prose-quoteless dark:prose-invert" id="dream-single-post-main" itemscope itemtype="http://schema.org/Article">
-      
-  <meta itemprop="name" content="Wheel of Life 2024">
-  <meta itemprop="description" content="2024 年度生命之轮回顾：从事业、学习、健康、家庭等八个维度全面反思这一年的成长与不足。">
-  <meta itemprop="datePublished" content="2025-01-11T16:26:38+08:00">
-  <meta itemprop="dateModified" content="2025-01-11T16:26:38+08:00">
-  <meta itemprop="wordCount" content="95">
-  <meta itemprop="keywords" content="年度总结,生活">
-
-      <header>
-        <h1 itemprop="headline">Wheel of Life 2024</h1>
-        <p class="text-sm">
-          
-            Saturday, Jan 11, 2025
-          
-
-          | <span>1 minute read</span>
-
-          
-          | <span>Updated at
-            
-              Saturday, Jan 11, 2025
-            </span>
-          
-        </p>
-
+</div>
+  </header> 
+<figure class="entry-cover">
+        <img loading="eager" src="https://fancive.github.io/images/img/wheel_of_life_2024.jpg" alt="">
         
-        <div class="flex justify-between">
-          
-            <div class="flex items-center">
-  
-  <span>@</span>
-  
+</figure><div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
 
-  <span itemprop="author" itemscope itemtype="https://schema.org/Person">
-  
-    <span itemprop="name">fancive</span>
-  
-  </span>
-</div>
-
-          
-
-          <div class="flex items-center gap-2">
-  
-  
-
-  
-  
-  
-  
-  
-    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
-      href="https://x.com/intent/post?text=Wheel%20of%20Life%202024&amp;url=https://fancive.github.io/posts/wheel-of-life-2024/" target="_blank" rel="noopener noreferrer"
-      title="Share on X">
-      <ion-icon class="group-hover:text-primary-content" name="logo-x"></ion-icon>
-    </a>
-  
-    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
-      href="https://facebook.com/sharer/sharer.php?u=https://fancive.github.io/posts/wheel-of-life-2024/" target="_blank" rel="noopener noreferrer"
-      title="Share on Facebook">
-      <ion-icon class="group-hover:text-primary-content" name="logo-facebook"></ion-icon>
-    </a>
-  
-    <a class="group inline-flex items-center p-2 rounded-full cursor-pointer hover:bg-primary"
-      href="https://wa.me/?text=Wheel%20of%20Life%202024%20https://fancive.github.io/posts/wheel-of-life-2024/" target="_blank" rel="noopener noreferrer"
-      title="Share on WhatsApp">
-      <ion-icon class="group-hover:text-primary-content" name="logo-whatsapp"></ion-icon>
-    </a>
-  
-
-  
-  
-</div>
-
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e7%94%9f%e5%91%bd%e4%b9%8b%e8%bd%ae-2024" aria-label="生命之轮 2024">生命之轮 2024</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#%e4%ba%8b%e4%b8%9a%e5%8f%91%e5%b1%958%e5%88%86-1" aria-label="事业发展：8分 (↑1)">事业发展：8分 (↑1)</a></li>
+                <li>
+                    <a href="#%e4%ba%ba%e9%99%85%e5%85%b3%e7%b3%bb75%e5%88%86-05" aria-label="人际关系：7.5分 (↑0.5)">人际关系：7.5分 (↑0.5)</a></li>
+                <li>
+                    <a href="#%e6%95%99%e8%82%b2%e5%ad%a6%e4%b9%a085%e5%88%86-05" aria-label="教育学习：8.5分 (↑0.5)">教育学习：8.5分 (↑0.5)</a></li>
+                <li>
+                    <a href="#%e5%bf%83%e7%81%b5%e6%88%90%e9%95%bf85%e5%88%86-05" aria-label="心灵成长：8.5分 (↑0.5)">心灵成长：8.5分 (↑0.5)</a></li>
+                <li>
+                    <a href="#%e5%81%a5%e5%ba%b7%e7%8a%b6%e5%86%b565%e5%88%86-05" aria-label="健康状况：6.5分 (↓0.5)">健康状况：6.5分 (↓0.5)</a></li>
+                <li>
+                    <a href="#%e5%ae%b6%e5%ba%ad%e5%85%b3%e7%b3%bb75%e5%88%86-05" aria-label="家庭关系：7.5分 (↓0.5)">家庭关系：7.5分 (↓0.5)</a></li>
+                <li>
+                    <a href="#%e9%87%91%e9%92%b1%e8%b4%a2%e5%af%8c7%e5%88%86-1" aria-label="金钱财富：7分 (↑1)">金钱财富：7分 (↑1)</a></li>
+                <li>
+                    <a href="#%e4%bc%91%e9%97%b2%e5%a8%b1%e4%b9%906%e5%88%86-%e6%8c%81%e5%b9%b3" aria-label="休闲娱乐：6分 (持平)">休闲娱乐：6分 (持平)</a></li></ul>
+                    
+                <li>
+                    <a href="#%e6%80%bb%e4%bd%93%e8%af%84%e4%bc%b0" aria-label="总体评估">总体评估</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
         </div>
-      </header>
+    </details>
+</div>
 
-      <section id="dream-single-post-content" itemprop="articleBody">
-        
-        <img src="/images/img/wheel_of_life_2024.jpg" alt="Wheel of Life 2024" />
-        
-
-        <blockquote>
-    <p>我让大模型读取了我的2024年每个月的月报(从周报和日记中总结)，得到了以下的生命之轮得分</p>
-
-  </blockquote>
-
-<h1 id="生命之轮-2024">生命之轮 2024</h1>
-<p><img alt="wheel_of_life_2024" src="/images/img/wheel_of_life_2024.jpg"></p>
+  <div class="post-content"><blockquote>
+<p>我让大模型读取了我的2024年每个月的月报(从周报和日记中总结)，得到了以下的生命之轮得分</p>
+</blockquote>
+<h1 id="生命之轮-2024">生命之轮 2024<a hidden class="anchor" aria-hidden="true" href="#生命之轮-2024">#</a></h1>
+<p><img alt="wheel_of_life_2024" loading="lazy" src="/images/img/wheel_of_life_2024.jpg"></p>
 <p>基于对全年12个月的完整回顾分析，我现在重新为生命之轮的八个维度进行评分：</p>
 <hr>
-<h3 id="事业发展8分-1">事业发展：8分 (↑1)</h3>
+<h3 id="事业发展8分-1">事业发展：8分 (↑1)<a hidden class="anchor" aria-hidden="true" href="#事业发展8分-1">#</a></h3>
 <p><strong>优点：</strong></p>
 <ul>
 <li>全年完成多个重要项目：ES监控系统、自动部署工具、圈子项目等</li>
@@ -350,7 +290,7 @@
 <li>项目时间管理需要提升</li>
 </ul>
 <hr>
-<h3 id="人际关系75分-05">人际关系：7.5分 (↑0.5)</h3>
+<h3 id="人际关系75分-05">人际关系：7.5分 (↑0.5)<a hidden class="anchor" aria-hidden="true" href="#人际关系75分-05">#</a></h3>
 <p><strong>优点：</strong></p>
 <ul>
 <li>团队协作能力提升，能够处理复杂的跨部门协作</li>
@@ -364,7 +304,7 @@
 <li>家庭关系的调解技巧需要提升</li>
 </ul>
 <hr>
-<h3 id="教育学习85分-05">教育学习：8.5分 (↑0.5)</h3>
+<h3 id="教育学习85分-05">教育学习：8.5分 (↑0.5)<a hidden class="anchor" aria-hidden="true" href="#教育学习85分-05">#</a></h3>
 <p><strong>优点：</strong></p>
 <ul>
 <li>持续的技术学习和算法训练</li>
@@ -379,7 +319,7 @@
 <li>学习计划执行的连续性需要提升</li>
 </ul>
 <hr>
-<h3 id="心灵成长85分-05">心灵成长：8.5分 (↑0.5)</h3>
+<h3 id="心灵成长85分-05">心灵成长：8.5分 (↑0.5)<a hidden class="anchor" aria-hidden="true" href="#心灵成长85分-05">#</a></h3>
 <p><strong>优点：</strong></p>
 <ul>
 <li>持续的冥想练习和自我觉察</li>
@@ -393,7 +333,7 @@
 <li>在家庭矛盾中的情绪管理仍需提升</li>
 </ul>
 <hr>
-<h3 id="健康状况65分-05">健康状况：6.5分 (↓0.5)</h3>
+<h3 id="健康状况65分-05">健康状况：6.5分 (↓0.5)<a hidden class="anchor" aria-hidden="true" href="#健康状况65分-05">#</a></h3>
 <p><strong>优点：</strong></p>
 <ul>
 <li>尝试建立运动习惯（健身、瑜伽）</li>
@@ -407,7 +347,7 @@
 <li>反复出现身体不适（扁桃体、咽喉等）</li>
 </ul>
 <hr>
-<h3 id="家庭关系75分-05">家庭关系：7.5分 (↓0.5)</h3>
+<h3 id="家庭关系75分-05">家庭关系：7.5分 (↓0.5)<a hidden class="anchor" aria-hidden="true" href="#家庭关系75分-05">#</a></h3>
 <p><strong>优点：</strong></p>
 <ul>
 <li>保持固定的亲子活动和陪伴时间</li>
@@ -422,7 +362,7 @@
 <li>育儿方式仍需改进</li>
 </ul>
 <hr>
-<h3 id="金钱财富7分-1">金钱财富：7分 (↑1)</h3>
+<h3 id="金钱财富7分-1">金钱财富：7分 (↑1)<a hidden class="anchor" aria-hidden="true" href="#金钱财富7分-1">#</a></h3>
 <p><strong>优点：</strong></p>
 <ul>
 <li>完成重要的房贷决策</li>
@@ -436,7 +376,7 @@
 <li>投资和理财方面需要加强</li>
 </ul>
 <hr>
-<h3 id="休闲娱乐6分-持平">休闲娱乐：6分 (持平)</h3>
+<h3 id="休闲娱乐6分-持平">休闲娱乐：6分 (持平)<a hidden class="anchor" aria-hidden="true" href="#休闲娱乐6分-持平">#</a></h3>
 <p><strong>优点：</strong></p>
 <ul>
 <li>有固定的家庭出游活动</li>
@@ -450,7 +390,7 @@
 <li>作息不规律严重影响休闲质量</li>
 </ul>
 <hr>
-<h2 id="总体评估">总体评估</h2>
+<h2 id="总体评估">总体评估<a hidden class="anchor" aria-hidden="true" href="#总体评估">#</a></h2>
 <p>相比之前的评分，多个维度有所提升，特别是事业发展（+1）、教育学习（+0.5）、心灵成长（+0.5）和金钱财富（+1）。这反映出你在工作能力、学习成长和财务管理方面都有明显进步。</p>
 <p>然而，健康状况（-0.5）和家庭关系（-0.5）出现了下滑，主要是由于作息不规律、运动习惯不稳定，以及家庭矛盾的持续存在。</p>
 <p><strong>建议重点关注：</strong></p>
@@ -461,284 +401,221 @@
 <li><strong>时间管理</strong>：特别是控制电子娱乐时间，这严重影响了其他维度的发展</li>
 <li><strong>生活平衡</strong>：在追求事业和学习进步的同时，不要忽视健康和家庭</li>
 </ul>
-      </section>
 
-      
+  </div>
 
-      
-      <div class="divider"></div>
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://fancive.github.io/tags/%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/">年度总结</a></li>
+      <li><a href="https://fancive.github.io/tags/%E7%94%9F%E6%B4%BB/">生活</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://fancive.github.io/posts/automating-deployment-pipeline-from-code-review-to-production/">
+    <span class="title">« Prev</span>
+    <br>
+    <span>从代码评审到生产部署：自动化流水线实践</span>
+  </a>
+  <a class="next" href="https://fancive.github.io/posts/llm-driven-alert-diagnosis-engine-design/">
+    <span class="title">Next »</span>
+    <br>
+    <span>Llm Driven Alert Diagnosis Engine Design(设计新一代LLM驱动的告警诊断引擎)</span>
+  </a>
+</nav>
 
-      <section class="space-y-4">
-        
-<article>
-  <div id="disqus_thread"></div>
-<script>
-    window.disqus_config = function () {
-        this.page.identifier = '\/posts\/wheel-of-life-2024\/';
-        this.page.title = 'Wheel of Life 2024';
-        this.page.url = 'https:\/\/fancive.github.io\/posts\/wheel-of-life-2024\/';
 
-        
-    };
-    function initDisqus() {
-        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
-            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
-            return;
-        }
-        var d = document, s = d.createElement('script'); s.async = true;
-        s.src = '//' + "fancive-github-com" + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    };
-    setTimeout(() => {
-        initDisqus();
-    }, 3000);
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+<ul class="share-buttons">
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share Wheel of Life 2024 on x"
+            href="https://x.com/intent/tweet/?text=Wheel%20of%20Life%202024&amp;url=https%3a%2f%2ffancive.github.io%2fposts%2fwheel-of-life-2024%2f&amp;hashtags=%e5%b9%b4%e5%ba%a6%e6%80%bb%e7%bb%93%2c%e7%94%9f%e6%b4%bb">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M512 62.554 L 512 449.446 C 512 483.97 483.97 512 449.446 512 L 62.554 512 C 28.03 512 0 483.97 0 449.446 L 0 62.554 C 0 28.03 28.029 0 62.554 0 L 449.446 0 C 483.971 0 512 28.03 512 62.554 Z M 269.951 190.75 L 182.567 75.216 L 56 75.216 L 207.216 272.95 L 63.9 436.783 L 125.266 436.783 L 235.9 310.383 L 332.567 436.783 L 456 436.783 L 298.367 228.367 L 432.367 75.216 L 371.033 75.216 Z M 127.633 110 L 164.101 110 L 383.481 400.065 L 349.5 400.065 Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share Wheel of Life 2024 on linkedin"
+            href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2ffancive.github.io%2fposts%2fwheel-of-life-2024%2f&amp;title=Wheel%20of%20Life%202024&amp;summary=Wheel%20of%20Life%202024&amp;source=https%3a%2f%2ffancive.github.io%2fposts%2fwheel-of-life-2024%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share Wheel of Life 2024 on reddit"
+            href="https://reddit.com/submit?url=https%3a%2f%2ffancive.github.io%2fposts%2fwheel-of-life-2024%2f&title=Wheel%20of%20Life%202024">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share Wheel of Life 2024 on facebook"
+            href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2ffancive.github.io%2fposts%2fwheel-of-life-2024%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share Wheel of Life 2024 on whatsapp"
+            href="https://api.whatsapp.com/send?text=Wheel%20of%20Life%202024%20-%20https%3a%2f%2ffancive.github.io%2fposts%2fwheel-of-life-2024%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share Wheel of Life 2024 on telegram"
+            href="https://telegram.me/share/url?text=Wheel%20of%20Life%202024&amp;url=https%3a%2f%2ffancive.github.io%2fposts%2fwheel-of-life-2024%2f">
+            <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share Wheel of Life 2024 on ycombinator"
+            href="https://news.ycombinator.com/submitlink?t=Wheel%20of%20Life%202024&u=https%3a%2f%2ffancive.github.io%2fposts%2fwheel-of-life-2024%2f">
+            <svg version="1.1" xml:space="preserve" width="30px" height="30px" viewBox="0 0 512 512" fill="currentColor"
+                xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape">
+                <path
+                    d="M449.446 0C483.971 0 512 28.03 512 62.554L512 449.446C512 483.97 483.97 512 449.446 512L62.554 512C28.03 512 0 483.97 0 449.446L0 62.554C0 28.03 28.029 0 62.554 0L449.446 0ZM183.8767 87.9921H121.8427L230.6673 292.4508V424.0079H281.3328V292.4508L390.1575 87.9921H328.1233L256 238.2489z" />
+            </svg>
+        </a>
+    </li>
+</ul>
+
+  </footer>
 </article>
-
-
-
-
-
-
-
-
-      </section>
-      
-    </article>
-  </div>
-
-  <div class="hidden lg:flex lg:flex-col lg:items-end">
+    </main>
     
+<footer class="footer">
+        <span>&copy; 2026 <a href="https://fancive.github.io/">我的博客</a></span> · 
 
-    
-  </div>
-</div>
-
-
-            
-<footer class="flex justify-between items-center gap-2 px-4 py-12">
-
-  <div>
-  
-  <p>© 2026 home</p>
-  
-
-  
-  <p class="text-sm">
-    🌱
-    <span class="text-base-content/60">
-      Powered by <a class="hover:underline" href="https://gohugo.io/" target="_blank">Hugo</a> with theme
-      <a class="hover:underline" href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</span
-    >
-  </p>
-  
-</div>
-
-  <div
-  x-data="{ icons: [
-    { name: 'moon', status: 'y' },
-    { name: 'sunny', status: 'n' },
-    { name: 'desktop', status: 'auto' }
-  ] }"
-  class="flex items-center gap-2 h-[32px] px-2 bg-base-100 border border-base-content/30 rounded-full"
->
-  <template x-for="icon in icons">
-    <div
-      role="button"
-      tabindex="0"
-      :aria-label="'Select ' + icon.name + ' mode'"
-      class="group inline-flex justify-center items-center p-1 rounded-full cursor-pointer hover:bg-primary"
-      :class="$store.darkMode.icon() === icon.name && 'bg-primary'"
-      @click="$store.darkMode.toggle(icon.status)"
-    >
-      <ion-icon
-        :name="`${icon.name}-outline`"
-        class="group-hover:text-primary-content"
-        :class="$store.darkMode.icon() === icon.name && 'text-primary-content'"
-      >
-      </ion-icon>
-    </div>
-  </template>
-</div>
-
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
 </footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
 
-          </div>
-        </div>
-        <div class="back">
-          <div class="container">
-            
-            <div class="dream-grid dream-grid-about">
-  
-  
-  
-  <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-4 dream-column">
-    <article
-      class="card card-compact bg-base-100 hover:bg-base-content/10 shadow-xl dark:border dark:border-base-content/30"
-    >
-      <div class="card-body">
-        <div class="card-title">About</div>
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
 
-        <div class="prose dark:prose-invert">
-          <h2 id="-关于我">👋 关于我</h2>
-<p>我是 fancivez，一名 Golang 后端工程师，目前就职于百度。</p>
-<h2 id="-技术栈">💻 技术栈</h2>
-<ul>
-<li><strong>主要语言</strong>: Go (Golang)</li>
-<li><strong>专长领域</strong>:
-<ul>
-<li>后端服务开发</li>
-<li>AIOps (智能运维)</li>
-<li>系统架构设计</li>
-<li>自动化工具开发</li>
-</ul>
-</li>
-</ul>
-<h2 id="-博客主题">📝 博客主题</h2>
-<p>这个博客主要分享：</p>
-<ul>
-<li>Go 语言深度技术文章和源码分析</li>
-<li>软件架构设计与最佳实践</li>
-<li>AIOps 领域的研究与实践</li>
-<li>个人成长与思考</li>
-</ul>
-<h2 id="-联系方式">📫 联系方式</h2>
-<ul>
-<li><strong>Email</strong>: <a href="mailto:fancivez@gmail.com" target="_blank">fancivez@gmail.com</a>
-</li>
-<li><strong>GitHub</strong>: <a href="https://github.com/fancive" target="_blank">github.com/fancive</a>
-</li>
-<li><strong>WeChat</strong>: fancivez</li>
-</ul>
-<p>欢迎交流技术，分享想法！</p>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
 
-        </div>
-      </div>
-    </article>
-  </div>
-  
-  
-
-  
-
-  
-</div>
-
-            
-
-            
-<footer class="flex justify-between items-center gap-2 px-4 py-12">
-
-  <div>
-  
-  <p>© 2026 home</p>
-  
-
-  
-  <p class="text-sm">
-    🌱
-    <span class="text-base-content/60">
-      Powered by <a class="hover:underline" href="https://gohugo.io/" target="_blank">Hugo</a> with theme
-      <a class="hover:underline" href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</span
-    >
-  </p>
-  
-</div>
-
-  <div
-  x-data="{ icons: [
-    { name: 'moon', status: 'y' },
-    { name: 'sunny', status: 'n' },
-    { name: 'desktop', status: 'auto' }
-  ] }"
-  class="flex items-center gap-2 h-[32px] px-2 bg-base-100 border border-base-content/30 rounded-full"
->
-  <template x-for="icon in icons">
-    <div
-      role="button"
-      tabindex="0"
-      :aria-label="'Select ' + icon.name + ' mode'"
-      class="group inline-flex justify-center items-center p-1 rounded-full cursor-pointer hover:bg-primary"
-      :class="$store.darkMode.icon() === icon.name && 'bg-primary'"
-      @click="$store.darkMode.toggle(icon.status)"
-    >
-      <ion-icon
-        :name="`${icon.name}-outline`"
-        class="group-hover:text-primary-content"
-        :class="$store.darkMode.icon() === icon.name && 'text-primary-content'"
-      >
-      </ion-icon>
-    </div>
-  </template>
-</div>
-
-</footer>
-
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script>
-  window.lightTheme =  null 
-  window.darkTheme =  null 
 </script>
-
-
-  <script src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script>
-
-  
-  
-    
-  
-  <script src="/js/grid.min.js"></script>
-
-
-
-
-  
-
-<script src="/js/main.min.js"></script>
-
-    
-
-
-
-
-
-
-
-
-
-    
-
-    
-
-    
-
-    
-    
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-7N49ZFJ61J"></script>
-      <script>
-        var doNotTrack = false;
-        if ( false ) {
-          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
-          var doNotTrack = (dnt == "1" || dnt == "yes");
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
         }
-        if (!doNotTrack) {
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-7N49ZFJ61J');
-        }
-      </script>
-    
+    };
 
-    <script type="module" src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.js"></script>
-  </body>
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
 </html>

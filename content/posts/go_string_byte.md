@@ -1,7 +1,8 @@
 ---
 title: "深入理解 Go String 转 []byte 的容量分配机制"
 date: 2020-05-31T21:30:28+08:00
-cover: "/images/illustrations/interface.jpg"
+cover:
+  image: "/images/illustrations/interface.jpg"
 description: "探究 Go 语言中 string 转 []byte 时容量变化的底层原理，通过汇编代码分析内存分配机制。"
 categories:
   - Go语言

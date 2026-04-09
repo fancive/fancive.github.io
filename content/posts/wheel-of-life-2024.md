@@ -1,7 +1,8 @@
 ---
 title: "Wheel of Life 2024"
 date: 2025-01-11T16:26:38+08:00
-cover: "/images/img/wheel_of_life_2024.jpg"
+cover:
+  image: "/images/img/wheel_of_life_2024.jpg"
 description: "2024 年度生命之轮回顾：从事业、学习、健康、家庭等八个维度全面反思这一年的成长与不足。"
 categories:
   - 个人思考
