@@ -16,6 +16,13 @@
       <description>给人用的命令行和给 Agent 用的命令行，是两种东西。七个设计原则，用真实内部工具和知名开源 CLI 逐条拆解。</description>
     </item>
     <item>
+      <title>让 AI 帮你维护一个个人百科全书</title>
+      <link>https://fancive.github.io/posts/agentic-wiki-ai-personal-encyclopedia/</link>
+      <pubDate>Tue, 07 Apr 2026 10:00:00 +0800</pubDate>
+      <guid>https://fancive.github.io/posts/agentic-wiki-ai-personal-encyclopedia/</guid>
+      <description>你记过的笔记，最后真的翻过几次？Karpathy 的 LLM Wiki 模式：不是帮你记更多，而是帮你把已经记的东西养活。</description>
+    </item>
+    <item>
       <title>如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法</title>
       <link>https://fancive.github.io/posts/quantify-api-cpu-consumption-with-regression/</link>
       <pubDate>Fri, 23 Jan 2026 12:00:00 +0800</pubDate>

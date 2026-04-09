@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>AI on 我的博客</title>
+    <link>https://fancive.github.io/tags/ai/</link>
+    <description>Recent content in AI on 我的博客</description>
+    <generator>Hugo</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 07 Apr 2026 10:00:00 +0800</lastBuildDate>
+    <atom:link href="https://fancive.github.io/tags/ai/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>让 AI 帮你维护一个个人百科全书</title>
+      <link>https://fancive.github.io/posts/agentic-wiki-ai-personal-encyclopedia/</link>
+      <pubDate>Tue, 07 Apr 2026 10:00:00 +0800</pubDate>
+      <guid>https://fancive.github.io/posts/agentic-wiki-ai-personal-encyclopedia/</guid>
+      <description>你记过的笔记，最后真的翻过几次？Karpathy 的 LLM Wiki 模式：不是帮你记更多，而是帮你把已经记的东西养活。</description>
+    </item>
+  </channel>
+</rss>
