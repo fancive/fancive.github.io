@@ -5,6 +5,9 @@ description: "你记过的笔记，最后真的翻过几次？Karpathy 的 LLM W
 tags: ["AI", "知识管理", "Obsidian", "个人百科", "Karpathy"]
 categories:
   - 方法论
+cover:
+  image: "/images/covers/agentic-wiki.svg"
+  alt: "AI 维护的个人百科架构"
 draft: false
 ---
 
