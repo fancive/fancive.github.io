@@ -1,0 +1,8 @@
+# Hugo build output (now built & deployed by GitHub Actions, no longer committed)
+/public/
+/docs/
+resources/_gen/
+.hugo_build.lock
+
+# macOS
+.DS_Store

@@ -1,41 +1,23 @@
 #!/bin/bash
-# Hugo 博客构建和发布脚本
+# 本地预览 / 构建检查脚本。
+# 部署已交给 GitHub Actions（push 到 main 自动构建发布），不再手动 commit docs/。
 
-set -e  # 遇到错误立即退出
+set -e
 
-echo "🚀 开始构建 Hugo 站点..."
-
-# 构建站点
-hugo
-
-echo "✅ 构建完成！"
-echo ""
-echo "📝 生成的文件在 docs/ 目录"
-echo ""
-
-# 检查 docs 目录是否有变更
-if [[ -n $(git status -s docs/) ]]; then
-    echo "📦 检测到 docs/ 目录有变更"
-
-    # 询问是否提交
-    read -p "是否提交并推送到远程仓库? (y/n) " -n 1 -r
-    echo
-
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        # 获取提交信息
-        read -p "请输入提交信息 (默认: Update site): " commit_msg
-        commit_msg=${commit_msg:-"Update site"}
-
-        # 提交并推送
-        git add docs/
-        git commit -m "$commit_msg"
-        git push
-
-        echo "✅ 已推送到远程仓库"
-        echo "🌐 站点将在几分钟后更新: https://fancive.github.io/"
-    else
-        echo "⏭️  跳过提交"
-    fi
-else
-    echo "ℹ️  docs/ 目录没有变更"
-fi
+case "${1:-serve}" in
+  serve)
+    echo "🚀 本地预览（含草稿），打开 http://localhost:1313"
+    hugo server -D --navigateToChanged
+    ;;
+  build)
+    echo "🔨 生产构建到 public/（仅本地检查，产物不入库）"
+    hugo --gc --minify
+    echo "✅ 构建完成，产物在 public/。push 到 main 后由 GitHub Actions 自动部署。"
+    ;;
+  *)
+    echo "用法: ./build.sh [serve|build]"
+    echo "  serve  本地预览（默认）"
+    echo "  build  生产构建检查"
+    exit 1
+    ;;
+esac

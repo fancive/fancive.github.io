@@ -8,6 +8,7 @@ categories:
 cover:
   image: "/images/covers/agentic-wiki.svg"
   alt: "AI 维护的个人百科架构"
+  responsiveImages: false
 draft: false
 ---
 

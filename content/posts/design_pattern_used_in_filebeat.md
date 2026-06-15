@@ -11,21 +11,13 @@ tags:
   - 设计模式
 ---
 
-## 引言
-
-Filebeat 是 Elastic Stack 中用于收集和转发日志数据的轻量级采集器。通过深入阅读 Filebeat 的源码，我们可以学习到许多优秀的设计模式应用。本文将介绍 Filebeat 中使用的四种核心设计模式：Registry + LazyInit、Observer、Strategy 和 Object Pool，并分析它们如何帮助 Filebeat 实现高性能和良好的可扩展性。
+Filebeat 是 Elastic Stack 里那个轻量级的日志采集器。最近读它的源码，发现几处设计模式用得很顺手，记一下：Registry + LazyInit、Observer、Strategy 和 Object Pool 这四个，正好对应插件化、解耦、可配置和性能优化几个常见诉求。
 
 <!--more-->
 
-## Registry 模式与 LazyInit 的结合
+## Registry + LazyInit
 
-### 设计思想
-
-Registry 模式（注册表模式）允许在运行时动态注册和查找组件，而 LazyInit（延迟初始化）则确保组件只在真正需要时才被创建。Filebeat 将这两种模式结合使用，实现了灵活的插件化架构。
-
-### 实现细节
-
-**获取工厂函数**
+Filebeat 支持 log、stdin、redis、kafka 等多种 input 类型，要做到加一种类型不动核心代码，靠的就是注册表：每个 input 类型把自己的工厂函数登记进去，运行时再按配置里的 `type` 查出来用。延迟初始化的部分在于——只有配置里真正用到的 input 才会被实例化。
 
 在 `filebeat/input.New` 中，通过 Registry 获取对应类型的工厂函数：
 
@@ -57,19 +49,13 @@ func init() {
 }
 ```
 
-### 优势
+这样配置和实现就彻底分开了——加一种新的 input 类型只要在 `init` 里 `Register` 一下，核心的 `New` 逻辑一行都不用改。
 
-- **解耦**：配置和具体实现分离，便于扩展新的 input 类型
-- **延迟加载**：只有被使用的组件才会被实例化，节省资源
-- **插件化**：新增功能只需注册即可，无需修改核心代码
+## Observer：事件总线
 
-## Observer 模式（观察者模式）
+Filebeat 内部组件之间不直接互相调用，而是走一条事件总线（Event Bus）：谁关心什么事件就订阅，谁产生了事件就发布出去，中间用 channel 传递。典型的观察者模式。
 
-### 设计思想
-
-Observer 模式定义了对象间的一对多依赖关系，当一个对象状态改变时，所有依赖它的对象都会收到通知。Filebeat 使用 Observer 模式实现事件总线（Event Bus），用于组件间的消息传递。
-
-### 发布事件
+发布事件时遍历所有订阅者，只把它感兴趣的事件投进它的 channel：
 
 ```go
 func (b *bus) Publish(e Event) {
@@ -86,7 +72,7 @@ func (b *bus) Publish(e Event) {
 }
 ```
 
-### 订阅事件
+订阅时创建一个带缓冲的 channel，并把 filter 一起记下来，这样发布端就能做选择性投递：
 
 ```go
 func (b *bus) Subscribe(filter ...string) Listener {
@@ -103,19 +89,11 @@ func (b *bus) Subscribe(filter ...string) Listener {
 }
 ```
 
-### 应用场景
+发布者和订阅者互不知道对方存在，靠 channel 异步传递，再加上 filter 做选择性订阅——这套组合让模块之间的耦合降到很低。
 
-- **组件解耦**：发布者和订阅者互不依赖
-- **异步处理**：通过 channel 实现异步事件传递
-- **灵活订阅**：支持基于过滤器的选择性订阅
+## Strategy：Kafka 分区策略
 
-## Strategy 模式（策略模式）
-
-### 设计思想
-
-Strategy 模式定义了一系列算法，将每个算法封装起来，使它们可以互相替换。Filebeat 在 Kafka 输出中使用 Strategy 模式来支持不同的分区策略。
-
-### 实现代码
+Filebeat 往 Kafka 写数据时支持 random、round_robin、hash 几种分区方式。与其在写入逻辑里塞一堆 `if-else`，它把每种策略做成一个独立的构造函数，用一张 map 注册起来，按配置取用：
 
 ```go
 // 定义策略映射表
@@ -140,21 +118,13 @@ func initPartitionStrategy(config *Config) (Partitioner, error) {
 }
 ```
 
-### 优势
+加一种新的分区策略，往这张 map 里添一行就行，写入主流程完全不用动。
 
-- **算法可替换**：通过配置切换不同的分区策略
-- **易于扩展**：新增策略只需添加到映射表
-- **代码清晰**：每种策略独立实现，职责单一
+## Object Pool：复用 ackChan
 
-## Object Pool 模式（对象池模式）
+Filebeat 在确认（ACK）链路上会高频创建、丢弃 `ackChan` 这种短命对象，频繁分配会给 GC 带来压力。它的做法是用 `sync.Pool` 把这些对象池化复用。
 
-### 设计思想
-
-Object Pool 模式通过复用对象来减少频繁创建和销毁对象的开销。在高并发场景下，这种模式能显著提升性能并减少 GC 压力。
-
-### 实现代码
-
-**定义对象池**
+定义对象池，`New` 负责在池空时兜底造一个新的：
 
 ```go
 var ackChanPool = sync.Pool{
@@ -166,7 +136,7 @@ var ackChanPool = sync.Pool{
 }
 ```
 
-**从池中获取对象**
+从池里取出来后，把每个字段重新赋值，相当于"重置"成一个干净对象再用：
 
 ```go
 func newACKChan(seq uint, start, count int, states []clientState) *ackChan {
@@ -180,7 +150,7 @@ func newACKChan(seq uint, start, count int, states []clientState) *ackChan {
 }
 ```
 
-**归还对象到池**
+归还时把 `next` 置空再 `Put` 回去——这一步很关键，不清掉引用的话被池子持有的对象会顺带把它指向的东西也留住，造成内存泄漏：
 
 ```go
 func releaseACKChan(c *ackChan) {
@@ -189,22 +159,7 @@ func releaseACKChan(c *ackChan) {
 }
 ```
 
-### 性能优势
-
-- **减少 GC 压力**：复用对象减少垃圾回收次数
-- **提升性能**：避免频繁的内存分配和初始化
-- **适用场景**：高频创建销毁的短生命周期对象
-
-## 总结
-
-通过分析 Filebeat 的源码，我们学习到了四种经典设计模式的实际应用：
-
-1. **Registry + LazyInit**：实现插件化架构和延迟加载
-2. **Observer**：解耦组件，实现灵活的事件驱动
-3. **Strategy**：封装算法变化，支持策略切换
-4. **Object Pool**：优化性能，减少资源开销
-
-这些设计模式的合理运用，使 Filebeat 具备了良好的可扩展性、可维护性和高性能。在我们日常的 Go 项目开发中，也可以借鉴这些优秀的工程实践。
+`sync.Pool` 在这种高频创建销毁的短命对象上收益最明显，省下的是反复分配内存和触发 GC 的开销。
 
 ## 参考资源
 

@@ -32,7 +32,7 @@ It is a descriptive paper that discusses the challenges and innovations related 
 
 P. Huang, C. Guo et al., "Capturing and Enhancing In Situ System Observability for Failure Detection", *Proceedings of OSDI*, 2018.
 
-Y. Xu, K. Sui et al., "Improving Service Availability of Cloud Systems by Predicting Disk Error", *Proceedings of USNIX ATC*, 2018.
+Y. Xu, K. Sui et al., "Improving Service Availability of Cloud Systems by Predicting Disk Error", *Proceedings of USENIX ATC*, 2018.
 
 Q. Lin, K. Hsieh et al., "Predicting Node Failure in Cloud Service Systems", *proceedings of FSE*, 2018.
 

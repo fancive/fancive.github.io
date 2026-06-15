@@ -4,12 +4,12 @@
 - `content/` holds source markdown; new posts belong in `content/posts/` and pages under `content/{about,contact}/`.
 - `static/` exposes assets verbatim at publish time (images, downloads); reference them with absolute paths like `/images/...`.
 - `layouts/` contains any theme overrides and shortcodes; keep custom HTML here instead of editing theme files directly.
-- `docs/` is the generated site served by GitHub Pages—never edit it manually; run Hugo to refresh it before publishing.
-- `themes/` tracks upstream themes (`dream` in use, `ananke` kept for reference); pull upstream updates via git submodule when needed.
+- Build output (`public/`, legacy `docs/`) is git-ignored and built/deployed by GitHub Actions on push to `main`—never edit or commit it.
+- `themes/` tracks a single upstream theme submodule (`PaperMod`); pull upstream updates via `git submodule update --remote themes/PaperMod`.
 
 ## Build, Test, and Development Commands
-- `hugo server -D` launches the live preview with drafts included at http://localhost:1313; reloads on file changes.
-- `hugo --gc --minify -d docs` builds the production bundle, runs garbage collection on unused resources, and writes into `docs/`.
+- `hugo server -D` (or `./build.sh serve`) launches the live preview with drafts at http://localhost:1313; reloads on file changes.
+- `hugo --gc --minify` builds the production bundle to `public/` for a local check; the real deploy runs in CI.
 - `hugo new posts/<slug>.md` scaffolds a post using `archetypes/default.md`; edit front matter immediately after generation.
 
 ## Coding Style & Naming Conventions
@@ -25,6 +25,6 @@
 
 ## Commit & Pull Request Guidelines
 - Follow the existing history: short, descriptive commit subjects (`change abstract`, `wheel of life 2024`) in the imperative mood work well.
-- Include the regenerated `docs/` content in the same commit when publishing; omit it for draft-only work-in-progress branches.
+- Commit only source (`content/`, `config.toml`, `layouts/`, `assets/`, `static/`); never commit build output (`public/`/`docs/` are git-ignored). GitHub Actions rebuilds on push.
 - In pull requests, summarize the change scope, note any new content URLs, and attach screenshots for visual tweaks.
 - Link issues or discussions when applicable and call out manual verification steps you performed (e.g., `hugo server -D`, mobile layout check).

@@ -1,0 +1,31 @@
+/* 中文正文排版优化：放大行高、轻微字间距，长段落更易读 */
+.post-content {
+    line-height: 1.85;
+    letter-spacing: 0.02em;
+}
+
+.post-content p,
+.post-content li {
+    /* 中文标点与英文混排时的细节 */
+    word-break: break-word;
+}
+
+/* 字体栈：英文用系统无衬线，中文降级到平方/雅黑 */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+
+/* 代码块/行内代码用等宽字体，略缩小字号 */
+pre, code, kbd, samp {
+    font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", Menlo,
+        Consolas, monospace;
+    font-size: 0.88em;
+}
+
+/* 列表页封面图统一比例，避免 SVG / JPG 混排时高度参差 */
+.entry-cover img,
+.post-cover img {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+}

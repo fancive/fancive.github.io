@@ -8,6 +8,7 @@ categories:
 cover:
   image: "/images/covers/cli-agent-dx.svg"
   alt: "Human DX vs Agent DX"
+  responsiveImages: false
 draft: false
 ---
 

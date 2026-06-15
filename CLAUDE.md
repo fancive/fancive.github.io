@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Hugo static site blog publishing to GitHub Pages at https://fancive.github.io/. The site uses the [hugo-theme-dream](https://github.com/g1eny0ung/hugo-theme-dream) theme and publishes Chinese content focused on software architecture, Go programming, and AIOps topics.
+This is a Hugo static site blog publishing to GitHub Pages at https://fancive.github.io/. The site uses the [PaperMod](https://github.com/adityatelange/hugo-PaperMod) theme and publishes Chinese content focused on three lines: Go backend engineering, AIOps/observability, and AI Agent engineering.
+
+**Deployment**: GitHub Actions builds and deploys on every push to `main` (`.github/workflows/hugo.yml`). The build output (`public/`, and the legacy `docs/`) is git-ignored and NOT committed — never hand-edit or commit build artifacts.
 
 ## Build and Development Commands
 
@@ -25,14 +27,17 @@ hugo server --disableFastRender
 
 ### Building and Publishing
 ```bash
-# Build site (outputs to docs/ directory as configured in config.toml)
-hugo
+# Local production build check (outputs to public/, git-ignored)
+hugo --gc --minify
 
 # Build including draft content
 hugo -D
 
-# Build and publish using automated script
-./build.sh
+# Local preview (drafts on) — wraps `hugo server -D`
+./build.sh serve
+
+# Publishing is automatic: push to main → GitHub Actions builds & deploys.
+# Do NOT commit build output.
 ```
 
 ### Content Management
@@ -48,15 +53,15 @@ hugo new contact.md
 ## Architecture and Structure
 
 ### Publishing Configuration
-- **Output directory**: `docs/` (configured via `publishDir` in config.toml)
-- **Deployment**: GitHub Pages serves from the `docs/` folder on the main branch
+- **Output directory**: `public/` (Hugo default; git-ignored)
+- **Deployment**: GitHub Actions (`.github/workflows/hugo.yml`) builds with `hugo --gc --minify` and deploys via `actions/deploy-pages` on push to `main`. GitHub Pages source must be set to "GitHub Actions" (Settings → Pages).
 - **Base URL**: https://fancive.github.io/
 
 ### Theme Management
-- The site uses git submodules for theme management (see `.gitmodules`)
-- Active theme: `dream` (located in `themes/dream/`)
-- Other available themes in `themes/`: `ananke`
-- To update theme submodules: `git submodule update --remote`
+- The site uses a single git submodule for the theme (see `.gitmodules`)
+- Active theme: `PaperMod` (located in `themes/PaperMod/`)
+- To update the theme: `git submodule update --remote themes/PaperMod`
+- Custom CSS overrides live in `assets/css/extended/*.css` (auto-bundled by PaperMod)
 
 ### Content Organization
 - Blog posts: `content/posts/*.md`
@@ -72,20 +77,23 @@ hugo new contact.md
 
 ### Site Configuration
 - Main config: `config.toml` (Hugo TOML format)
-- Language: Chinese (zh-cn) with English support
-- Comment system: Giscus (configured in `[params.giscus]`)
+- Language: Chinese only (`defaultContentLanguage = "zh-cn"`)
+- Comment system: none currently. PaperMod supports giscus — to enable, override `layouts/partials/comments.html` and set `comments = true` in `[params]`.
 - Analytics: Google Analytics enabled (G-7N49ZFJ61J)
 
 ### Front Matter Structure
-Posts should include (archetype template provides this structure):
+Posts should include (archetype template provides this structure). Note `cover` is a **nested map** (PaperMod format), not a flat string. `author` is set site-wide in config.toml — don't repeat it per post:
 ```yaml
 ---
 title: Post Title
 date: 2025-01-30T14:07:06+08:00
 lastmod: 2025-01-30T14:07:06+08:00
-author: fancivez
-cover: /images/covers/post-name.jpg
 description: "Brief description for SEO"
+cover:
+  image: "/images/covers/post-name.jpg"
+  alt: "..."
+  caption: "..."
+  # SVG covers must add: responsiveImages: false  (Hugo can't resize SVG)
 categories:
   - Category Name
 tags:
@@ -120,19 +128,15 @@ static/images/
 ## Workflow Tools
 
 ### Build Script (`build.sh`)
-Automated build and publishing workflow:
-- Builds the Hugo site
-- Detects changes in `docs/` directory
-- Prompts for commit and push
-- Includes deployment URL reminder
-
-Usage: `./build.sh`
+Local-only helper (deployment is handled by GitHub Actions, not this script):
+- `./build.sh serve` — local preview with drafts (`hugo server -D`)
+- `./build.sh build` — production build check to `public/`
 
 ## Important Notes
 
-- Content language is primarily Chinese (`languageCode = "zh-cn"`)
-- The site includes both Chinese and English language support
-- Disqus shortname configured but Giscus is the active comment system
-- SEO features enabled: robots.txt, sitemap.xml, Google Analytics
-- All categories and most tags should be in Chinese for consistency
-- Use `<!--more-->` to mark excerpt break in posts
+- Content language is Chinese only (`defaultContentLanguage = "zh-cn"`); this also fixes JSON-LD `inLanguage` / `hreflang` which otherwise default to `en`.
+- No comment system is wired up (PaperMod supports giscus if wanted).
+- SEO features enabled: robots.txt, sitemap.xml, RSS/JSON output, Google Analytics, per-post `cover` as og:image (+ `params.images` fallback for the homepage).
+- Categories should be a small stable set of Chinese topic domains (e.g. Go语言 / 软件架构 / AIOps / 方法论 / 个人思考). Don't put genre labels like 翻译/paper reading as categories. Tags: technical names in lowercase-hyphen English, topic words in Chinese.
+- Use `<!--more-->` to mark excerpt break in posts.
+- **Writing source**: long-form posts are drafted in the Obsidian vault `Writing/` (plain markdown, `>` blockquote lede, no frontmatter), then copied into `content/posts/` with Hugo frontmatter added. This copy is currently manual — keep the two in sync, or treat `content/posts/` as the published source of truth.
