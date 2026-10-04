@@ -18,17 +18,17 @@ tag = "tags"
 [menu]
 [[menu.main]]
 identifier = "posts"
-name = "Posts"
+name = "文章"
 url = "/posts/"
 weight = 5
 [[menu.main]]
 identifier = "categories"
-name = "Categories"
+name = "主题"
 url = "/categories/"
 weight = 10
 [[menu.main]]
 identifier = "tags"
-name = "Tags"
+name = "标签"
 url = "/tags/"
 weight = 15
 [[menu.main]]
@@ -38,12 +38,12 @@ url = "/archives/"
 weight = 18
 [[menu.main]]
 identifier = "about"
-name = "About"
+name = "关于"
 url = "/about/"
 weight = 20
 [[menu.main]]
 identifier = "search"
-name = "Search"
+name = "搜索"
 url = "/search/"
 weight = 25
 
@@ -52,21 +52,27 @@ author = "fancive"
 description = "专注 Go 语言、AI Agent 工程与系统可观测性（AIOps），记录真实的工程决策与踩坑过程。"
 env = "production"
 defaultTheme = "auto"
+DateFormat = "2006年1月2日"
 ShowReadingTime = true
-ShowWordCount = true
-ShowShareButtons = true
+ShowWordCount = false
+ShowShareButtons = false
 ShowPostNavLinks = true
 ShowBreadCrumbs = true
 ShowCodeCopyButtons = true
 ShowToc = true
 TocOpen = false
 ShowRssButtonInSectionTermList = true
+mainSections = ["posts"]
+featuredPost = "/posts/rewrite-cli-for-ai-agents"
 # 首页社交分享卡的兜底图（文章会优先用自己的 cover）。
 images = ["/images/og-default.jpg"]
 
   [params.homeInfoParams]
-  Title = "Hi there 👋"
-  Content = "工程师，写 Go、AI Agent 工具链和 AIOps。这里是思考的副产品。"
+  Title = "工程实践，持续探索。"
+  Content = "我是 fancive，写 Go、AI Agent 与 AIOps。记录真实问题、工程决策和一路踩过的坑。"
+
+  [params.label]
+  text = "fancive / 工程笔记"
 
   [[params.socialIcons]]
   name = "github"

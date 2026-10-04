@@ -1,0 +1,119 @@
+{{- define "main" }}
+
+{{- if and site.Params.profileMode.enabled .IsHome }}
+{{- partial "index_profile.html" . }}
+{{- else }}
+
+{{- if and (not .IsHome) .Title }}
+<header class="page-header">
+  {{- partial "breadcrumbs.html" . }}
+  <h1>
+    {{ .Title }}
+    {{- if and (or (eq .Kind "term") (eq .Kind "section")) (.Param "ShowRssButtonInSectionTermList") }}
+    {{- with .OutputFormats.Get "rss" }}
+    <a href="{{ .RelPermalink }}" title="RSS" aria-label="RSS">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" height="23">
+        <path d="M4 11a9 9 0 0 1 9 9" />
+        <path d="M4 4a16 16 0 0 1 16 16" />
+        <circle cx="5" cy="19" r="1" />
+      </svg>
+    </a>
+    {{- end }}
+    {{- end }}
+  </h1>
+  {{- with .Description }}
+  <div class="post-description">{{ . | markdownify }}</div>
+  {{- end }}
+</header>
+{{- end }}
+
+{{- with .Content }}
+<div class="post-content">
+  {{- if not ($.Param "disableAnchoredHeadings") }}
+  {{- partial "anchored_headings.html" . -}}
+  {{- else }}{{ . }}{{ end }}
+</div>
+{{- end }}
+
+{{- $pages := union .RegularPages .Sections }}
+{{- if .IsHome }}
+{{- $pages = where site.RegularPages "Type" "in" site.Params.mainSections }}
+{{- $pages = where $pages "Params.hiddenInHomeList" "!=" true }}
+{{- $pages = where $pages "Params.hiddenInHomeList" "!=" "true" }}
+{{- end }}
+
+{{- $featured := false }}
+{{- if and .IsHome (gt (len $pages) 0) }}
+{{- $featured = index $pages 0 }}
+{{- with site.Params.featuredPost }}
+  {{- $reference := . }}
+  {{- $candidate := site.GetPage $reference }}
+  {{- if not $candidate }}
+    {{- range $pages }}
+      {{- if and .File (or (eq .File.ContentBaseName $reference) (eq .Params.slug $reference)) }}
+        {{- $candidate = . }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  {{- with $candidate }}
+    {{- if gt (len (where $pages "RelPermalink" .RelPermalink)) 0 }}
+      {{- $featured = . }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- /* Pin before pagination so a selected older post still appears exactly once. */}}
+{{- $pages = union (slice $featured) $pages }}
+{{- end }}
+{{- $paginator := .Paginate $pages }}
+
+{{- if and .IsHome site.Params.homeInfoParams (eq $paginator.PageNumber 1) }}
+{{- partial "home_info.html" . }}
+{{- end }}
+
+{{- if and .IsHome (eq $paginator.PageNumber 1) $featured }}
+<section class="featured-section" aria-labelledby="featured-title">
+  <div class="featured-heading">
+    <h2 id="featured-title">精选文章</h2>
+    <span>从这里开始</span>
+  </div>
+  {{- partial "post_entry.html" (dict "page" $featured "featured" true) }}
+</section>
+{{- end }}
+
+{{- if .IsHome }}
+<div class="feed-heading">
+  <h2>{{ if eq $paginator.PageNumber 1 }}最近文章{{ else }}文章{{ end }}</h2>
+  <span>{{ len $pages }} 篇记录</span>
+</div>
+{{- end }}
+
+<div class="post-feed">
+  {{- range $page := $paginator.Pages }}
+    {{- $isFeatured := and $.IsHome (eq $paginator.PageNumber 1) $featured (eq $page.RelPermalink $featured.RelPermalink) }}
+    {{- if not $isFeatured }}
+    {{- partial "post_entry.html" (dict "page" $page "featured" false "term" $.Data.Term) }}
+    {{- end }}
+  {{- end }}
+</div>
+
+{{- if gt $paginator.TotalPages 1 }}
+<footer class="page-footer">
+  <nav class="pagination" aria-label="文章分页">
+    {{- if $paginator.HasPrev }}
+    <a class="prev" href="{{ $paginator.Prev.URL | absURL }}">
+      «&nbsp;{{ i18n "prev_page" }}&nbsp;
+      {{- if .Param "ShowPageNums" }}{{ sub $paginator.PageNumber 1 }}/{{ $paginator.TotalPages }}{{ end }}
+    </a>
+    {{- end }}
+    {{- if $paginator.HasNext }}
+    <a class="next" href="{{ $paginator.Next.URL | absURL }}">
+      {{ i18n "next_page" }}&nbsp;
+      {{- if .Param "ShowPageNums" }}{{ add $paginator.PageNumber 1 }}/{{ $paginator.TotalPages }}{{ end }}&nbsp;»
+    </a>
+    {{- end }}
+  </nav>
+</footer>
+{{- end }}
+
+{{- end }}
+{{- end -}}

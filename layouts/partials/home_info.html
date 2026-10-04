@@ -1,0 +1,44 @@
+{{- with site.Params.homeInfoParams }}
+<section class="home-intro" aria-labelledby="home-title">
+  <div class="home-intro-copy">
+    <h1 id="home-title">
+      {{- $lines := split .Title "，" -}}
+      {{- range $index, $line := $lines -}}
+      <span class="home-title-line">{{ $line | markdownify }}{{ if lt $index (sub (len $lines) 1) }}，{{ end }}</span>
+      {{- end -}}
+    </h1>
+    <p>{{ .Content | markdownify }}</p>
+    <div class="home-links">
+      {{- with site.GetPage "/about" }}
+      <a href="{{ .RelPermalink }}">关于我 <span aria-hidden="true">↗</span></a>
+      {{- end }}
+      {{- range site.Params.socialIcons }}
+      {{- $label := .title | default (.name | title) }}
+      {{- if eq .name "github" }}{{ $label = "GitHub" }}{{ end }}
+      {{- if eq .name "rss" }}{{ $label = "RSS" }}{{ end }}
+      <a href="{{ trim .url " " | safeURL }}"{{ if hasPrefix .url "http" }} target="_blank" rel="noopener noreferrer me"{{ end }}>
+        <span class="home-link-icon" aria-hidden="true">{{ partial "svg.html" . }}</span>
+        <span>{{ $label }}</span>
+      </a>
+      {{- end }}
+    </div>
+  </div>
+  <div class="home-portrait">
+    <img src="{{ "/images/profile.jpg" | relURL }}" alt="fancive 的宇航员头像" width="176" height="176" decoding="async">
+  </div>
+</section>
+{{- $topics := slice
+  (dict "path" "/tags/AI Agent" "label" "AI Agent" "tone" "agent")
+  (dict "path" "/categories/Go语言" "label" "Go" "tone" "go")
+  (dict "path" "/categories/AIOps" "label" "AIOps" "tone" "aiops")
+  (dict "path" "/categories/个人思考" "label" "随笔" "tone" "notes")
+}}
+<nav class="home-topics" aria-label="文章主题">
+  <span class="home-topics-label">按主题阅读</span>
+  {{- range $topic := $topics }}
+  {{- with site.GetPage $topic.path }}
+  <a href="{{ .RelPermalink }}" data-topic="{{ $topic.tone }}">{{ $topic.label }}</a>
+  {{- end }}
+  {{- end }}
+</nav>
+{{- end -}}

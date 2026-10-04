@@ -1,0 +1,41 @@
+{{- $page := .page }}
+{{- $isHidden := ($page.Param "cover.hiddenInList") | default ($page.Param "cover.hidden") | default false }}
+{{- $hasCover := and $page.Params.cover.image (not $isHidden) }}
+<article class="post-entry blog-entry{{ if $hasCover }} has-cover{{ end }}{{ if .featured }} featured-entry{{ end }}{{ if .term }} tag-entry{{ end }}">
+  <div class="entry-body">
+    <header class="entry-header">
+      <h2>
+        <a class="entry-title-link" href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
+        {{- if $page.Draft }}<span class="entry-draft">草稿</span>{{ end }}
+      </h2>
+    </header>
+    {{- if ne ($page.Param "hideSummary") true }}
+    <div class="entry-content">
+      {{- with $page.Description }}
+      <p>{{ . | plainify | htmlUnescape }}</p>
+      {{- else }}
+      <p>{{ $page.Summary | plainify | htmlUnescape }}{{ if $page.Truncated }}…{{ end }}</p>
+      {{- end }}
+    </div>
+    {{- end }}
+    {{- if not ($page.Param "hideMeta") }}
+    <footer class="entry-footer">
+      {{- if not $page.Date.IsZero }}
+      <time datetime="{{ $page.Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ $page.Date.Format "2006.01.02" }}</time>
+      {{- end }}
+      {{- if $page.Param "ShowReadingTime" }}
+      {{- if not $page.Date.IsZero }}<span class="meta-separator" aria-hidden="true">·</span>{{ end }}
+      <span>{{ $page.ReadingTime }} 分钟阅读</span>
+      {{- end }}
+      {{- range first 1 ($page.GetTerms "categories") }}
+      <a class="entry-category" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+      {{- end }}
+    </footer>
+    {{- end }}
+  </div>
+  {{- if $hasCover }}
+  <a class="entry-cover-link" href="{{ $page.RelPermalink }}" aria-label="阅读：{{ $page.Title | plainify }}">
+    {{- partial "cover.html" (dict "cxt" $page "IsSingle" false "isHidden" $isHidden) }}
+  </a>
+  {{- end }}
+</article>

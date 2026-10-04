@@ -1,5 +1,5 @@
 ---
-title: "About"
+title: "关于"
 description: "关于 fancive"
 date: "2019-02-28"
 aliases: ["about-me"]
