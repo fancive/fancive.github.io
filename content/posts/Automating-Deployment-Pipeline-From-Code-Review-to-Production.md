@@ -2,7 +2,6 @@
 title: "从代码评审到生产部署：自动化流水线实践"
 date: 2025-01-30T14:07:06+08:00
 lastmod: 2025-01-30T14:07:06+08:00
-author: fancivez
 cover:
   image: /images/img/idp.jpg
 description: "从代码评审到生产环境的自动化部署实践：解决传统部署流程痛点，实现智能化的一站式部署工具，提升开发效率。"
@@ -10,7 +9,7 @@ categories:
   - 软件架构
 tags:
   - 开发工具
-  - DevOps
+  - devops
   - 自动化
 draft: false
 ---

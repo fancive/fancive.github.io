@@ -7,7 +7,7 @@ description: "深入剖析 GORM Preload 的性能陷阱，提供预加载的最�
 categories:
   - Go语言
 tags:
-  - GORM
+  - gorm
   - 数据库
 draft: true
 ---

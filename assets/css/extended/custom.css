@@ -243,7 +243,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible,
 body:not(.list) .entry-cover img { width: 100%; height: auto; aspect-ratio: auto; border-radius: 10px; }
 .post-content { font-size: 18px; line-height: 1.9; letter-spacing: 0; margin-top: 32px; }
 .post-content p, .post-content li { overflow-wrap: break-word; word-break: normal; }
-/* A few posts use body h1 sections; keep them below the post title. */
+/* Markdown body h1 sections stay below the post title. */
 .post-content h1 { font-size: 31px; line-height: 1.5; margin: 48px 0 24px; }
 .post-content h2 { font-size: 28px; line-height: 1.5; margin: 44px 0 22px; }
 .post-content h3 { font-size: 22px; line-height: 1.6; margin-top: 30px; }

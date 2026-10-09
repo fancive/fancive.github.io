@@ -7,6 +7,8 @@ theme = 'PaperMod'
 enableRobotsTXT = true
 enableGitInfo = true
 googleAnalytics = "G-7N49ZFJ61J"
+# 标签按 front matter 原样显示（小写连字符），不再被自动转成 "Ai-Agent" / "Llm"。
+capitalizeListTitles = false
 
 [pagination]
 pagerSize = 10

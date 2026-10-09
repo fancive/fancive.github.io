@@ -13,7 +13,6 @@ images/
 │   └── post-name-2/
 ├── site/            # 站点资源图片
 │   ├── profile.jpg  # 个人头像
-│   ├── background.jpg
 │   └── globe.svg
 └── illustrations/   # 其他插图（已有）
 ```

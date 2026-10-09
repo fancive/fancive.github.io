@@ -1,5 +1,5 @@
 ---
-title: "[Paper reading] A Survey On Log Research Of AIOps: Methods and Trends"
+title: "[Paper Reading] A Survey on Log Research of AIOps: Methods and Trends"
 date: 2023-03-25T13:43:03+08:00
 cover:
   image: "/images/img/log_4_ops.png"
@@ -7,12 +7,12 @@ description: "AIOps 日志研究综述：系统梳理日志分析的方法、趋
 categories:
   - AIOps
 tags:
-  - paper reading
-  - AIOps
+  - paper-reading
+  - aiops
 draft: false
 ---
 
-# first pass
+## first pass
 
 5-10 mins
 
@@ -21,7 +21,7 @@ draft: false
 3. conclusions
 4. references
 <!--more-->
-## question
+### question
 
 **Category: What type of paper is this? A measurement paper? An analysis of an existing system? A description of a research prototype?**
 
@@ -55,14 +55,14 @@ The paper presents a comprehensive survey of the research on log analysis in the
 
 It appears to be well-organized and follows a logical structure. It starts by providing background information on AIOps and log management, followed by a review on related work in the field.The paper then describes the methodology used to conduct the survey and presents the key findings. The discussion section analyzes the results. The conclusion summarizes the main contributions of the study and outlines future direction of study.  
 
-# second pass
+## second pass
 
 1 hour
 
 1. ﬁgures(插图), diagrams(示意图、流程图) and other illustrations
 2. mark relevant unread references
 
-## question
+### question
 
 **summarize the main thrust**
 
@@ -76,7 +76,7 @@ There are still many challenges to be addressed, such as the lack of labelled da
 
 **some evidence**
 
-# third pass
+## third pass
 
 1 / 4-5 hour
 

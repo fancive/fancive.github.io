@@ -2,19 +2,18 @@
 title: "如何量化 API 接口的 CPU 资源消耗：一种基于回归分析的方法"
 date: 2026-01-23T12:00:00+08:00
 lastmod: 2026-01-23T12:00:00+08:00
-author: fancivez
 cover:
   image: /images/img/cpu-analysis.jpg
 images:
   - /images/img/cpu-analysis.jpg
 description: "利用线性回归和现有监控数据（QPS、CPU 使用率），量化微服务中各 API 接口的 CPU 资源消耗，指导性能优化。"
 categories:
-  - 性能优化
+  - AIOps
 tags:
   - 机器学习
   - 微服务
   - 监控
-  - Python
+  - python
 draft: false
 ---
 

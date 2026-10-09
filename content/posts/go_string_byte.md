@@ -7,7 +7,7 @@ description: "探究 Go 语言中 string 转 []byte 时容量变化的底层原�
 categories:
   - Go语言
 tags:
-  - go runtime
+  - go-runtime
 ---
 
 ## 引言

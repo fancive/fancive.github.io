@@ -2,7 +2,7 @@
 title: "让 AI 帮你维护一个个人百科全书"
 date: 2026-04-07T10:00:00+08:00
 description: "你记过的笔记，最后真的翻过几次？Karpathy 的 LLM Wiki 模式：不是帮你记更多，而是帮你把已经记的东西养活。"
-tags: ["AI", "知识管理", "Obsidian", "个人百科", "Karpathy"]
+tags: ["ai-agent", "claude-code", "知识管理", "obsidian", "个人百科", "karpathy"]
 categories:
   - 方法论
 cover:

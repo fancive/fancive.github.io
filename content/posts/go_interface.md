@@ -7,7 +7,7 @@ description: "深入理解 Go 语言 interface 的内部实现机制，包括静
 categories:
   - Go语言
 tags:
-  - go runtime
+  - go-runtime
   - 翻译
 ---
 
@@ -69,7 +69,7 @@ type Stringer interface {
 
 将 b 分配给 Stringer 类型的接口值会同时设置接口值的两个单词。
 
-![interface](https://i.stack.imgur.com/H78Bz.png)
+![interface](https://i.sstatic.net/H78Bz.png)
 
 接口值中的第一个单词指向我所称的**interface table**或者 itable
 

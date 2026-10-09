@@ -2,7 +2,7 @@
 title: "你的 CLI 该为 AI Agent 重写了"
 date: 2026-04-09T12:00:00+08:00
 description: "给人用的命令行和给 Agent 用的命令行，是两种东西。七个设计原则，用真实内部工具和知名开源 CLI 逐条拆解。"
-tags: ["AI Agent", "CLI", "Developer Experience", "工具设计", "Claude Code"]
+tags: ["ai-agent", "cli", "developer-experience", "工具设计", "claude-code"]
 categories:
   - 软件架构
 cover:

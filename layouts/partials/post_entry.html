@@ -25,7 +25,7 @@
       {{- end }}
       {{- if $page.Param "ShowReadingTime" }}
       {{- if not $page.Date.IsZero }}<span class="meta-separator" aria-hidden="true">·</span>{{ end }}
-      <span>{{ $page.ReadingTime }} 分钟阅读</span>
+      <span>{{ i18n "read_time" $page.ReadingTime }}</span>
       {{- end }}
       {{- range first 1 ($page.GetTerms "categories") }}
       <a class="entry-category" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
