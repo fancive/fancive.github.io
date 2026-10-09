@@ -35,7 +35,7 @@
   </div>
   {{- if $hasCover }}
   <a class="entry-cover-link" href="{{ $page.RelPermalink }}" aria-label="阅读：{{ $page.Title | plainify }}">
-    {{- partial "cover.html" (dict "cxt" $page "IsSingle" false "isHidden" $isHidden) }}
+    {{- partial "entry_thumb.html" (dict "page" $page "featured" .featured) }}
   </a>
   {{- end }}
 </article>

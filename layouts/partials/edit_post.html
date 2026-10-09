@@ -1,0 +1,11 @@
+{{- if and (or .Params.editPost.URL site.Params.editPost.URL) (not (.Param "editPost.disabled")) -}}
+{{- $fileUrlPath := path.Join .File.Path }}
+
+{{- /* Same separator as post_meta.html; the link never wraps mid-phrase. */ -}}
+{{- if or .Params.author site.Params.author (.Param "ShowReadingTime") (not .Date.IsZero) .IsTranslated }}&nbsp;·&nbsp;{{- end -}}
+<span class="post-edit">
+    <a href="{{ .Params.editPost.URL | default site.Params.editPost.URL }}{{ if .Params.editPost.appendFilePath | default ( site.Params.editPost.appendFilePath | default false ) }}/{{ $fileUrlPath }}{{ end }}" rel="noopener noreferrer edit" target="_blank">
+        {{- .Params.editPost.Text | default (site.Params.editPost.Text | default (i18n "edit_post" | default "Edit")) -}}
+    </a>
+</span>
+{{- end }}

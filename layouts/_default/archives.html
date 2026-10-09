@@ -1,0 +1,41 @@
+{{- define "main" }}
+
+{{- $pages := where site.RegularPages "Type" "in" site.Params.mainSections }}
+{{- if site.Params.ShowAllPagesInArchive }}
+{{- $pages = site.RegularPages }}
+{{- end }}
+<header class="page-header">
+  <h1>{{ .Title }}</h1>
+  <div class="post-description">
+    {{- with .Description }}{{ . }}{{ else }}共 {{ len $pages }} 篇文章{{ end -}}
+  </div>
+</header>
+
+{{- /* Numeric month keys keep the headings Chinese; the theme groups by English month names. */}}
+{{- range $pages.GroupByPublishDate "2006" }}
+{{- if ne .Key "0001" }}
+{{- $year := .Key }}
+<section class="archive-year">
+  <h2 class="archive-year-header" id="{{ $year }}">
+    <a class="archive-header-link" href="#{{ $year }}">{{ $year }}</a>
+    <span class="archive-count">{{ len .Pages }} 篇</span>
+  </h2>
+  {{- range .Pages.GroupByPublishDate "1" }}
+  <div class="archive-month">
+    <h3 class="archive-month-header" id="{{ $year }}-{{ .Key }}">{{ .Key }} 月</h3>
+    <ul class="archive-posts">
+      {{- range .Pages }}
+      <li class="archive-entry">
+        <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "01.02" }}</time>
+        <a class="archive-entry-title" href="{{ .RelPermalink }}">{{ .Title | markdownify }}</a>
+        {{- if .Draft }}<span class="entry-draft">草稿</span>{{ end }}
+      </li>
+      {{- end }}
+    </ul>
+  </div>
+  {{- end }}
+</section>
+{{- end }}
+{{- end }}
+
+{{- end }}{{/* end main */}}

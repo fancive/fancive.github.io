@@ -1,0 +1,43 @@
+{{- /* Override: large local images get a webp srcset sized to the 760px column,
+       and link to the original so detailed diagrams stay zoomable. */ -}}
+{{- $u := urls.Parse .Destination -}}
+{{- $src := $u.String -}}
+{{- $img := false -}}
+{{- if not $u.IsAbs -}}
+  {{- $path := strings.TrimPrefix "/" (strings.TrimPrefix "./" $u.Path) }}
+  {{- with or (.PageInner.Resources.Get $path) (resources.Get $path) -}}
+    {{- $img = . -}}
+    {{- $src = .RelPermalink -}}
+    {{- with $u.RawQuery -}}
+      {{- $src = printf "%s?%s" $src . -}}
+    {{- end -}}
+    {{- with $u.Fragment -}}
+      {{- $src = printf "%s#%s" $src . -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $attributes := merge .Attributes (dict "alt" .Text "src" $src "title" (.Title | transform.HTMLEscape) "loading" "lazy" "decoding" "async") -}}
+{{- $resized := false -}}
+{{- if and $img (in (slice "jpeg" "png" "webp") $img.MediaType.SubType) (gt $img.Width 760) -}}
+  {{- $small := $img.Resize "760x webp q82" -}}
+  {{- $srcset := slice (printf "%s 760w" $small.RelPermalink) -}}
+  {{- if gt $img.Width 1520 -}}
+    {{- $srcset = $srcset | append (printf "%s 1520w" ($img.Resize "1520x webp q80").RelPermalink) -}}
+  {{- end -}}
+  {{- $attributes = merge $attributes (dict
+    "src" $small.RelPermalink
+    "srcset" (delimit $srcset ", ")
+    "sizes" "(max-width: 800px) 100vw, 760px"
+    "width" (string $small.Width)
+    "height" (string $small.Height)) -}}
+  {{- $resized = true -}}
+{{- end -}}
+{{- if $resized }}<a class="image-link" href="{{ $src }}" target="_blank" rel="noopener">{{ end -}}
+<img
+  {{- range $k, $v := $attributes -}}
+    {{- if $v -}}
+      {{- printf " %s=%q" $k $v | safeHTMLAttr -}}
+    {{- end -}}
+  {{- end -}}>
+{{- if $resized }}</a>{{ end -}}
+{{- /**/ -}}

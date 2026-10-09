@@ -1,0 +1,46 @@
+{{- define "main" }}
+
+{{- $isCategories := eq .Data.Plural "categories" }}
+{{- $terms := .Data.Terms.ByCount }}
+<header class="page-header">
+    <h1>{{ .Title }}</h1>
+    <div class="post-description">
+        {{- with .Description }}{{ . }}{{ else }}{{ len $terms }} 个{{ cond $isCategories "主题" "标签" }}，按文章数排序{{ end -}}
+    </div>
+</header>
+
+{{- if $isCategories }}
+{{- /* Same tones as the home topic chips; unlisted categories stay neutral. */}}
+{{- $tones := dict "Go语言" "teal" "AIOps" "blue" "个人思考" "rose" "软件架构" "accent" "方法论" "feature" }}
+<ul class="term-cards">
+    {{- range $terms }}
+    {{- $count := .Count }}
+    {{- with .Page }}
+    <li>
+        <a class="term-card" href="{{ .RelPermalink }}" data-tone="{{ index $tones .Title | default "neutral" }}">
+            <span class="term-card-head">
+                <span class="term-card-name">{{ .LinkTitle }}</span>
+                <span class="term-card-count">{{ $count }} 篇</span>
+            </span>
+            {{- with index .Pages 0 }}
+            <span class="term-card-latest">最近：{{ .Title }}</span>
+            {{- end }}
+        </a>
+    </li>
+    {{- end }}
+    {{- end }}
+</ul>
+{{- else }}
+<ul class="term-chips">
+    {{- range $terms }}
+    {{- $count := .Count }}
+    {{- with .Page }}
+    <li>
+        <a href="{{ .RelPermalink }}">{{ .LinkTitle }}<span class="term-count">{{ $count }}</span></a>
+    </li>
+    {{- end }}
+    {{- end }}
+</ul>
+{{- end }}
+
+{{- end }}{{/* end main */ -}}

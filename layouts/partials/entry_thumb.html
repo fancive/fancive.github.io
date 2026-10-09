@@ -1,0 +1,25 @@
+{{- /* List thumbnails share one crop ratio so the feed stays aligned; the
+       article page still shows the full cover through cover.html.
+       Feed thumbnails are 3:2, the featured card uses the 1200x630 cover ratio. */ -}}
+{{- $page := .page }}
+{{- $src := $page.Params.cover.image }}
+{{- $alt := $page.Params.cover.alt | default $page.Params.cover.caption | plainify }}
+{{- $widths := cond .featured (slice 280 560) (slice 160 320) }}
+{{- $sizes := cond .featured "270px" "(max-width: 700px) 88px, 148px" }}
+{{- $img := resources.Get (strings.TrimPrefix "/" $src) }}
+<figure class="entry-cover">
+  {{- if and $img (in (slice "jpeg" "png" "webp" "gif") $img.MediaType.SubType) }}
+  {{- $srcset := slice }}
+  {{- $last := $img }}
+  {{- range $widths }}
+  {{- $h := cond $.featured (div (mul . 21) 40) (div (mul . 2) 3) }}
+  {{- $last = $img.Fill (printf "%dx%d smart webp q80" . $h) }}
+  {{- $srcset = $srcset | append (printf "%s %dw" $last.RelPermalink .) }}
+  {{- end }}
+  <img loading="lazy" decoding="async" src="{{ $last.RelPermalink }}" srcset="{{ delimit $srcset ", " }}"
+    sizes="{{ $sizes }}" width="{{ $last.Width }}" height="{{ $last.Height }}" alt="{{ $alt }}">
+  {{- else }}
+  {{- /* SVG and remote covers cannot be resized; CSS crops them instead. */}}
+  <img loading="lazy" decoding="async" src="{{ $src | relURL }}" alt="{{ $alt }}">
+  {{- end }}
+</figure>

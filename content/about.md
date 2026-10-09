@@ -1,8 +1,11 @@
 ---
 title: "关于"
-description: "关于 fancive"
 date: "2019-02-28"
 aliases: ["about-me"]
+ShowToc: false
+hideMeta: true
+ShowBreadCrumbs: false
+ShowPostNavLinks: false
 ---
 
 ## 关于我

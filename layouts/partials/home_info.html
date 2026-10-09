@@ -24,7 +24,10 @@
     </div>
   </div>
   <div class="home-portrait">
-    <img src="{{ "/images/profile.jpg" | relURL }}" alt="fancive 的宇航员头像" width="176" height="176" decoding="async">
+    {{- /* Shown at 196px; a 2x webp replaces the 1024px original. */}}
+    {{- $portrait := "/images/profile.jpg" | relURL }}
+    {{- with resources.Get "images/profile.jpg" }}{{ $portrait = (.Fill "392x392 center webp q82").RelPermalink }}{{ end }}
+    <img src="{{ $portrait }}" alt="fancive 的宇航员头像" width="196" height="196" decoding="async">
   </div>
 </section>
 {{- $topics := slice

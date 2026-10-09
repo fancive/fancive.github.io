@@ -84,7 +84,7 @@ images = ["/images/og-default.jpg"]
 
   [params.editPost]
   URL = "https://github.com/fancive/fancive.github.io/blob/main/content"
-  Text = "在 GitHub 上查看/修改本文"
+  Text = "在 GitHub 上编辑"
   appendFilePath = true
 
   [params.fuseOpts]
@@ -111,3 +111,16 @@ home = ["HTML", "RSS", "JSON"]
     style = "monokai"
   [markup.goldmark.renderer]
     unsafe = true
+
+# 图片同时挂到 assets，Hugo 才能给封面生成缩略图和 srcset，原图 URL 不变。
+# 声明任一挂载会替换该目标的默认挂载，所以 assets/static 要显式保留。
+[module]
+  [[module.mounts]]
+  source = "assets"
+  target = "assets"
+  [[module.mounts]]
+  source = "static"
+  target = "static"
+  [[module.mounts]]
+  source = "static/images"
+  target = "assets/images"
